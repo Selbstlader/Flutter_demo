@@ -6,6 +6,8 @@ import '../constants/app_constants.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
 import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
+import '../../features/home/presentation/pages/calculation_result_page.dart';
+import '../../features/home/presentation/pages/pension_result_page.dart';
 import '../../features/profile/presentation/pages/profile_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
 
@@ -39,6 +41,26 @@ class AppRouter {
         name: 'home',
         builder: (context, state) => const HomePage(),
         routes: [
+          // 计算结果页（子路由）
+          GoRoute(
+            path: 'calculation-result',
+            name: 'calculation-result',
+            builder: (context, state) {
+              final formData = state.extra as Map<String, dynamic>? ?? {};
+              return CalculationResultPage(formData: formData);
+            },
+          ),
+          
+          // 养老金计算结果页（子路由）
+          GoRoute(
+            path: 'pension-result',
+            name: 'pension-result',
+            builder: (context, state) {
+              final formData = state.extra as Map<String, dynamic>? ?? {};
+              return PensionResultPage(formData: formData);
+            },
+          ),
+          
           // 个人资料页（子路由）
           GoRoute(
             path: 'profile',

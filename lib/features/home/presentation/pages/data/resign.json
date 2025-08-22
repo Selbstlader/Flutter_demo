@@ -1,0 +1,1301 @@
+{
+    "version": "2025.1",
+    "lastUpdated": "2025-06-27",
+    "regions": {
+        "shanghai": {
+            "name": "上海",
+            "socialSecurityBase": 7310,
+            "housingFundBase": 2590,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.10
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.0016
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.01
+                },
+                "housingFund": {
+                    "personal": 0.07,
+                    "company": 0.07
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "beijing": {
+            "name": "北京",
+            "socialSecurityBase": 5869,
+            "housingFundBase": 2320,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.10
+                },
+                "unemployment": {
+                    "personal": 0.002,
+                    "company": 0.008
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.008
+                },
+                "housingFund": {
+                    "personal": 0.12,
+                    "company": 0.12
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "guangzhou": {
+            "name": "广州",
+            "socialSecurityBase": 5592,
+            "housingFundBase": 2100,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.14
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.055
+                },
+                "unemployment": {
+                    "personal": 0.002,
+                    "company": 0.0064
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.0016
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.0085
+                },
+                "housingFund": {
+                    "personal": 0.05,
+                    "company": 0.05
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "shenzhen": {
+            "name": "深圳",
+            "socialSecurityBase": 6757,
+            "housingFundBase": 2360,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.13
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.045
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.0014
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.0045
+                },
+                "housingFund": {
+                    "personal": 0.05,
+                    "company": 0.05
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "wuhan": {
+            "name": "武汉",
+            "socialSecurityBase": 4077,
+            "housingFundBase": 1900,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.08
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.007
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "nanjing": {
+            "name": "南京",
+            "socialSecurityBase": 4494,
+            "housingFundBase": 2020,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.09
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.008
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "suzhou": {
+            "name": "苏州",
+            "socialSecurityBase": 4494,
+            "housingFundBase": 1980,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.09
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.008
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "hangzhou": {
+            "name": "杭州",
+            "socialSecurityBase": 4927,
+            "housingFundBase": 2010,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.14
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.105
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.012
+                },
+                "housingFund": {
+                    "personal": 0.12,
+                    "company": 0.12
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "tianjin": {
+            "name": "天津市",
+            "socialSecurityBase": 4400,
+            "housingFundBase": 2050,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.095
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.008
+                },
+                "housingFund": {
+                    "personal": 0.11,
+                    "company": 0.11
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "chongqing": {
+            "name": "重庆市",
+            "socialSecurityBase": 3699,
+            "housingFundBase": 1800,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.085
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.007
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.07,
+                    "company": 0.07
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "hebei": {
+            "name": "河北省",
+            "socialSecurityBase": 3849,
+            "housingFundBase": 1650,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.08
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.007
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "shanxi": {
+            "name": "山西省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1520,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "neimenggu": {
+            "name": "内蒙古自治区",
+            "socialSecurityBase": 3746,
+            "housingFundBase": 1600,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "liaoning": {
+            "name": "辽宁省",
+            "socialSecurityBase": 4100,
+            "housingFundBase": 1750,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.07
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.006
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "jilin": {
+            "name": "吉林省",
+            "socialSecurityBase": 3429,
+            "housingFundBase": 1550,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "heilongjiang": {
+            "name": "黑龙江省",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1480,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "jiangsu": {
+            "name": "江苏省",
+            "socialSecurityBase": 4494,
+            "housingFundBase": 1980,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.09
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.008
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "zhejiang": {
+            "name": "浙江省",
+            "socialSecurityBase": 4927,
+            "housingFundBase": 2010,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.14
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.105
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.012
+                },
+                "housingFund": {
+                    "personal": 0.12,
+                    "company": 0.12
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "anhui": {
+            "name": "安徽省",
+            "socialSecurityBase": 3429,
+            "housingFundBase": 1650,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "fujian": {
+            "name": "福建省",
+            "socialSecurityBase": 4100,
+            "housingFundBase": 1850,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.14
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.08
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.007
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "jiangxi": {
+            "name": "江西省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1580,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "shandong": {
+            "name": "山东省",
+            "socialSecurityBase": 4077,
+            "housingFundBase": 1780,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.09
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.01
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "henan": {
+            "name": "河南省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1520,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "hubei": {
+            "name": "湖北省",
+            "socialSecurityBase": 4077,
+            "housingFundBase": 1900,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.08
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.007
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "hunan": {
+            "name": "湖南省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1650,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "guangdong": {
+            "name": "广东省",
+            "socialSecurityBase": 5592,
+            "housingFundBase": 2100,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.14
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.055
+                },
+                "unemployment": {
+                    "personal": 0.002,
+                    "company": 0.0064
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.0016
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.0085
+                },
+                "housingFund": {
+                    "personal": 0.05,
+                    "company": 0.05
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "guangxi": {
+            "name": "广西壮族自治区",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1480,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "hainan": {
+            "name": "海南省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1520,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.005,
+                    "company": 0.005
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "sichuan": {
+            "name": "四川省",
+            "socialSecurityBase": 3699,
+            "housingFundBase": 1700,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.065
+                },
+                "unemployment": {
+                    "personal": 0.004,
+                    "company": 0.006
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "guizhou": {
+            "name": "贵州省",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1450,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "yunnan": {
+            "name": "云南省",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1520,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "xizang": {
+            "name": "西藏自治区",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1450,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "shaanxi": {
+            "name": "陕西省",
+            "socialSecurityBase": 3746,
+            "housingFundBase": 1650,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "gansu": {
+            "name": "甘肃省",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1450,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "qinghai": {
+            "name": "青海省",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1450,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "ningxia": {
+            "name": "宁夏回族自治区",
+            "socialSecurityBase": 3184,
+            "housingFundBase": 1450,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        },
+        "xinjiang": {
+            "name": "新疆维吾尔自治区",
+            "socialSecurityBase": 3360,
+            "housingFundBase": 1520,
+            "rates": {
+                "pension": {
+                    "personal": 0.08,
+                    "company": 0.16
+                },
+                "medical": {
+                    "personal": 0.02,
+                    "company": 0.06
+                },
+                "unemployment": {
+                    "personal": 0.003,
+                    "company": 0.007
+                },
+                "workInjury": {
+                    "personal": 0,
+                    "company": 0.002
+                },
+                "maternity": {
+                    "personal": 0,
+                    "company": 0.005
+                },
+                "housingFund": {
+                    "personal": 0.08,
+                    "company": 0.08
+                },
+                "supplementaryHousingFund": {
+                    "personal": 0,
+                    "company": 0
+                }
+            }
+        }
+    }
+}
