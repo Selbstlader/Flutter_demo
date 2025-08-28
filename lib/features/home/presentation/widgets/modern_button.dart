@@ -36,39 +36,36 @@ class ModernButton extends StatelessWidget {
         onTapDown: (_) => scaleAnimationController?.forward(),
         onTapUp: (_) => scaleAnimationController?.reverse(),
         onTapCancel: () => scaleAnimationController?.reverse(),
-        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
+        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
         child: Container(
           padding: EdgeInsets.symmetric(
-            vertical: _getResponsiveSpacing(context, 16),
-            horizontal: _getResponsiveSpacing(context, 24),
+            vertical: _getResponsiveSpacing(context, 14),
+            horizontal: _getResponsiveSpacing(context, 20),
           ),
           decoration: BoxDecoration(
-            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
-            gradient: isPrimary
-                ? const LinearGradient(
-                    begin: Alignment.topLeft,
-                    end: Alignment.bottomRight,
-                    colors: [
-                      Color(0xFF6366F1),
-                      Color(0xFF4F46E5),
-                    ],
-                  )
-                : null,
+            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
+            color: isPrimary ? const Color(0xFF4A90E2) : Colors.white,
             border: !isPrimary
                 ? Border.all(
-                    color: const Color(0xFF6366F1),
-                    width: 2,
+                    color: const Color(0xFF4A90E2),
+                    width: 1.5,
                   )
                 : null,
             boxShadow: isPrimary
                 ? [
                     BoxShadow(
-                      color: const Color(0xFF6366F1).withOpacity(0.3),
-                      blurRadius: 20,
-                      offset: const Offset(0, 8),
+                      color: const Color(0xFF4A90E2).withOpacity(0.2),
+                      blurRadius: 12,
+                      offset: const Offset(0, 4),
                     ),
                   ]
-                : null,
+                : [
+                    BoxShadow(
+                      color: Colors.black.withOpacity(0.04),
+                      blurRadius: 8,
+                      offset: const Offset(0, 2),
+                    ),
+                  ],
           ),
           child: Row(
             mainAxisAlignment: MainAxisAlignment.center,
@@ -76,18 +73,18 @@ class ModernButton extends StatelessWidget {
               if (icon != null) ...[
                 Icon(
                   icon,
-                  color: isPrimary ? Colors.white : const Color(0xFF6366F1),
-                  size: _getResponsiveFontSize(context, 18),
+                  color: isPrimary ? Colors.white : const Color(0xFF4A90E2),
+                  size: _getResponsiveFontSize(context, 16),
                 ),
                 SizedBox(width: _getResponsiveSpacing(context, 8)),
               ],
               Text(
                 text,
                 style: TextStyle(
-                  color: isPrimary ? Colors.white : const Color(0xFF6366F1),
-                  fontSize: _getResponsiveFontSize(context, 16),
-                  fontWeight: FontWeight.w600,
-                  letterSpacing: 0.5,
+                  color: isPrimary ? Colors.white : const Color(0xFF4A90E2),
+                  fontSize: _getResponsiveFontSize(context, 15),
+                  fontWeight: FontWeight.w500,
+                  letterSpacing: 0.3,
                 ),
               ),
             ],

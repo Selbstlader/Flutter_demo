@@ -191,14 +191,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
 
     return Container(
       decoration: const BoxDecoration(
-        gradient: LinearGradient(
-          begin: Alignment.topCenter,
-          end: Alignment.bottomCenter,
-          colors: [
-            Color(0xFFF8FAFC),
-            Color(0xFFE2E8F0),
-          ],
-        ),
+        color: Color(0xFFF5F7FA),
       ),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
@@ -223,24 +216,48 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                         child: Column(
                           crossAxisAlignment: CrossAxisAlignment.start,
                           children: [
-                            Text(
-                              '社保个税计算器',
-                              style: TextStyle(
-                                fontSize: _getResponsiveFontSize(28),
-                                fontWeight: FontWeight.w800,
-                                color: const Color(0xFF1E293B),
-                                letterSpacing: 0.5,
-                              ),
-                            ),
-                            SizedBox(height: _getResponsiveSpacing(8)),
-                            Text(
-                              '精准计算您的社保缴费和个人所得税',
-                              style: TextStyle(
-                                fontSize: _getResponsiveFontSize(16),
-                                fontWeight: FontWeight.w400,
-                                color: const Color(0xFF64748B),
-                                height: 1.5,
-                              ),
+                            Row(
+                              children: [
+                                Container(
+                                  padding: const EdgeInsets.all(8),
+                                  decoration: BoxDecoration(
+                                    color: const Color(0xFF4A90E2).withOpacity(0.1),
+                                    borderRadius: BorderRadius.circular(8),
+                                  ),
+                                  child: Icon(
+                                    Icons.calculate_outlined,
+                                    color: const Color(0xFF4A90E2),
+                                    size: _getResponsiveFontSize(20),
+                                  ),
+                                ),
+                                SizedBox(width: _getResponsiveSpacing(12)),
+                                Expanded(
+                                  child: Column(
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      Text(
+                                        '社保个税计算',
+                                        style: TextStyle(
+                                          fontSize: _getResponsiveFontSize(22),
+                                          fontWeight: FontWeight.w600,
+                                          color: const Color(0xFF2C3E50),
+                                          letterSpacing: 0.3,
+                                        ),
+                                      ),
+                                      SizedBox(height: _getResponsiveSpacing(4)),
+                                      Text(
+                                        '计算您的社保缴费和个人所得税',
+                                        style: TextStyle(
+                                          fontSize: _getResponsiveFontSize(14),
+                                          fontWeight: FontWeight.w400,
+                                          color: const Color(0xFF7F8C8D),
+                                          height: 1.4,
+                                        ),
+                                      ),
+                                    ],
+                                  ),
+                                ),
+                              ],
                             ),
                           ],
                         ),
@@ -249,7 +266,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                       // 地区选择
                       ModernCard(
                         title: '地区选择',
-                        icon: Icons.location_on_rounded,
+                        icon: Icons.location_on_outlined,
                         child: RegionDropdown(
                           selectedRegion: _selectedRegion,
                           items: _regionItems,
@@ -266,7 +283,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                       // 基本信息
                       ModernCard(
                         title: '基本信息',
-                        icon: Icons.account_balance_wallet_rounded,
+                        icon: Icons.person_outline_rounded,
                         child: Column(
                           children: [
                             ModernTextField(
@@ -281,7 +298,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                               controller: _housingFundRateController,
                               label: '公积金缴纳比例',
                               suffix: '%',
-                              icon: Icons.percent_rounded,
+                              icon: Icons.percent_outlined,
                               validator: _validateRate,
                             ),
                             SizedBox(height: _getResponsiveSpacing(20)),
@@ -289,7 +306,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                               controller: _specialDeductionController,
                               label: '专项附加扣除',
                               suffix: '元',
-                              icon: Icons.receipt_long_rounded,
+                              icon: Icons.receipt_outlined,
                               validator: _validateDeduction,
                             ),
                             SizedBox(height: _getResponsiveSpacing(20)),
@@ -297,7 +314,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                               controller: _socialSecurityBaseController,
                               label: '社保基数',
                               suffix: '元',
-                              icon: Icons.security_rounded,
+                              icon: Icons.shield_outlined,
                               onChanged: (value) => _validateBaseInput(value, 'social'),
                               validator: _validateBaseField,
                             ),
@@ -306,7 +323,7 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
                               controller: _housingFundBaseController,
                               label: '公积金基数',
                               suffix: '元',
-                              icon: Icons.home_rounded,
+                              icon: Icons.home_outlined,
                               onChanged: (value) => _validateBaseInput(value, 'housing'),
                               validator: _validateBaseField,
                             ),

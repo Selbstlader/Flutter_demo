@@ -32,11 +32,11 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   void initState() {
     super.initState();
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1000),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
     _slideController = AnimationController(
-      duration: const Duration(milliseconds: 800),
+      duration: const Duration(milliseconds: 600),
       vsync: this,
     );
     
@@ -45,7 +45,7 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
     );
     
     _slideAnimation = Tween<Offset>(
-      begin: const Offset(0, 0.3),
+      begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
     
@@ -80,34 +80,43 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   Widget build(BuildContext context) {
     return Scaffold(
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
           gradient: LinearGradient(
-            begin: Alignment.topLeft,
-            end: Alignment.bottomRight,
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
             colors: [
-              Color(0xFF0F0F23),
-              Color(0xFF16213E),
-              Color(0xFF1A1A2E),
+              Color(0xFFF8FAFC),
+              Color(0xFFE2E8F0),
             ],
           ),
         ),
         child: SafeArea(
           child: SingleChildScrollView(
             padding: const EdgeInsets.symmetric(horizontal: 24),
-            child: FadeTransition(
-              opacity: _fadeAnimation,
-              child: SlideTransition(
-                position: _slideAnimation,
-                child: Column(
-                  crossAxisAlignment: CrossAxisAlignment.start,
-                  children: [
-                    const SizedBox(height: 60),
-                    _buildHeader(),
-                    const SizedBox(height: 48),
-                    _buildLoginForm(),
-                    const SizedBox(height: 24),
-                    _buildFooter(),
-                  ],
+            child: ConstrainedBox(
+              constraints: BoxConstraints(
+                minHeight: MediaQuery.of(context).size.height - 
+                    MediaQuery.of(context).padding.top - 
+                    MediaQuery.of(context).padding.bottom,
+              ),
+              child: FadeTransition(
+                opacity: _fadeAnimation,
+                child: SlideTransition(
+                  position: _slideAnimation,
+                  child: Column(
+                    crossAxisAlignment: CrossAxisAlignment.center,
+                    children: [
+                      const SizedBox(height: 40),
+                      _buildHeader(),
+                      const SizedBox(height: 32),
+                      _buildLoginForm(),
+                      const SizedBox(height: 20),
+                      _buildFooter(),
+                      const SizedBox(height: 40),
+                    ],
+                  ),
                 ),
               ),
             ),
@@ -119,46 +128,47 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
 
   Widget _buildHeader() {
     return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Container(
-          width: 80,
-          height: 80,
+          width: 72,
+          height: 72,
           decoration: BoxDecoration(
             gradient: const LinearGradient(
-              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
+              begin: Alignment.topLeft,
+              end: Alignment.bottomRight,
+              colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
             ),
             borderRadius: BorderRadius.circular(20),
             boxShadow: [
               BoxShadow(
-                color: const Color(0xFF6366F1).withOpacity(0.3),
-                blurRadius: 20,
-                offset: const Offset(0, 8),
+                color: const Color(0xFF6366F1).withOpacity(0.2),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
               ),
             ],
           ),
           child: const Icon(
             Icons.psychology_rounded,
             color: Colors.white,
-            size: 40,
+            size: 32,
           ),
         ),
         const SizedBox(height: 24),
         const Text(
           '欢迎回来',
           style: TextStyle(
-            fontSize: 32,
+            fontSize: 28,
             fontWeight: FontWeight.bold,
-            color: Colors.white,
+            color: Color(0xFF1E293B),
             height: 1.2,
           ),
         ),
         const SizedBox(height: 8),
-        Text(
-          '使用邮箱和密码登录您的账户',
+        const Text(
+          '登录您的账户继续使用',
           style: TextStyle(
             fontSize: 16,
-            color: Colors.white.withOpacity(0.7),
+            color: Color(0xFF64748B),
             height: 1.5,
           ),
         ),
@@ -167,103 +177,122 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   }
 
   Widget _buildLoginForm() {
-    return Form(
-      key: _formKey,
-      child: Column(
-        children: [
-          CommonTextField(
-            controller: _emailController,
-            label: '邮箱',
-            hint: '请输入您的邮箱地址',
-            icon: Icons.email_outlined,
-            keyboardType: TextInputType.emailAddress,
-            validator: (value) {
-              if (value == null || value.trim().isEmpty) {
-                return '请输入邮箱地址';
-              }
-              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
-                return '请输入正确的邮箱格式';
-              }
-              return null;
-            },
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 4),
           ),
-          const SizedBox(height: 20),
-          CommonTextField(
-            controller: _passwordController,
-            label: '密码',
-            hint: '请输入您的密码',
-            icon: Icons.lock_outline,
-            isPassword: true,
-            passwordVisible: _isPasswordVisible,
-            onPasswordVisibilityToggle: () {
-              setState(() {
-                _isPasswordVisible = !_isPasswordVisible;
-              });
-            },
-            validator: (value) {
-              if (value == null || value.isEmpty) {
-                return '请输入密码';
-              }
-              if (value.length < 6) {
-                return '密码至少6位';
-              }
-              return null;
-            },
-          ),
-          const SizedBox(height: 16),
-          Row(
-            mainAxisAlignment: MainAxisAlignment.spaceBetween,
-            children: [
-              Row(
-                children: [
-                  Container(
-                    width: 20,
-                    height: 20,
-                    decoration: BoxDecoration(
-                      border: Border.all(color: const Color(0xFF6366F1)),
-                      borderRadius: BorderRadius.circular(4),
+        ],
+      ),
+      child: Form(
+        key: _formKey,
+        child: Column(
+          children: [
+            CommonTextField(
+              controller: _emailController,
+              label: '邮箱',
+              hint: '请输入您的邮箱地址',
+              icon: Icons.email_outlined,
+              keyboardType: TextInputType.emailAddress,
+              validator: (value) {
+                if (value == null || value.trim().isEmpty) {
+                  return '请输入邮箱地址';
+                }
+                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                  return '请输入正确的邮箱格式';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 20),
+            CommonTextField(
+              controller: _passwordController,
+              label: '密码',
+              hint: '请输入您的密码',
+              icon: Icons.lock_outline,
+              isPassword: true,
+              passwordVisible: _isPasswordVisible,
+              onPasswordVisibilityToggle: () {
+                setState(() {
+                  _isPasswordVisible = !_isPasswordVisible;
+                });
+              },
+              validator: (value) {
+                if (value == null || value.isEmpty) {
+                  return '请输入密码';
+                }
+                if (value.length < 6) {
+                  return '密码至少6位';
+                }
+                return null;
+              },
+            ),
+            const SizedBox(height: 16),
+            Row(
+              mainAxisAlignment: MainAxisAlignment.spaceBetween,
+              children: [
+                Row(
+                  children: [
+                    Container(
+                      width: 18,
+                      height: 18,
+                      decoration: BoxDecoration(
+                        border: Border.all(color: const Color(0xFF6366F1), width: 1.5),
+                        borderRadius: BorderRadius.circular(4),
+                      ),
+                      child: const Icon(
+                        Icons.check,
+                        size: 12,
+                        color: Color(0xFF6366F1),
+                      ),
                     ),
-                    child: const Icon(
-                      Icons.check,
-                      size: 14,
-                      color: Color(0xFF6366F1),
+                    const SizedBox(width: 8),
+                    const Text(
+                      '记住我',
+                      style: TextStyle(
+                        color: Color(0xFF64748B),
+                        fontSize: 14,
+                      ),
                     ),
+                  ],
+                ),
+                TextButton(
+                  onPressed: () {},
+                  style: TextButton.styleFrom(
+                    padding: EdgeInsets.zero,
+                    minimumSize: Size.zero,
+                    tapTargetSize: MaterialTapTargetSize.shrinkWrap,
                   ),
-                  const SizedBox(width: 8),
-                  Text(
-                    '记住我',
+                  child: const Text(
+                    '忘记密码？',
                     style: TextStyle(
-                      color: Colors.white.withOpacity(0.7),
+                      color: Color(0xFF6366F1),
                       fontSize: 14,
+                      fontWeight: FontWeight.w500,
                     ),
-                  ),
-                ],
-              ),
-              TextButton(
-                onPressed: () {},
-                child: const Text(
-                  '忘记密码？',
-                  style: TextStyle(
-                    color: Color(0xFF6366F1),
-                    fontSize: 14,
                   ),
                 ),
-              ),
-            ],
-          ),
-          const SizedBox(height: 24),
-          
-          // 错误信息显示
-          const ErrorMessageWidget(),
-          
-          const SizedBox(height: 8),
-          _buildLoginButton(),
-        ],
+              ],
+            ),
+            const SizedBox(height: 24),
+            
+            // 错误信息显示
+            const ErrorMessageWidget(),
+            
+            const SizedBox(height: 8),
+            _buildLoginButton(),
+          ],
+        ),
       ),
     );
   }
-
-
 
   Widget _buildLoginButton() {
     return AuthGradientButton(
@@ -273,36 +302,39 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   }
 
   Widget _buildFooter() {
-    return Center(
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.center,
-        children: [
-          Text(
-            '还没有账户？',
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.7),
-              fontSize: 14,
-            ),
+    return Row(
+      mainAxisAlignment: MainAxisAlignment.center,
+      children: [
+        const Text(
+          '还没有账户？',
+          style: TextStyle(
+            color: Color(0xFF64748B),
+            fontSize: 14,
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).push(
-                MaterialPageRoute(
-                  builder: (context) => const ModernRegisterPage(),
-                ),
-              );
-            },
-            child: const Text(
-              '立即注册',
-              style: TextStyle(
-                color: Color(0xFF6366F1),
-                fontSize: 14,
-                fontWeight: FontWeight.w600,
+        ),
+        TextButton(
+          onPressed: () {
+            Navigator.of(context).push(
+              MaterialPageRoute(
+                builder: (context) => const ModernRegisterPage(),
               ),
+            );
+          },
+          style: TextButton.styleFrom(
+            padding: const EdgeInsets.symmetric(horizontal: 4),
+            minimumSize: Size.zero,
+            tapTargetSize: MaterialTapTargetSize.shrinkWrap,
+          ),
+          child: const Text(
+            '立即注册',
+            style: TextStyle(
+              color: Color(0xFF6366F1),
+              fontSize: 14,
+              fontWeight: FontWeight.w600,
             ),
           ),
-        ],
-      ),
+        ),
+      ],
     );
   }
 }

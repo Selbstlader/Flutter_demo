@@ -1,5 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:go_router/go_router.dart';
 
 import '../widgets/app_header.dart';
 import '../widgets/bottom_navigation.dart';
@@ -29,61 +30,54 @@ class _HomePageState extends ConsumerState<HomePage> {
       builder: (BuildContext context) {
         return Dialog(
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(20),
+            borderRadius: BorderRadius.circular(16),
           ),
           child: Container(
             padding: const EdgeInsets.all(24),
             decoration: BoxDecoration(
-              borderRadius: BorderRadius.circular(20),
-              gradient: const LinearGradient(
-                begin: Alignment.topLeft,
-                end: Alignment.bottomRight,
-                colors: [
-                  Color(0xFFF8FAFC),
-                  Color(0xFFE2E8F0),
-                ],
-              ),
+              borderRadius: BorderRadius.circular(16),
+              color: Colors.white,
+              boxShadow: [
+                BoxShadow(
+                  color: Colors.black.withOpacity(0.1),
+                  blurRadius: 20,
+                  offset: const Offset(0, 8),
+                ),
+              ],
             ),
             child: Column(
               mainAxisSize: MainAxisSize.min,
               children: [
                 Container(
-                  width: 60,
-                  height: 60,
+                  width: 56,
+                  height: 56,
                   decoration: BoxDecoration(
-                    gradient: const LinearGradient(
-                      begin: Alignment.topLeft,
-                      end: Alignment.bottomRight,
-                      colors: [
-                        Color(0xFF8B5CF6),
-                        Color(0xFF6366F1),
-                      ],
-                    ),
-                    borderRadius: BorderRadius.circular(30),
+                    color: const Color(0xFF4A90E2).withOpacity(0.1),
+                    borderRadius: BorderRadius.circular(28),
                   ),
                   child: const Icon(
-                    Icons.psychology_rounded,
-                    color: Colors.white,
+                    Icons.support_agent_rounded,
+                    color: Color(0xFF4A90E2),
                     size: 28,
                   ),
                 ),
                 const SizedBox(height: 16),
                 const Text(
-                  'AI智能助手',
+                  '智能助手',
                   style: TextStyle(
-                    fontSize: 20,
-                    fontWeight: FontWeight.bold,
-                    color: Color(0xFF1E293B),
+                    fontSize: 18,
+                    fontWeight: FontWeight.w600,
+                    color: Color(0xFF2C3E50),
                   ),
                 ),
                 const SizedBox(height: 8),
                 const Text(
-                  '我可以帮助您解答社保和养老金相关问题，提供个性化的计算建议。',
+                  '我可以帮助您解答社保和养老金相关问题，提供专业的计算建议。',
                   textAlign: TextAlign.center,
                   style: TextStyle(
                     fontSize: 14,
-                    color: Color(0xFF64748B),
-                    height: 1.5,
+                    color: Color(0xFF7F8C8D),
+                    height: 1.4,
                   ),
                 ),
                 const SizedBox(height: 24),
@@ -95,14 +89,14 @@ class _HomePageState extends ConsumerState<HomePage> {
                         style: TextButton.styleFrom(
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
-                            side: const BorderSide(color: Color(0xFFE2E8F0)),
+                            borderRadius: BorderRadius.circular(8),
+                            side: const BorderSide(color: Color(0xFFE0E6ED)),
                           ),
                         ),
                         child: const Text(
                           '取消',
                           style: TextStyle(
-                            color: Color(0xFF64748B),
+                            color: Color(0xFF7F8C8D),
                             fontWeight: FontWeight.w500,
                           ),
                         ),
@@ -113,7 +107,6 @@ class _HomePageState extends ConsumerState<HomePage> {
                       child: ElevatedButton(
                         onPressed: () {
                           Navigator.of(context).pop();
-                          // 跳转到AI聊天页面
                           Navigator.of(context).push(
                             MaterialPageRoute(
                               builder: (context) => const AIChatPage(),
@@ -121,18 +114,18 @@ class _HomePageState extends ConsumerState<HomePage> {
                           );
                         },
                         style: ElevatedButton.styleFrom(
-                          backgroundColor: const Color(0xFF6366F1),
+                          backgroundColor: const Color(0xFF4A90E2),
                           foregroundColor: Colors.white,
                           padding: const EdgeInsets.symmetric(vertical: 12),
                           shape: RoundedRectangleBorder(
-                            borderRadius: BorderRadius.circular(12),
+                            borderRadius: BorderRadius.circular(8),
                           ),
                           elevation: 0,
                         ),
                         child: const Text(
-                          '开始对话',
+                          '开始咨询',
                           style: TextStyle(
-                            fontWeight: FontWeight.w600,
+                            fontWeight: FontWeight.w500,
                           ),
                         ),
                       ),
@@ -150,7 +143,7 @@ class _HomePageState extends ConsumerState<HomePage> {
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: const Color(0xFFF8FAFC),
+      backgroundColor: const Color(0xFFF5F7FA),
       appBar: AppHeader(
         title: '社保养老金计算',
         actions: [
@@ -159,18 +152,18 @@ class _HomePageState extends ConsumerState<HomePage> {
               _showAIDialog(context);
             },
             icon: const Icon(
-              Icons.psychology_rounded,
-              color: Color(0xFF6366F1),
+              Icons.support_agent_rounded,
+              color: Color(0xFF4A90E2),
             ),
-            tooltip: 'AI助手',
+            tooltip: '智能助手',
           ),
           IconButton(
             onPressed: () {
-              Navigator.pushNamed(context, '/settings');
+              context.push('/settings');
             },
             icon: const Icon(
               Icons.settings_rounded,
-              color: Color(0xFF64748B),
+              color: Color(0xFF7F8C8D),
             ),
             tooltip: '设置',
           ),
@@ -178,14 +171,7 @@ class _HomePageState extends ConsumerState<HomePage> {
       ),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: LinearGradient(
-            begin: Alignment.topCenter,
-            end: Alignment.bottomCenter,
-            colors: [
-              Color(0xFFF8FAFC),
-              Color(0xFFE2E8F0),
-            ],
-          ),
+          color: Color(0xFFF5F7FA),
         ),
         child: IndexedStack(
           index: _currentIndex,

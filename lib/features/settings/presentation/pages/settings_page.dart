@@ -12,124 +12,141 @@ class SettingsPage extends StatefulWidget {
 
 class _SettingsPageState extends State<SettingsPage> {
   bool _notificationsEnabled = true;
-  bool _darkModeEnabled = true;
+  bool _darkModeEnabled = false;
   bool _biometricEnabled = false;
 
   @override
   Widget build(BuildContext context) {
     return Scaffold(
-      backgroundColor: AppTheme.darkBackground,
+      backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
-        backgroundColor: AppTheme.darkSurface,
+        backgroundColor: Colors.white,
         elevation: 0,
         leading: IconButton(
-          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          icon: const Icon(Icons.arrow_back_ios, color: Color(0xFF64748B)),
           onPressed: () => context.pop(),
         ),
         title: const Text(
           '设置',
           style: TextStyle(
-            color: Colors.white,
+            color: Color(0xFF1E293B),
             fontSize: 18,
             fontWeight: FontWeight.w600,
           ),
         ),
+        shadowColor: Colors.black.withOpacity(0.05),
       ),
       body: Container(
+        width: double.infinity,
+        height: double.infinity,
         decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF8FAFC),
+              Color(0xFFE2E8F0),
+            ],
+          ),
         ),
         child: ListView(
-          padding: const EdgeInsets.all(AppTheme.paddingMedium),
+          padding: const EdgeInsets.all(16),
           children: [
-            _buildSection(
-              title: '账户设置',
-              children: [
-                _buildSettingItem(
-                  icon: Icons.person_outline,
-                  title: '个人信息',
-                  subtitle: '管理您的个人资料',
-                  onTap: () {},
-                ),
-                _buildSettingItem(
-                  icon: Icons.security_rounded,
-                  title: '账户安全',
-                  subtitle: '密码、验证方式',
-                  onTap: () {},
-                ),
-                _buildSettingItem(
-                  icon: Icons.privacy_tip_outlined,
-                  title: '隐私设置',
-                  subtitle: '数据使用权限',
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.paddingLarge),
-            _buildSection(
-              title: '应用设置',
-              children: [
-                _buildSwitchItem(
-                  icon: Icons.notifications_outlined,
-                  title: '推送通知',
-                  subtitle: '接收重要消息提醒',
-                  value: _notificationsEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _notificationsEnabled = value;
-                    });
-                  },
-                ),
-                _buildSwitchItem(
-                  icon: Icons.dark_mode_outlined,
-                  title: '深色模式',
-                  subtitle: '护眼模式，节省电量',
-                  value: _darkModeEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _darkModeEnabled = value;
-                    });
-                  },
-                ),
-                _buildSwitchItem(
-                  icon: Icons.fingerprint,
-                  title: '生物识别',
-                  subtitle: '指纹或面容解锁',
-                  value: _biometricEnabled,
-                  onChanged: (value) {
-                    setState(() {
-                      _biometricEnabled = value;
-                    });
-                  },
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.paddingLarge),
-            _buildSection(
-              title: '帮助与支持',
-              children: [
-                _buildSettingItem(
-                  icon: Icons.help_outline,
-                  title: '使用帮助',
-                  subtitle: '常见问题解答',
-                  onTap: () {},
-                ),
-                _buildSettingItem(
-                  icon: Icons.feedback_outlined,
-                  title: '意见反馈',
-                  subtitle: '告诉我们您的建议',
-                  onTap: () {},
-                ),
-                _buildSettingItem(
-                  icon: Icons.info_outline,
-                  title: '关于我们',
-                  subtitle: '版本信息和团队介绍',
-                  onTap: () {},
-                ),
-              ],
-            ),
-            const SizedBox(height: AppTheme.paddingXLarge),
+            // _buildSection(
+            //   title: '账户设置',
+            //   children: [
+            //     _buildSettingItem(
+            //       icon: Icons.person_outline,
+            //       title: '个人信息',
+            //       subtitle: '管理您的个人资料',
+            //       onTap: () {},
+            //     ),
+            //     _buildDivider(),
+            //     _buildSettingItem(
+            //       icon: Icons.security_rounded,
+            //       title: '账户安全',
+            //       subtitle: '密码、验证方式',
+            //       onTap: () {},
+            //     ),
+            //     _buildDivider(),
+            //     _buildSettingItem(
+            //       icon: Icons.privacy_tip_outlined,
+            //       title: '隐私设置',
+            //       subtitle: '数据使用权限',
+            //       onTap: () {},
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 24),
+            // _buildSection(
+            //   title: '应用设置',
+            //   children: [
+            //     _buildSwitchItem(
+            //       icon: Icons.notifications_outlined,
+            //       title: '推送通知',
+            //       subtitle: '接收重要消息提醒',
+            //       value: _notificationsEnabled,
+            //       onChanged: (value) {
+            //         setState(() {
+            //           _notificationsEnabled = value;
+            //         });
+            //       },
+            //     ),
+            //     _buildDivider(),
+            //     _buildSwitchItem(
+            //       icon: Icons.light_mode_outlined,
+            //       title: '浅色模式',
+            //       subtitle: '清爽界面，护眼舒适',
+            //       value: !_darkModeEnabled,
+            //       onChanged: (value) {
+            //         setState(() {
+            //           _darkModeEnabled = !value;
+            //         });
+            //       },
+            //     ),
+            //     _buildDivider(),
+            //     _buildSwitchItem(
+            //       icon: Icons.fingerprint,
+            //       title: '生物识别',
+            //       subtitle: '指纹或面容解锁',
+            //       value: _biometricEnabled,
+            //       onChanged: (value) {
+            //         setState(() {
+            //           _biometricEnabled = value;
+            //         });
+            //       },
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 24),
+            // _buildSection(
+            //   title: '帮助与支持',
+            //   children: [
+            //     _buildSettingItem(
+            //       icon: Icons.help_outline,
+            //       title: '使用帮助',
+            //       subtitle: '常见问题解答',
+            //       onTap: () {},
+            //     ),
+            //     _buildDivider(),
+            //     _buildSettingItem(
+            //       icon: Icons.feedback_outlined,
+            //       title: '意见反馈',
+            //       subtitle: '告诉我们您的建议',
+            //       onTap: () {},
+            //     ),
+            //     _buildDivider(),
+            //     _buildSettingItem(
+            //       icon: Icons.info_outline,
+            //       title: '关于我们',
+            //       subtitle: '版本信息和团队介绍',
+            //       onTap: () {},
+            //     ),
+            //   ],
+            // ),
+            // const SizedBox(height: 32),
             _buildLogoutButton(),
+            const SizedBox(height: 32),
           ],
         ),
       ),
@@ -144,30 +161,39 @@ class _SettingsPageState extends State<SettingsPage> {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         Padding(
-          padding: const EdgeInsets.only(
-            left: AppTheme.paddingMedium,
-            bottom: AppTheme.paddingSmall,
-          ),
+          padding: const EdgeInsets.only(left: 16, bottom: 8),
           child: Text(
             title,
-            style: TextStyle(
-              fontSize: AppTheme.fontSizeMedium,
+            style: const TextStyle(
+              fontSize: 14,
               fontWeight: FontWeight.w600,
-              color: AppTheme.textSecondary,
+              color: Color(0xFF64748B),
             ),
           ),
         ),
         Container(
           decoration: BoxDecoration(
-            color: AppTheme.cardBackground.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
-            border: Border.all(
-              color: const Color(0xFF374151).withOpacity(0.3),
-            ),
+            color: Colors.white,
+            borderRadius: BorderRadius.circular(16),
+            boxShadow: [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.05),
+                blurRadius: 10,
+                offset: const Offset(0, 4),
+              ),
+            ],
           ),
           child: Column(children: children),
         ),
       ],
+    );
+  }
+
+  Widget _buildDivider() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      height: 1,
+      color: const Color(0xFFF1F5F9),
     );
   }
 
@@ -178,11 +204,14 @@ class _SettingsPageState extends State<SettingsPage> {
     required VoidCallback onTap,
   }) {
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -194,21 +223,21 @@ class _SettingsPageState extends State<SettingsPage> {
       title: Text(
         title,
         style: const TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: AppTheme.fontSizeMedium,
+          color: Color(0xFF1E293B),
+          fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: AppTheme.textSecondary,
-          fontSize: AppTheme.fontSizeSmall,
+        style: const TextStyle(
+          color: Color(0xFF64748B),
+          fontSize: 14,
         ),
       ),
       trailing: const Icon(
         Icons.arrow_forward_ios,
-        color: AppTheme.textSecondary,
+        color: Color(0xFF94A3B8),
         size: 16,
       ),
       onTap: onTap,
@@ -223,11 +252,14 @@ class _SettingsPageState extends State<SettingsPage> {
     required ValueChanged<bool> onChanged,
   }) {
     return ListTile(
+      contentPadding: const EdgeInsets.symmetric(horizontal: 16, vertical: 4),
       leading: Container(
         width: 40,
         height: 40,
         decoration: BoxDecoration(
-          gradient: AppTheme.primaryGradient,
+          gradient: const LinearGradient(
+            colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+          ),
           borderRadius: BorderRadius.circular(10),
         ),
         child: Icon(
@@ -239,30 +271,32 @@ class _SettingsPageState extends State<SettingsPage> {
       title: Text(
         title,
         style: const TextStyle(
-          color: AppTheme.textPrimary,
-          fontSize: AppTheme.fontSizeMedium,
+          color: Color(0xFF1E293B),
+          fontSize: 16,
           fontWeight: FontWeight.w500,
         ),
       ),
       subtitle: Text(
         subtitle,
-        style: TextStyle(
-          color: AppTheme.textSecondary,
-          fontSize: AppTheme.fontSizeSmall,
+        style: const TextStyle(
+          color: Color(0xFF64748B),
+          fontSize: 14,
         ),
       ),
       trailing: Switch(
         value: value,
         onChanged: onChanged,
-        activeColor: AppTheme.primaryColor,
-        activeTrackColor: AppTheme.primaryColor.withOpacity(0.3),
+        activeColor: const Color(0xFF6366F1),
+        activeTrackColor: const Color(0xFF6366F1).withOpacity(0.3),
+        inactiveThumbColor: const Color(0xFF94A3B8),
+        inactiveTrackColor: const Color(0xFFE2E8F0),
       ),
     );
   }
 
   Widget _buildLogoutButton() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: AppTheme.paddingMedium),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
       child: ElevatedButton(
         onPressed: () {
           _showLogoutDialog();
@@ -270,15 +304,16 @@ class _SettingsPageState extends State<SettingsPage> {
         style: ElevatedButton.styleFrom(
           backgroundColor: const Color(0xFFEF4444),
           foregroundColor: Colors.white,
-          padding: const EdgeInsets.symmetric(vertical: AppTheme.paddingMedium),
+          padding: const EdgeInsets.symmetric(vertical: 16),
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+            borderRadius: BorderRadius.circular(12),
           ),
+          elevation: 0,
         ),
         child: const Text(
           '退出登录',
           style: TextStyle(
-            fontSize: AppTheme.fontSizeMedium,
+            fontSize: 16,
             fontWeight: FontWeight.w600,
           ),
         ),
@@ -291,32 +326,30 @@ class _SettingsPageState extends State<SettingsPage> {
       context: context,
       builder: (BuildContext context) {
         return AlertDialog(
-          backgroundColor: AppTheme.cardBackground,
+          backgroundColor: Colors.white,
           shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+            borderRadius: BorderRadius.circular(16),
           ),
           title: const Text(
             '确认退出',
             style: TextStyle(
-              color: AppTheme.textPrimary,
+              color: Color(0xFF1E293B),
               fontWeight: FontWeight.w600,
             ),
           ),
-          content: Text(
+          content: const Text(
             '您确定要退出登录吗？',
             style: TextStyle(
-              color: AppTheme.textSecondary,
+              color: Color(0xFF64748B),
             ),
           ),
           actions: [
             TextButton(
               onPressed: () => context.pop(),
-              child: Text(
-                '取消',
-                style: TextStyle(
-                  color: AppTheme.textSecondary,
-                ),
+              style: TextButton.styleFrom(
+                foregroundColor: const Color(0xFF64748B),
               ),
+              child: const Text('取消'),
             ),
             ElevatedButton(
               onPressed: () {
@@ -326,11 +359,10 @@ class _SettingsPageState extends State<SettingsPage> {
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFEF4444),
+                foregroundColor: Colors.white,
+                elevation: 0,
               ),
-              child: const Text(
-                '退出',
-                style: TextStyle(color: Colors.white),
-              ),
+              child: const Text('退出'),
             ),
           ],
         );

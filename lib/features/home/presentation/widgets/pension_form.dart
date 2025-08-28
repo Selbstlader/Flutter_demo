@@ -141,7 +141,9 @@ class _PensionFormState extends BaseFormState<PensionForm> {
     final isTablet = screenWidth > 768;
 
     return Container(
-      decoration: containerDecoration,
+      decoration: const BoxDecoration(
+        color: Color(0xFFF5F7FA),
+      ),
       child: SingleChildScrollView(
         physics: const BouncingScrollPhysics(),
         padding: EdgeInsets.symmetric(
@@ -159,24 +161,48 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                   child: Column(
                     crossAxisAlignment: CrossAxisAlignment.start,
                     children: [
-                      Text(
-                        '养老金计算器',
-                        style: TextStyle(
-                          fontSize: getResponsiveFontSize(28),
-                          fontWeight: FontWeight.w800,
-                          color: const Color(0xFF1E293B),
-                          letterSpacing: 0.5,
-                        ),
-                      ),
-                      SizedBox(height: getResponsiveSpacing(8)),
-                      Text(
-                        '预估您的养老金收益情况',
-                        style: TextStyle(
-                          fontSize: getResponsiveFontSize(16),
-                          fontWeight: FontWeight.w400,
-                          color: const Color(0xFF64748B),
-                          height: 1.5,
-                        ),
+                      Row(
+                        children: [
+                          Container(
+                            padding: const EdgeInsets.all(8),
+                            decoration: BoxDecoration(
+                              color: const Color(0xFF27AE60).withOpacity(0.1),
+                              borderRadius: BorderRadius.circular(8),
+                            ),
+                            child: Icon(
+                              Icons.elderly_outlined,
+                              color: const Color(0xFF27AE60),
+                              size: getResponsiveFontSize(20),
+                            ),
+                          ),
+                          SizedBox(width: getResponsiveSpacing(12)),
+                          Expanded(
+                            child: Column(
+                              crossAxisAlignment: CrossAxisAlignment.start,
+                              children: [
+                                Text(
+                                  '养老金计算',
+                                  style: TextStyle(
+                                    fontSize: getResponsiveFontSize(22),
+                                    fontWeight: FontWeight.w600,
+                                    color: const Color(0xFF2C3E50),
+                                    letterSpacing: 0.3,
+                                  ),
+                                ),
+                                SizedBox(height: getResponsiveSpacing(4)),
+                                Text(
+                                  '预估您的养老金收益情况',
+                                  style: TextStyle(
+                                    fontSize: getResponsiveFontSize(14),
+                                    fontWeight: FontWeight.w400,
+                                    color: const Color(0xFF7F8C8D),
+                                    height: 1.4,
+                                  ),
+                                ),
+                              ],
+                            ),
+                          ),
+                        ],
                       ),
                     ],
                   ),
@@ -185,7 +211,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                 // 地区选择
                 ModernCard(
                   title: '地区选择',
-                  icon: Icons.location_on_rounded,
+                  icon: Icons.location_on_outlined,
                   child: RegionDropdown(
                     selectedRegion: _selectedRegion,
                     items: _regionItems,
@@ -202,7 +228,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                 // 基本信息
                 ModernCard(
                   title: '基本信息',
-                  icon: Icons.person_rounded,
+                  icon: Icons.person_outline_rounded,
                   child: Column(
                     children: [
                       ModernTextField(
@@ -220,7 +246,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                               controller: _currentAgeController,
                               label: '当前年龄',
                               suffix: '岁',
-                              icon: Icons.cake_rounded,
+                              icon: Icons.person_outline,
                               validator: _validateAge,
                             ),
                           ),
@@ -230,7 +256,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                               controller: _retirementAgeController,
                               label: '退休年龄',
                               suffix: '岁',
-                              icon: Icons.elderly_rounded,
+                              icon: Icons.elderly_outlined,
                               validator: _validateRetirementAge,
                             ),
                           ),
@@ -241,7 +267,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                         controller: _paymentYearsController,
                         label: '缴费年限',
                         suffix: '年',
-                        icon: Icons.schedule_rounded,
+                        icon: Icons.access_time_outlined,
                         validator: _validatePaymentYears,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
@@ -249,7 +275,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                         controller: _socialSecurityBaseController,
                         label: '社保基数',
                         suffix: '元',
-                        icon: Icons.security_rounded,
+                        icon: Icons.shield_outlined,
                         validator: _validateBaseField,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
@@ -257,7 +283,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                         controller: _accountBalanceController,
                         label: '当前账户余额（可选）',
                         suffix: '元',
-                        icon: Icons.account_balance_rounded,
+                        icon: Icons.account_balance_wallet_outlined,
                         validator: _validateAccountBalance,
                       ),
                     ],

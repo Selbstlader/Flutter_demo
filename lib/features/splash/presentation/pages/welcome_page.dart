@@ -1,9 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../auth/presentation/pages/modern_login_page.dart';
-import '../../../auth/presentation/pages/modern_register_page.dart';
-import '../../../../core/theme/app_theme.dart';
-import '../../../../core/router/app_router.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -23,23 +19,23 @@ class _WelcomePageState extends State<WelcomePage>
   void initState() {
     super.initState();
     _fadeController = AnimationController(
-      duration: const Duration(milliseconds: 1500),
+      duration: const Duration(milliseconds: 1000),
       vsync: this,
     );
     _slideController = AnimationController(
-      duration: const Duration(milliseconds: 1200),
+      duration: const Duration(milliseconds: 800),
       vsync: this,
     );
-
+    
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
-
+    
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.3),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
-
+    
     _fadeController.forward();
     _slideController.forward();
   }
@@ -54,14 +50,21 @@ class _WelcomePageState extends State<WelcomePage>
   @override
   Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: const Color(0xFFF8FAFC),
       body: Container(
         decoration: const BoxDecoration(
-          gradient: AppTheme.backgroundGradient,
+          gradient: LinearGradient(
+            begin: Alignment.topCenter,
+            end: Alignment.bottomCenter,
+            colors: [
+              Color(0xFFF8FAFC),
+              Color(0xFFE2E8F0),
+            ],
+          ),
         ),
         child: SafeArea(
           child: Padding(
-            padding:
-                const EdgeInsets.symmetric(horizontal: AppTheme.paddingLarge),
+            padding: const EdgeInsets.symmetric(horizontal: 24),
             child: FadeTransition(
               opacity: _fadeAnimation,
               child: SlideTransition(
@@ -69,12 +72,16 @@ class _WelcomePageState extends State<WelcomePage>
                 child: Column(
                   children: [
                     const Spacer(flex: 2),
-                    _buildHeader(),
-                    const Spacer(flex: 1),
-                    _buildFeatures(),
+                    _buildLogo(),
+                    const SizedBox(height: 32),
+                    _buildTitle(),
+                    const SizedBox(height: 16),
+                    _buildDescription(),
                     const Spacer(flex: 2),
+                    _buildFeatures(),
+                    const Spacer(flex: 3),
                     _buildButtons(),
-                    const SizedBox(height: AppTheme.paddingXLarge),
+                    const SizedBox(height: 32),
                   ],
                 ),
               ),
@@ -85,209 +92,195 @@ class _WelcomePageState extends State<WelcomePage>
     );
   }
 
-  Widget _buildHeader() {
-    return Column(
+  Widget _buildLogo() {
+    return Container(
+      width: 120,
+      height: 120,
+      decoration: BoxDecoration(
+        gradient: const LinearGradient(
+          begin: Alignment.topLeft,
+          end: Alignment.bottomRight,
+          colors: [
+            Color(0xFF8B5CF6),
+            Color(0xFF6366F1),
+          ],
+        ),
+        borderRadius: BorderRadius.circular(30),
+        boxShadow: [
+          BoxShadow(
+            color: const Color(0xFF6366F1).withOpacity(0.3),
+            blurRadius: 20,
+            offset: const Offset(0, 8),
+          ),
+        ],
+      ),
+      child: const Icon(
+        Icons.calculate_rounded,
+        color: Colors.white,
+        size: 60,
+      ),
+    );
+  }
+
+  Widget _buildTitle() {
+    return const Text(
+      '社保养老金计算器',
+      style: TextStyle(
+        fontSize: 32,
+        fontWeight: FontWeight.bold,
+        color: Color(0xFF1E293B),
+        height: 1.2,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildDescription() {
+    return const Text(
+      '专业的社保和养老金计算工具\n帮您规划美好的退休生活',
+      style: TextStyle(
+        fontSize: 16,
+        color: Color(0xFF64748B),
+        height: 1.6,
+      ),
+      textAlign: TextAlign.center,
+    );
+  }
+
+  Widget _buildFeatures() {
+    return Container(
+      padding: const EdgeInsets.all(24),
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(20),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 15,
+            offset: const Offset(0, 5),
+          ),
+        ],
+      ),
+      child: Column(
+        children: [
+          _buildFeatureItem(
+            Icons.calculate_outlined,
+            '精准计算',
+            '基于最新政策的社保养老金计算',
+          ),
+          const SizedBox(height: 20),
+          _buildFeatureItem(
+            Icons.psychology_rounded,
+            'AI智能助手',
+            '专业的社保政策解答和建议',
+          ),
+          // const SizedBox(height: 20),
+          // _buildFeatureItem(
+          //   Icons.trending_up_rounded,
+          //   '规划建议',
+          //   '个性化的退休规划和缴费策略',
+          // ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildFeatureItem(IconData icon, String title, String description) {
+    return Row(
       children: [
         Container(
-          width: 120,
-          height: 120,
+          width: 48,
+          height: 48,
           decoration: BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(30),
-            boxShadow: AppTheme.primaryShadow,
+            gradient: const LinearGradient(
+              colors: [Color(0xFF8B5CF6), Color(0xFF6366F1)],
+            ),
+            borderRadius: BorderRadius.circular(12),
           ),
-          child: const Icon(
-            Icons.psychology_rounded,
+          child: Icon(
+            icon,
             color: Colors.white,
-            size: 60,
+            size: 24,
           ),
         ),
-        const SizedBox(height: AppTheme.paddingLarge),
-        const Text(
-          'AI智能助手',
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeTitle,
-            fontWeight: FontWeight.bold,
-            color: AppTheme.textPrimary,
-          ),
-        ),
-        const SizedBox(height: AppTheme.paddingSmall),
-        Text(
-          '您的专业社保养老金计算顾问',
-          textAlign: TextAlign.center,
-          style: TextStyle(
-            fontSize: AppTheme.fontSizeLarge,
-            color: AppTheme.textSecondary,
-            height: 1.5,
+        const SizedBox(width: 16),
+        Expanded(
+          child: Column(
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(
+                title,
+                style: const TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                  color: Color(0xFF1E293B),
+                ),
+              ),
+              const SizedBox(height: 4),
+              Text(
+                description,
+                style: const TextStyle(
+                  fontSize: 14,
+                  color: Color(0xFF64748B),
+                  height: 1.4,
+                ),
+              ),
+            ],
           ),
         ),
       ],
     );
   }
 
-  Widget _buildFeatures() {
-    final features = [
-      {
-        'icon': Icons.calculate_rounded,
-        'title': '智能计算',
-        'description': '精准计算社保缴费和养老金收益',
-      },
-      {
-        'icon': Icons.chat_bubble_outline_rounded,
-        'title': 'AI对话',
-        'description': '24小时在线解答您的疑问',
-      },
-      {
-        'icon': Icons.security_rounded,
-        'title': '数据安全',
-        'description': '银行级加密保护您的隐私',
-      },
-    ];
-
-    return Column(
-      children: features
-          .map((feature) => _buildFeatureItem(
-                icon: feature['icon'] as IconData,
-                title: feature['title'] as String,
-                description: feature['description'] as String,
-              ))
-          .toList(),
-    );
-  }
-
-  Widget _buildFeatureItem({
-    required IconData icon,
-    required String title,
-    required String description,
-  }) {
-    return Container(
-      margin: const EdgeInsets.only(bottom: AppTheme.paddingMedium),
-      padding: const EdgeInsets.all(AppTheme.paddingLarge),
-      decoration: BoxDecoration(
-        color: AppTheme.cardBackground.withOpacity(0.5),
-        borderRadius: BorderRadius.circular(AppTheme.cardRadius),
-        border: Border.all(
-          color: const Color(0xFF374151).withOpacity(0.3),
-        ),
-      ),
-      child: Row(
-        children: [
-          Container(
-            width: 48,
-            height: 48,
-            decoration: BoxDecoration(
-              gradient: AppTheme.primaryGradient,
-              borderRadius: BorderRadius.circular(12),
-            ),
-            child: Icon(
-              icon,
-              color: Colors.white,
-              size: 24,
-            ),
-          ),
-          const SizedBox(width: AppTheme.paddingMedium),
-          Expanded(
-            child: Column(
-              crossAxisAlignment: CrossAxisAlignment.start,
-              children: [
-                Text(
-                  title,
-                  style: const TextStyle(
-                    fontSize: AppTheme.fontSizeLarge,
-                    fontWeight: FontWeight.w600,
-                    color: AppTheme.textPrimary,
-                  ),
-                ),
-                const SizedBox(height: 4),
-                Text(
-                  description,
-                  style: TextStyle(
-                    fontSize: AppTheme.fontSizeMedium,
-                    color: AppTheme.textSecondary,
-                    height: 1.4,
-                  ),
-                ),
-              ],
-            ),
-          ),
-        ],
-      ),
-    );
-  }
-
   Widget _buildButtons() {
     return Column(
       children: [
-        Container(
+        SizedBox(
           width: double.infinity,
           height: 56,
-          decoration: BoxDecoration(
-            gradient: AppTheme.primaryGradient,
-            borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
-            boxShadow: AppTheme.primaryShadow,
-          ),
           child: ElevatedButton(
-            onPressed: () {
-              context.push(AppRouter.login);
-            },
+            onPressed: () => context.go('/login'),
             style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
+              backgroundColor: const Color(0xFF6366F1),
+              foregroundColor: Colors.white,
+              elevation: 0,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+                borderRadius: BorderRadius.circular(16),
               ),
+              shadowColor: const Color(0xFF6366F1).withOpacity(0.3),
             ),
             child: const Text(
-              '立即登录',
+              '开始使用',
               style: TextStyle(
-                color: Colors.white,
-                fontSize: AppTheme.fontSizeLarge,
+                fontSize: 16,
                 fontWeight: FontWeight.w600,
               ),
             ),
           ),
         ),
-        const SizedBox(height: AppTheme.paddingMedium),
-        Container(
+        const SizedBox(height: 12),
+        SizedBox(
           width: double.infinity,
           height: 56,
-          decoration: BoxDecoration(
-            color: AppTheme.cardBackground.withOpacity(0.5),
-            borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
-            border: Border.all(
-              color: const Color(0xFF374151).withOpacity(0.5),
-            ),
-          ),
           child: TextButton(
-            onPressed: () {
-              context.push(AppRouter.register);
-            },
+            onPressed: () => context.go('/home'),
             style: TextButton.styleFrom(
+              foregroundColor: const Color(0xFF64748B),
+              backgroundColor: Colors.white,
               shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+                borderRadius: BorderRadius.circular(16),
+                side: const BorderSide(
+                  color: Color(0xFFE2E8F0),
+                  width: 1,
+                ),
               ),
             ),
             child: const Text(
-              '创建账户',
+              '直接体验',
               style: TextStyle(
-                color: AppTheme.textPrimary,
-                fontSize: AppTheme.fontSizeLarge,
-                fontWeight: FontWeight.w600,
+                fontSize: 16,
+                fontWeight: FontWeight.w500,
               ),
-            ),
-          ),
-        ),
-        const SizedBox(height: AppTheme.paddingLarge),
-        TextButton(
-          onPressed: () {
-            // 跳过登录，直接进入应用
-            context.go(AppRouter.home);
-          },
-          child: Text(
-            '跳过，稍后登录',
-            style: TextStyle(
-              color: AppTheme.textSecondary,
-              fontSize: AppTheme.fontSizeMedium,
             ),
           ),
         ),

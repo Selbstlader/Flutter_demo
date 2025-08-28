@@ -21,50 +21,50 @@ class ModernCard extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       width: double.infinity,
-      margin: margin ?? EdgeInsets.only(bottom: _getResponsiveSpacing(context, 24)),
+      margin: margin ?? EdgeInsets.only(bottom: _getResponsiveSpacing(context, 20)),
       decoration: BoxDecoration(
         color: Colors.white,
-        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 20)),
+        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 12)),
         boxShadow: [
           BoxShadow(
-            color: const Color(0x0F000000),
-            blurRadius: 20,
-            offset: const Offset(0, 4),
+            color: Colors.black.withOpacity(0.04),
+            blurRadius: 12,
+            offset: const Offset(0, 2),
             spreadRadius: 0,
           ),
           BoxShadow(
-            color: const Color(0x0A000000),
-            blurRadius: 40,
-            offset: const Offset(0, 8),
+            color: Colors.black.withOpacity(0.02),
+            blurRadius: 24,
+            offset: const Offset(0, 4),
             spreadRadius: 0,
           ),
         ],
         border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1,
+          color: const Color(0xFFE0E6ED),
+          width: 0.5,
         ),
       ),
       child: ClipRRect(
-        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 20)),
+        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 12)),
         child: Container(
-          padding: padding ?? EdgeInsets.all(_getResponsiveSpacing(context, 24)),
+          padding: padding ?? EdgeInsets.all(_getResponsiveSpacing(context, 20)),
           child: Column(
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (title != null) ...[
                 Row(
                   children: [
-                    if (icon != null) ...[
+                    if (icon != null) ...[ 
                       Container(
                         padding: EdgeInsets.all(_getResponsiveSpacing(context, 8)),
                         decoration: BoxDecoration(
-                          color: const Color(0xFF6366F1).withOpacity(0.1),
-                          borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
+                          color: const Color(0xFF4A90E2).withOpacity(0.08),
+                          borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 8)),
                         ),
                         child: Icon(
                           icon,
-                          color: const Color(0xFF6366F1),
-                          size: _getResponsiveFontSize(context, 20),
+                          color: const Color(0xFF4A90E2),
+                          size: _getResponsiveFontSize(context, 18),
                         ),
                       ),
                       SizedBox(width: _getResponsiveSpacing(context, 12)),
@@ -72,15 +72,15 @@ class ModernCard extends StatelessWidget {
                     Text(
                       title!,
                       style: TextStyle(
-                        fontSize: _getResponsiveFontSize(context, 18),
-                        fontWeight: FontWeight.w700,
-                        color: const Color(0xFF1E293B),
-                        letterSpacing: 0.3,
+                        fontSize: _getResponsiveFontSize(context, 16),
+                        fontWeight: FontWeight.w600,
+                        color: const Color(0xFF2C3E50),
+                        letterSpacing: 0.2,
                       ),
                     ),
                   ],
                 ),
-                SizedBox(height: _getResponsiveSpacing(context, 20)),
+                SizedBox(height: _getResponsiveSpacing(context, 16)),
               ],
               child,
             ],

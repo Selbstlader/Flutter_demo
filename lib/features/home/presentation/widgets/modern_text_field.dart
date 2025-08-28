@@ -26,78 +26,78 @@ class ModernTextField extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       decoration: BoxDecoration(
-        color: const Color(0xFFF8FAFC),
-        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
+        color: const Color(0xFFFAFBFC),
+        borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
         border: Border.all(
-          color: const Color(0xFFE2E8F0),
-          width: 1.5,
+          color: const Color(0xFFE0E6ED),
+          width: 1,
         ),
       ),
       child: TextFormField(
         controller: controller,
         style: TextStyle(
-          fontSize: _getResponsiveFontSize(context, 16),
+          fontSize: _getResponsiveFontSize(context, 15),
           fontWeight: FontWeight.w500,
-          color: const Color(0xFF334155),
+          color: const Color(0xFF2C3E50),
         ),
         decoration: InputDecoration(
           labelText: label,
           labelStyle: TextStyle(
-            fontSize: _getResponsiveFontSize(context, 14),
+            fontSize: _getResponsiveFontSize(context, 13),
             fontWeight: FontWeight.w500,
-            color: const Color(0xFF64748B),
+            color: const Color(0xFF7F8C8D),
           ),
           suffixText: suffix,
           suffixStyle: TextStyle(
-            fontSize: _getResponsiveFontSize(context, 14),
-            fontWeight: FontWeight.w600,
-            color: const Color(0xFF6366F1),
+            fontSize: _getResponsiveFontSize(context, 13),
+            fontWeight: FontWeight.w500,
+            color: const Color(0xFF4A90E2),
           ),
           prefixIcon: iconText != null
               ? Container(
-                  width: _getResponsiveSpacing(context, 48),
-                  height: _getResponsiveSpacing(context, 48),
+                  width: _getResponsiveSpacing(context, 44),
+                  height: _getResponsiveSpacing(context, 44),
                   alignment: Alignment.center,
                   child: Text(
                     iconText!,
                     style: TextStyle(
-                      fontSize: _getResponsiveFontSize(context, 18),
-                      fontWeight: FontWeight.w700,
-                      color: const Color(0xFF6366F1),
+                      fontSize: _getResponsiveFontSize(context, 16),
+                      fontWeight: FontWeight.w600,
+                      color: const Color(0xFF4A90E2),
                     ),
                   ),
                 )
               : Container(
-                  padding: EdgeInsets.all(_getResponsiveSpacing(context, 12)),
+                  padding: EdgeInsets.all(_getResponsiveSpacing(context, 10)),
                   child: Icon(
                     icon,
-                    color: const Color(0xFF6366F1),
-                    size: _getResponsiveFontSize(context, 20),
+                    color: const Color(0xFF4A90E2),
+                    size: _getResponsiveFontSize(context, 18),
                   ),
                 ),
           border: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
+            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
             borderSide: BorderSide.none,
           ),
           focusedBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
+            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
             borderSide: const BorderSide(
-              color: Color(0xFF6366F1),
-              width: 2,
+              color: Color(0xFF4A90E2),
+              width: 1.5,
             ),
           ),
           errorBorder: OutlineInputBorder(
-            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 16)),
+            borderRadius: BorderRadius.circular(_getResponsiveRadius(context, 10)),
             borderSide: const BorderSide(
-              color: Color(0xFFEF4444),
-              width: 2,
+              color: Color(0xFFE74C3C),
+              width: 1.5,
             ),
           ),
           filled: true,
           fillColor: Colors.transparent,
           contentPadding: EdgeInsets.symmetric(
-            horizontal: _getResponsiveSpacing(context, 16),
-            vertical: _getResponsiveSpacing(context, 16),
+            horizontal: _getResponsiveSpacing(context, 14),
+            vertical: _getResponsiveSpacing(context, 14),
           ),
         ),
         keyboardType: TextInputType.number,

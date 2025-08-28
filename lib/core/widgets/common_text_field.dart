@@ -45,8 +45,8 @@ class _CommonTextFieldState extends State<CommonTextField> {
       children: [
         Text(
           widget.label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
+          style: const TextStyle(
+            color: Color(0xFF374151),
             fontSize: 14,
             fontWeight: FontWeight.w500,
           ),
@@ -54,10 +54,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
         const SizedBox(height: 8),
         Container(
           decoration: BoxDecoration(
-            color: const Color(0xFF1E293B).withOpacity(0.5),
+            color: const Color(0xFFF9FAFB),
             borderRadius: BorderRadius.circular(12),
             border: Border.all(
-              color: const Color(0xFF374151).withOpacity(0.5),
+              color: const Color(0xFFE5E7EB),
             ),
           ),
           child: TextFormField(
@@ -66,17 +66,22 @@ class _CommonTextFieldState extends State<CommonTextField> {
                 (widget.isConfirmPassword 
                     ? !widget.confirmPasswordVisible 
                     : !widget.passwordVisible),
-            style: const TextStyle(color: Colors.white),
+            style: const TextStyle(
+              color: Color(0xFF111827),
+              fontSize: 16,
+            ),
             validator: widget.validator,
             keyboardType: widget.keyboardType,
             decoration: InputDecoration(
               hintText: widget.hint,
-              hintStyle: TextStyle(
-                color: Colors.white.withOpacity(0.5),
+              hintStyle: const TextStyle(
+                color: Color(0xFF9CA3AF),
+                fontSize: 16,
               ),
               prefixIcon: Icon(
                 widget.icon,
                 color: const Color(0xFF6366F1),
+                size: 20,
               ),
               suffixIcon: widget.isPassword
                   ? IconButton(
@@ -84,9 +89,10 @@ class _CommonTextFieldState extends State<CommonTextField> {
                         (widget.isConfirmPassword 
                             ? widget.confirmPasswordVisible 
                             : widget.passwordVisible)
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white.withOpacity(0.7),
+                            ? Icons.visibility_off_outlined
+                            : Icons.visibility_outlined,
+                        color: const Color(0xFF6B7280),
+                        size: 20,
                       ),
                       onPressed: () {
                         if (widget.isConfirmPassword) {
@@ -105,12 +111,12 @@ class _CommonTextFieldState extends State<CommonTextField> {
             ),
           ),
         ),
-        if (widget.helperText != null) ...[
-          const SizedBox(height: 4),
+        if (widget.helperText != null) ...[ 
+          const SizedBox(height: 6),
           Text(
             widget.helperText!,
-            style: TextStyle(
-              color: Colors.white.withOpacity(0.5),
+            style: const TextStyle(
+              color: Color(0xFF6B7280),
               fontSize: 12,
             ),
           ),
