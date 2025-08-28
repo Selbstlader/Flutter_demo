@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
+import '../../../../core/utils/safe_area_utils.dart';
 
-/// 简洁的两项底部导航栏
+/// 简洁的两项底部导航栏 - 支持安全区域适配
 class CustomBottomNavigation extends StatelessWidget {
   final int currentIndex;
   final ValueChanged<int> onTap;
@@ -15,8 +16,14 @@ class CustomBottomNavigation extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
+    final double bottomSafeArea = SafeAreaUtils.getBottomSafeArea(context);
+    final bool hasBottomNav = SafeAreaUtils.hasBottomNavigationBar(context);
+    
+    // 计算底部导航栏的总高度，包含安全区域
+    final double totalHeight = 80 + (hasBottomNav ? bottomSafeArea : 16);
+    
     return Container(
-      height: 80,
+      height: totalHeight,
       decoration: BoxDecoration(
         color: Colors.white,
         borderRadius: const BorderRadius.only(
@@ -32,23 +39,36 @@ class CustomBottomNavigation extends StatelessWidget {
           ),
         ],
       ),
-      child: Row(
-        mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+      child: Column(
         children: [
-          // 社保计算导航项
-          _buildNavItem(
-            context,
-            items[0],
-            0,
-            currentIndex == 0,
+          // 导航栏内容
+          SizedBox(
+            height: 80,
+            child: Row(
+              mainAxisAlignment: MainAxisAlignment.spaceEvenly,
+              children: [
+                // 社保计算导航项
+                _buildNavItem(
+                  context,
+                  items[0],
+                  0,
+                  currentIndex == 0,
+                ),
+                // 养老金计算导航项
+                _buildNavItem(
+                  context,
+                  items[1],
+                  1,
+                  currentIndex == 1,
+                ),
+              ],
+            ),
           ),
-          // 养老金计算导航项
-          _buildNavItem(
-            context,
-            items[1],
-            1,
-            currentIndex == 1,
-          ),
+          // 底部安全区域
+          if (hasBottomNav)
+            SizedBox(height: bottomSafeArea)
+          else
+            const SizedBox(height: 16),
         ],
       ),
     );

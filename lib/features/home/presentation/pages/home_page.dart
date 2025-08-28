@@ -2,6 +2,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/widgets/safe_area_scaffold.dart';
+import '../../../../core/utils/safe_area_utils.dart';
 import '../widgets/app_header.dart';
 import '../widgets/bottom_navigation.dart';
 import '../widgets/social_security_form.dart';
@@ -142,8 +144,17 @@ class _HomePageState extends ConsumerState<HomePage> {
 
   @override
   Widget build(BuildContext context) {
-    return Scaffold(
+    // 设置系统UI样式
+    SafeAreaUtils.setSystemUIOverlayStyle(
+      statusBarColor: Colors.transparent,
+      statusBarIconBrightness: Brightness.dark,
+      systemNavigationBarColor: const Color(0xFFF5F7FA),
+      systemNavigationBarIconBrightness: Brightness.dark,
+    );
+
+    return SafeAreaScaffold(
       backgroundColor: const Color(0xFFF5F7FA),
+      enableSafeArea: true,
       appBar: AppHeader(
         title: '社保养老金计算',
         actions: [
@@ -169,13 +180,16 @@ class _HomePageState extends ConsumerState<HomePage> {
           ),
         ],
       ),
-      body: Container(
-        decoration: const BoxDecoration(
-          color: Color(0xFFF5F7FA),
-        ),
-        child: IndexedStack(
-          index: _currentIndex,
-          children: _pages,
+      body: SafeAreaContainer(
+        enableBottomSafeArea: false, // 底部导航栏会处理安全区域
+        child: Container(
+          decoration: const BoxDecoration(
+            color: Color(0xFFF5F7FA),
+          ),
+          child: IndexedStack(
+            index: _currentIndex,
+            children: _pages,
+          ),
         ),
       ),
       bottomNavigationBar: CustomBottomNavigation(

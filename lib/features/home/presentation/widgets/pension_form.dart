@@ -3,6 +3,8 @@ import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
+import '../../../../core/widgets/adaptive_form_container.dart';
+import '../../../../core/utils/safe_area_utils.dart';
 import 'base_form.dart';
 import 'modern_card.dart';
 import 'modern_text_field.dart';
@@ -137,19 +139,10 @@ class _PensionFormState extends BaseFormState<PensionForm> {
 
   @override
   Widget build(BuildContext context) {
-    final screenWidth = MediaQuery.of(context).size.width;
-    final isTablet = screenWidth > 768;
-
-    return Container(
-      decoration: const BoxDecoration(
-        color: Color(0xFFF5F7FA),
-      ),
-      child: SingleChildScrollView(
-        physics: const BouncingScrollPhysics(),
-        padding: EdgeInsets.symmetric(
-          horizontal: isTablet ? screenWidth * 0.15 : getResponsiveSpacing(20),
-          vertical: getResponsiveSpacing(24),
-        ),
+    return KeyboardAwareContainer(
+      child: AdaptiveFormContainer(
+        enableBottomSafeArea: true,
+        enableKeyboardPadding: true,
         child: Form(
           key: _formKey,
           child: buildAnimatedWrapper(
@@ -291,31 +284,32 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                 ),
 
                 // 操作按钮
-                Row(
-                  children: [
-                    Expanded(
-                      child: ModernButton(
-                        text: '计算养老金',
-                        onPressed: _submitForm,
-                        isPrimary: true,
-                        icon: Icons.calculate_rounded,
-                        scaleAnimationController: scaleAnimationController,
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  child: Row(
+                    children: [
+                      Expanded(
+                        child: ModernButton(
+                          text: '计算养老金',
+                          onPressed: _submitForm,
+                          isPrimary: true,
+                          icon: Icons.calculate_rounded,
+                          scaleAnimationController: scaleAnimationController,
+                        ),
                       ),
-                    ),
-                    SizedBox(width: getResponsiveSpacing(16)),
-                    Expanded(
-                      child: ModernButton(
-                        text: '重置表单',
-                        onPressed: _resetForm,
-                        isPrimary: false,
-                        icon: Icons.refresh_rounded,
-                        scaleAnimationController: scaleAnimationController,
+                      const SizedBox(width: 16),
+                      Expanded(
+                        child: ModernButton(
+                          text: '重置表单',
+                          onPressed: _resetForm,
+                          isPrimary: false,
+                          icon: Icons.refresh_rounded,
+                          scaleAnimationController: scaleAnimationController,
+                        ),
                       ),
-                    ),
-                  ],
+                    ],
+                  ),
                 ),
-
-                SizedBox(height: getResponsiveSpacing(40)),
               ],
             ),
           ),
