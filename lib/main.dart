@@ -1,15 +1,30 @@
 import 'package:flutter/material.dart';
 import 'package:provider/provider.dart' as provider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
+import 'package:hive_flutter/hive_flutter.dart';
+import 'package:flutter_dotenv/flutter_dotenv.dart';
 import 'core/router/app_router.dart';
 import 'core/services/token_refresh_service.dart';
+import 'core/services/storage_service.dart';
+import 'core/services/supabase_service.dart';
 // import 'core/services/app_initializer.dart';
 import 'core/theme/app_theme.dart';
 import 'features/auth/providers/auth_provider.dart';
-import 'features/splash/presentation/pages/welcome_page.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
+  
+  // 初始化环境变量
+  await dotenv.load(fileName: ".env");
+  
+  // 初始化Hive
+  await Hive.initFlutter();
+  
+  // 初始化存储服务
+  await StorageService.init();
+  
+  // 初始化Supabase
+  await SupabaseService.initialize();
   
   // 初始化应用服务
   // await AppInitializer.initialize();
@@ -56,14 +71,12 @@ class _MyAppState extends State<MyApp> {
           },
         ),
       ],
-      child: MaterialApp(
+      child: MaterialApp.router(
         title: 'AI智能助手',
         theme: AppTheme.darkTheme,
-        home: const WelcomePage(),
-        initialRoute: AppRouter.splash,
-        onGenerateRoute: AppRouter.generateRoute,
+        routerConfig: AppRouter.router,
         debugShowCheckedModeBanner: false,
       ),
     );
   }
-} 
+}

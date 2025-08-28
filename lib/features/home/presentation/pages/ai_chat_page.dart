@@ -30,7 +30,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
       duration: const Duration(milliseconds: 1500),
       vsync: this,
     )..repeat();
-    
+
     // 添加欢迎消息
     _messages.add(ChatMessage(
       id: 'welcome',
@@ -106,7 +106,7 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
     if (data != null) {
       // 处理不同类型的流式数据
       final event = data['event'] as String?;
-      
+
       switch (event) {
         case 'message':
           final answer = data['answer'] as String?;
@@ -308,8 +308,9 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
   }
 
   Widget _buildMessageBubble(ChatMessage message) {
-    final displayText = message.isUser ? message.query : (message.answer ?? message.query);
-    
+    final displayText =
+        message.isUser ? message.query : (message.answer ?? message.query);
+
     return Container(
       margin: const EdgeInsets.only(bottom: 16),
       child: Row(
@@ -372,8 +373,8 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
                     spreadRadius: 0,
                   ),
                 ],
-                border: message.isUser 
-                    ? null 
+                border: message.isUser
+                    ? null
                     : Border.all(
                         color: const Color(0xFFE2E8F0),
                         width: 1,
@@ -382,7 +383,8 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
               child: Text(
                 displayText,
                 style: TextStyle(
-                  color: message.isUser ? Colors.white : const Color(0xFF334155),
+                  color:
+                      message.isUser ? Colors.white : const Color(0xFF334155),
                   fontSize: 14,
                   height: 1.5,
                   fontWeight: FontWeight.w400,
@@ -479,11 +481,14 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
                   mainAxisSize: MainAxisSize.min,
                   children: List.generate(3, (index) {
                     final delay = index * 0.2;
-                    final animationValue = (_typingAnimationController.value - delay).clamp(0.0, 1.0);
+                    final animationValue =
+                        (_typingAnimationController.value - delay)
+                            .clamp(0.0, 1.0);
                     return Container(
                       margin: const EdgeInsets.symmetric(horizontal: 2),
                       child: Transform.translate(
-                        offset: Offset(0, -4 * (1 - (animationValue * 2 - 1).abs())),
+                        offset: Offset(
+                            0, -4 * (1 - (animationValue * 2 - 1).abs())),
                         child: Container(
                           width: 6,
                           height: 6,
@@ -554,7 +559,8 @@ class _AIChatPageState extends ConsumerState<AIChatPage>
                     fontWeight: FontWeight.w400,
                   ),
                   border: InputBorder.none,
-                  contentPadding: EdgeInsets.symmetric(horizontal: 20, vertical: 12),
+                  contentPadding:
+                      EdgeInsets.symmetric(horizontal: 20, vertical: 12),
                   filled: true,
                   fillColor: Colors.white,
                 ),

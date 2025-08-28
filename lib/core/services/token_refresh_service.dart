@@ -46,11 +46,8 @@ class TokenRefreshService {
       final response = await _authService.refreshToken();
       
       if (response.success && response.data != null) {
-        final authResponse = response.data!;
-        await ApiClient().saveTokens(
-          authResponse.accessToken,
-          authResponse.refreshToken,
-        );
+        // Supabase会自动处理token刷新，我们不需要手动保存
+        // 这里只是验证token刷新成功
         
         if (kDebugMode) {
           print('Token refreshed successfully');

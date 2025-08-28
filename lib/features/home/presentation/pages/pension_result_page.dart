@@ -193,6 +193,13 @@ class _PensionResultPageState extends State<PensionResultPage>
           icon: const Icon(Icons.arrow_back_ios_rounded),
           onPressed: () => context.pop(),
         ),
+        actions: [
+          IconButton(
+            icon: const Icon(Icons.home_rounded),
+            onPressed: () => context.go('/'),
+            tooltip: '返回首页',
+          ),
+        ],
         systemOverlayStyle: SystemUiOverlayStyle.dark,
       ),
       body: Container(

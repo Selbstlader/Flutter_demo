@@ -1,5 +1,7 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/router/app_router.dart';
 
 class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
@@ -22,7 +24,7 @@ class _SettingsPageState extends State<SettingsPage> {
         elevation: 0,
         leading: IconButton(
           icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
-          onPressed: () => Navigator.pop(context),
+          onPressed: () => context.pop(),
         ),
         title: const Text(
           '设置',
@@ -308,7 +310,7 @@ class _SettingsPageState extends State<SettingsPage> {
           ),
           actions: [
             TextButton(
-              onPressed: () => Navigator.pop(context),
+              onPressed: () => context.pop(),
               child: Text(
                 '取消',
                 style: TextStyle(
@@ -318,9 +320,9 @@ class _SettingsPageState extends State<SettingsPage> {
             ),
             ElevatedButton(
               onPressed: () {
-                Navigator.pop(context);
+                context.pop();
                 // 这里添加退出登录的逻辑
-                Navigator.pushReplacementNamed(context, '/welcome');
+                context.go(AppRouter.welcome);
               },
               style: ElevatedButton.styleFrom(
                 backgroundColor: const Color(0xFFEF4444),

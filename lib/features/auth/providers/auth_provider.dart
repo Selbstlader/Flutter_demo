@@ -1,19 +1,20 @@
-import 'package:flutter/foundation.dart';
-import '../models/user_model.dart';
+import 'package:flutter/material.dart';
 import '../services/auth_service.dart';
-import '../../../core/network/api_client.dart';
+import '../models/user_model.dart';
+import '../../../core/services/storage_service.dart';
+import '../../../core/models/user_model.dart' as core_models;
 
-class AuthProvider extends ChangeNotifier {
+class AuthProvider with ChangeNotifier {
   final AuthService _authService = AuthService();
   
-  User? _user;
+  User? _currentUser;
   bool _isLoading = false;
-  String? _error;
+  String? _errorMessage;
 
-  User? get user => _user;
+  User? get currentUser => _currentUser;
   bool get isLoading => _isLoading;
-  String? get error => _error;
-  bool get isLoggedIn => _user != null;
+  String? get errorMessage => _errorMessage;
+  bool get isLoggedIn => _authService.isLoggedIn;
 
   void _setLoading(bool loading) {
     _isLoading = loading;
@@ -21,71 +22,105 @@ class AuthProvider extends ChangeNotifier {
   }
 
   void _setError(String? error) {
-    _error = error;
+    _errorMessage = error;
     notifyListeners();
   }
 
-  Future<bool> login(String mobile, String password) async {
+  void clearError() {
+    _errorMessage = null;
+    notifyListeners();
+  }
+
+  // 转换User到UserModel
+  core_models.UserModel _convertToUserModel(User user) {
+    return core_models.UserModel(
+      id: user.supabaseId ?? user.id.toString(),
+      email: user.email ?? '',
+      name: user.nickname ?? user.username,
+      avatar: null,
+      createdAt: user.createTime ?? DateTime.now(),
+      updatedAt: DateTime.now(),
+    );
+  }
+
+  // 转换UserModel到User
+  User _convertFromUserModel(core_models.UserModel userModel) {
+    return User(
+      id: userModel.id.hashCode,
+      username: userModel.name ?? userModel.email,
+      nickname: userModel.name,
+      createTime: userModel.createdAt,
+      email: userModel.email,
+      supabaseId: userModel.id,
+    );
+  }
+
+  Future<bool> login(String email, String password) async {
     _setLoading(true);
     _setError(null);
-
+    
     try {
-      final request = LoginRequest(mobile: mobile, password: password);
-      final response = await _authService.login(request);
-
-      if (response.success && response.data != null) {
-        final loginResponse = response.data!;
-        await ApiClient().saveTokens(
-          loginResponse.accessToken,
-          loginResponse.refreshToken,
-        );
-        // 登录成功后需要获取用户详细信息
+      final request = LoginRequest(email: email, password: password);
+      final result = await _authService.login(request);
+      
+      if (result.success && result.data != null) {
         await loadCurrentUser();
+        
+        // 登录成功后同步用户数据到Supabase
+        if (_currentUser != null) {
+          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        }
+        
         _setLoading(false);
         return true;
       } else {
-        _setError(response.error ?? '登录失败');
+        _setError(result.error ?? '登录失败');
         _setLoading(false);
         return false;
       }
     } catch (e) {
-      _setError('登录失败: $e');
+      _setError('登录失败: ${e.toString()}');
       _setLoading(false);
       return false;
     }
   }
 
-  Future<bool> register(String username, String password, String confirmPassword, String? nickname) async {
+  Future<bool> register(String email, String password, String confirmPassword, {String? nickname}) async {
     _setLoading(true);
     _setError(null);
-
+    
+    // 验证密码确认
+    if (password != confirmPassword) {
+      _setError('密码确认不匹配');
+      _setLoading(false);
+      return false;
+    }
+    
     try {
       final request = RegisterRequest(
-        username: username,
+        email: email,
         password: password,
         confirmPassword: confirmPassword,
         nickname: nickname,
       );
-      final response = await _authService.register(request);
-
-      if (response.success && response.data != null) {
-        final registerResponse = response.data!;
-        // 注册成功后，创建用户对象
-        _user = User(
-          id: registerResponse.id,
-          username: registerResponse.username ?? username, // 如果接口返回null，使用注册时的用户名
-          nickname: registerResponse.nickname,
-          createTime: registerResponse.createTime,
-        );
+      final result = await _authService.register(request);
+      
+      if (result.success && result.data != null) {
+        // 注册成功后获取用户信息并同步到Supabase
+        await loadCurrentUser();
+        if (_currentUser != null) {
+          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        }
+        
         _setLoading(false);
         return true;
       } else {
-        _setError(response.error ?? '注册失败');
+        _setError(result.error ?? '注册失败');
         _setLoading(false);
         return false;
       }
     } catch (e) {
-      _setError('注册失败: $e');
+      _setError('注册失败: ${e.toString()}');
       _setLoading(false);
       return false;
     }
@@ -93,53 +128,195 @@ class AuthProvider extends ChangeNotifier {
 
   Future<void> logout() async {
     _setLoading(true);
+    _setError(null);
     
     try {
-      await _authService.logout();
-      _user = null;
-      _setError(null);
+      final result = await _authService.logout();
+      if (result.success) {
+        _currentUser = null;
+        // 登出时清空本地用户数据
+        await StorageService.clearUserData();
+      } else {
+        _setError(result.error ?? '登出失败');
+      }
+      _setLoading(false);
     } catch (e) {
-      _setError('退出登录失败: $e');
+      _setError('登出失败: ${e.toString()}');
+      _setLoading(false);
     }
-    
-    _setLoading(false);
   }
 
   Future<void> loadCurrentUser() async {
-    if (!_authService.isLoggedIn) return;
-
-    _setLoading(true);
-    
-    try {
-      final response = await _authService.getCurrentUser();
-      if (response.success && response.data != null) {
-        _user = response.data!;
-        _setError(null);
-      } else {
-        // 获取用户信息失败时，不自动退出登录，而是创建一个临时用户对象
-        _user = User(
-          id: 0,
-          username: '用户',
-          nickname: '用户',
-          createTime: DateTime.now(),
-        );
-        _setError(null);
-      }
-    } catch (e) {
-      // 获取用户信息失败时，不自动退出登录，而是创建一个临时用户对象
-      _user = User(
-        id: 0,
-        username: '用户',
-        nickname: '用户',
-        createTime: DateTime.now(),
-      );
-      _setError(null);
+    if (!_authService.isLoggedIn) {
+      _currentUser = null;
+      notifyListeners();
+      return;
     }
     
+    try {
+      final result = await _authService.getCurrentUser();
+      if (result.success && result.data != null) {
+        _currentUser = result.data;
+        
+        // 尝试从Supabase获取最新的用户数据
+        if (_currentUser?.supabaseId != null) {
+          final cloudUserModel = await StorageService.getSmartUserData(_currentUser!.supabaseId!);
+          if (cloudUserModel != null) {
+            _currentUser = _convertFromUserModel(cloudUserModel);
+          }
+        }
+      } else {
+        // 如果无法从服务获取，尝试从本地缓存获取
+        final cachedUserModel = StorageService.getCachedUserData();
+        if (cachedUserModel != null) {
+          _currentUser = _convertFromUserModel(cachedUserModel);
+        } else if (result.error != null) {
+          _setError(result.error);
+        }
+      }
+    } catch (e) {
+      // 发生异常时，尝试从本地缓存获取用户数据
+      final cachedUserModel = StorageService.getCachedUserData();
+      if (cachedUserModel != null) {
+        _currentUser = _convertFromUserModel(cachedUserModel);
+      } else {
+        _setError('获取用户信息失败: ${e.toString()}');
+      }
+    }
+    notifyListeners();
+  }
+
+  // 初始化方法，在应用启动时调用
+  Future<void> initialize() async {
+    _setLoading(true);
+    await loadCurrentUser();
     _setLoading(false);
   }
 
-  void clearError() {
+  // 检查认证状态
+  Future<bool> checkAuthStatus() async {
+    try {
+      if (_authService.isLoggedIn) {
+        await loadCurrentUser();
+        return _currentUser != null;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // 重新发送邮箱确认邮件
+  Future<bool> resendEmailConfirmation() async {
+    _setLoading(true);
     _setError(null);
+    
+    try {
+      final result = await _authService.resendEmailConfirmation();
+      if (result.success) {
+        _setLoading(false);
+        return true;
+      } else {
+        _setError(result.error ?? '发送确认邮件失败');
+        _setLoading(false);
+        return false;
+      }
+    } catch (e) {
+      _setError('发送确认邮件失败: ${e.toString()}');
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  // 重置密码
+  Future<bool> resetPassword(String email) async {
+    _setLoading(true);
+    _setError(null);
+    
+    try {
+      final result = await _authService.resetPassword(email);
+      if (result.success) {
+        _setLoading(false);
+        return true;
+      } else {
+        _setError(result.error ?? '发送重置密码邮件失败');
+        _setLoading(false);
+        return false;
+      }
+    } catch (e) {
+      _setError('发送重置密码邮件失败: ${e.toString()}');
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  // 更新密码
+  Future<bool> updatePassword(String newPassword) async {
+    _setLoading(true);
+    _setError(null);
+    
+    try {
+      final result = await _authService.updatePassword(newPassword);
+      if (result.success) {
+        _setLoading(false);
+        return true;
+      } else {
+        _setError(result.error ?? '更新密码失败');
+        _setLoading(false);
+        return false;
+      }
+    } catch (e) {
+      _setError('更新密码失败: ${e.toString()}');
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  // 更新用户信息
+  Future<bool> updateUser({String? nickname, Map<String, dynamic>? metadata}) async {
+    _setLoading(true);
+    _setError(null);
+    
+    try {
+      final result = await _authService.updateUser(nickname: nickname, metadata: metadata);
+      if (result.success && result.data != null) {
+        _currentUser = result.data;
+        
+        // 同步更新到Supabase
+        if (_currentUser != null) {
+          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        }
+        
+        _setLoading(false);
+        return true;
+      } else {
+        _setError(result.error ?? '更新用户信息失败');
+        _setLoading(false);
+        return false;
+      }
+    } catch (e) {
+      _setError('更新用户信息失败: ${e.toString()}');
+      _setLoading(false);
+      return false;
+    }
+  }
+
+  // 刷新令牌
+  Future<bool> refreshToken() async {
+    try {
+      final result = await _authService.refreshToken();
+      if (result.success) {
+        await loadCurrentUser();
+        return true;
+      }
+      return false;
+    } catch (e) {
+      return false;
+    }
+  }
+
+  // 检查邮箱是否已确认
+  bool get isEmailConfirmed {
+    return _authService.isEmailConfirmed;
   }
 }

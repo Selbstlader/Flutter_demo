@@ -54,8 +54,8 @@ class _PensionFormState extends BaseFormState<PensionForm> {
   Future<void> _loadRegionData() async {
     try {
       await CalculationService.loadRegionData();
-      final String jsonString = await rootBundle
-          .loadString('assets/data/regions.json');
+      final String jsonString =
+          await rootBundle.loadString('assets/data/regions.json');
       final Map<String, dynamic> data = json.decode(jsonString);
 
       setState(() {
@@ -74,7 +74,8 @@ class _PensionFormState extends BaseFormState<PensionForm> {
           );
         }).toList();
 
-        if (_selectedRegion == 'beijing' && _regionData.containsKey('beijing')) {
+        if (_selectedRegion == 'beijing' &&
+            _regionData.containsKey('beijing')) {
           final beijingInfo = _regionData['beijing'];
           _socialSecurityBaseController.text =
               beijingInfo['socialSecurityBase'].toString();
@@ -109,8 +110,15 @@ class _PensionFormState extends BaseFormState<PensionForm> {
         'accountBalance': _accountBalanceController.text,
         'region': _selectedRegion ?? 'beijing',
       };
-
-      context.pushNamed('pension-result', extra: formData);
+      
+      // 检查GoRouter是否可用
+      try {
+        if (mounted && context.mounted) {
+          context.pushNamed('pension-result', extra: formData);
+        }
+      } catch (e) {
+        showSnackBar('导航失败: $e', isError: true);
+      }
     }
   }
 

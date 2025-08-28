@@ -1,8 +1,12 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:provider/provider.dart' as provider;
+import 'package:go_router/go_router.dart';
 import '../../providers/auth_provider.dart';
 import 'modern_register_page.dart';
+import '../../../../core/widgets/common_text_field.dart';
+import '../../../../core/widgets/error_message_widget.dart';
+import '../../../../core/widgets/gradient_button.dart';
 
 class ModernLoginPage extends ConsumerStatefulWidget {
   const ModernLoginPage({super.key});
@@ -14,7 +18,7 @@ class ModernLoginPage extends ConsumerStatefulWidget {
 class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
     with TickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
-  final _mobileController = TextEditingController();
+  final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
   
   late AnimationController _fadeController;
@@ -53,7 +57,7 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   void dispose() {
     _fadeController.dispose();
     _slideController.dispose();
-    _mobileController.dispose();
+    _emailController.dispose();
     _passwordController.dispose();
     super.dispose();
   }
@@ -63,12 +67,12 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
 
     final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
     final success = await authProvider.login(
-      _mobileController.text.trim(),
+      _emailController.text.trim(),
       _passwordController.text,
     );
 
     if (success && mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
+      context.go('/home');
     }
   }
 
@@ -151,7 +155,7 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
         ),
         const SizedBox(height: 8),
         Text(
-          '使用手机号和密码登录您的账户',
+          '使用邮箱和密码登录您的账户',
           style: TextStyle(
             fontSize: 16,
             color: Colors.white.withOpacity(0.7),
@@ -167,29 +171,35 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
       key: _formKey,
       child: Column(
         children: [
-          _buildTextField(
-            controller: _mobileController,
-            label: '手机号',
-            hint: '请输入您的手机号',
-            icon: Icons.phone_outlined,
-            keyboardType: TextInputType.phone,
+          CommonTextField(
+            controller: _emailController,
+            label: '邮箱',
+            hint: '请输入您的邮箱地址',
+            icon: Icons.email_outlined,
+            keyboardType: TextInputType.emailAddress,
             validator: (value) {
               if (value == null || value.trim().isEmpty) {
-                return '请输入手机号';
+                return '请输入邮箱地址';
               }
-              if (!RegExp(r'^1[3-9]\d{9}$').hasMatch(value.trim())) {
-                return '请输入有效的手机号';
+              if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                return '请输入正确的邮箱格式';
               }
               return null;
             },
           ),
           const SizedBox(height: 20),
-          _buildTextField(
+          CommonTextField(
             controller: _passwordController,
             label: '密码',
             hint: '请输入您的密码',
             icon: Icons.lock_outline,
             isPassword: true,
+            passwordVisible: _isPasswordVisible,
+            onPasswordVisibilityToggle: () {
+              setState(() {
+                _isPasswordVisible = !_isPasswordVisible;
+              });
+            },
             validator: (value) {
               if (value == null || value.isEmpty) {
                 return '请输入密码';
@@ -244,39 +254,7 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
           const SizedBox(height: 24),
           
           // 错误信息显示
-          provider.Consumer<AuthProvider>(
-            builder: (context, authProvider, child) {
-              if (authProvider.error != null) {
-                return Container(
-                  padding: const EdgeInsets.all(12),
-                  margin: const EdgeInsets.only(bottom: 16),
-                  decoration: BoxDecoration(
-                    color: Colors.red.shade900.withOpacity(0.3),
-                    border: Border.all(color: Colors.red.shade400),
-                    borderRadius: BorderRadius.circular(8),
-                  ),
-                  child: Row(
-                    children: [
-                      Icon(Icons.error_outline, color: Colors.red.shade400),
-                      const SizedBox(width: 8),
-                      Expanded(
-                        child: Text(
-                          authProvider.error!,
-                          style: TextStyle(color: Colors.red.shade400),
-                        ),
-                      ),
-                      IconButton(
-                        icon: Icon(Icons.close, color: Colors.red.shade400),
-                        onPressed: () => authProvider.clearError(),
-                        iconSize: 20,
-                      ),
-                    ],
-                  ),
-                );
-              }
-              return const SizedBox.shrink();
-            },
-          ),
+          const ErrorMessageWidget(),
           
           const SizedBox(height: 8),
           _buildLoginButton(),
@@ -285,125 +263,12 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
     );
   }
 
-  Widget _buildTextField({
-    required TextEditingController controller,
-    required String label,
-    required String hint,
-    required IconData icon,
-    bool isPassword = false,
-    TextInputType? keyboardType,
-    String? Function(String?)? validator,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Text(
-          label,
-          style: TextStyle(
-            color: Colors.white.withOpacity(0.9),
-            fontSize: 14,
-            fontWeight: FontWeight.w500,
-          ),
-        ),
-        const SizedBox(height: 8),
-        Container(
-          decoration: BoxDecoration(
-            color: const Color(0xFF1E293B).withOpacity(0.5),
-            borderRadius: BorderRadius.circular(12),
-            border: Border.all(
-              color: const Color(0xFF374151).withOpacity(0.5),
-            ),
-          ),
-          child: TextFormField(
-            controller: controller,
-            obscureText: isPassword && !_isPasswordVisible,
-            keyboardType: keyboardType,
-            style: const TextStyle(color: Colors.white),
-            validator: validator,
-            decoration: InputDecoration(
-              hintText: hint,
-              hintStyle: TextStyle(
-                color: Colors.white.withOpacity(0.5),
-              ),
-              prefixIcon: Icon(
-                icon,
-                color: const Color(0xFF6366F1),
-              ),
-              suffixIcon: isPassword
-                  ? IconButton(
-                      icon: Icon(
-                        _isPasswordVisible
-                            ? Icons.visibility_off
-                            : Icons.visibility,
-                        color: Colors.white.withOpacity(0.7),
-                      ),
-                      onPressed: () {
-                        setState(() {
-                          _isPasswordVisible = !_isPasswordVisible;
-                        });
-                      },
-                    )
-                  : null,
-              border: InputBorder.none,
-              contentPadding: const EdgeInsets.symmetric(
-                horizontal: 16,
-                vertical: 16,
-              ),
-            ),
-          ),
-        ),
-      ],
-    );
-  }
+
 
   Widget _buildLoginButton() {
-    return provider.Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        return Container(
-          width: double.infinity,
-          height: 56,
-          decoration: BoxDecoration(
-            gradient: const LinearGradient(
-              colors: [Color(0xFF6366F1), Color(0xFF8B5CF6)],
-            ),
-            borderRadius: BorderRadius.circular(12),
-            boxShadow: [
-              BoxShadow(
-                color: const Color(0xFF6366F1).withOpacity(0.3),
-                blurRadius: 12,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: ElevatedButton(
-            onPressed: authProvider.isLoading ? null : _handleLogin,
-            style: ElevatedButton.styleFrom(
-              backgroundColor: Colors.transparent,
-              shadowColor: Colors.transparent,
-              shape: RoundedRectangleBorder(
-                borderRadius: BorderRadius.circular(12),
-              ),
-            ),
-            child: authProvider.isLoading
-                ? const SizedBox(
-                    width: 24,
-                    height: 24,
-                    child: CircularProgressIndicator(
-                      color: Colors.white,
-                      strokeWidth: 2,
-                    ),
-                  )
-                : const Text(
-                    '登录',
-                    style: TextStyle(
-                      color: Colors.white,
-                      fontSize: 16,
-                      fontWeight: FontWeight.w600,
-                    ),
-                  ),
-          ),
-        );
-      },
+    return AuthGradientButton(
+      text: '登录',
+      onPressed: _handleLogin,
     );
   }
 

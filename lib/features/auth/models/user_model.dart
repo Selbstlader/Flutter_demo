@@ -3,22 +3,42 @@ class User {
   final String username;
   final String? nickname;
   final DateTime? createTime;
+  final String? email;
+  final String? supabaseId; // Supabase UUID
 
   User({
     required this.id,
     required this.username,
     this.nickname,
     this.createTime,
+    this.email,
+    this.supabaseId,
   });
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'],
-      username: json['username'],
+      id: json['id'] is String ? json['id'].hashCode : json['id'],
+      username: json['username'] ?? json['email'] ?? '',
       nickname: json['nickname'],
+      email: json['email'],
+      supabaseId: json['supabaseId'] ?? json['id'],
       createTime: json['createTime'] != null 
-          ? DateTime.parse(json['createTime']) 
+          ? (json['createTime'] is String 
+              ? DateTime.parse(json['createTime'])
+              : DateTime.fromMillisecondsSinceEpoch(json['createTime']))
           : null,
+    );
+  }
+
+  // 从Supabase User创建
+  factory User.fromSupabaseUser(dynamic supabaseUser) {
+    return User(
+      id: supabaseUser.id.hashCode,
+      username: supabaseUser.email ?? '',
+      email: supabaseUser.email,
+      nickname: supabaseUser.userMetadata?['nickname'],
+      supabaseId: supabaseUser.id,
+      createTime: DateTime.parse(supabaseUser.createdAt),
     );
   }
 
@@ -27,36 +47,57 @@ class User {
       'id': id,
       'username': username,
       'nickname': nickname,
+      'email': email,
+      'supabaseId': supabaseId,
       'createTime': createTime?.toIso8601String(),
     };
+  }
+
+  // 复制方法，用于更新用户信息
+  User copyWith({
+    int? id,
+    String? username,
+    String? nickname,
+    String? email,
+    String? supabaseId,
+    DateTime? createTime,
+  }) {
+    return User(
+      id: id ?? this.id,
+      username: username ?? this.username,
+      nickname: nickname ?? this.nickname,
+      email: email ?? this.email,
+      supabaseId: supabaseId ?? this.supabaseId,
+      createTime: createTime ?? this.createTime,
+    );
   }
 }
 
 class LoginRequest {
-  final String mobile;
+  final String email;
   final String password;
 
   LoginRequest({
-    required this.mobile,
+    required this.email,
     required this.password,
   });
 
   Map<String, dynamic> toJson() {
     return {
-      'mobile': mobile,
+      'email': email,
       'password': password,
     };
   }
 }
 
 class RegisterRequest {
-  final String username;
+  final String email;
   final String password;
   final String confirmPassword;
   final String? nickname;
 
   RegisterRequest({
-    required this.username,
+    required this.email,
     required this.password,
     required this.confirmPassword,
     this.nickname,
@@ -64,7 +105,7 @@ class RegisterRequest {
 
   Map<String, dynamic> toJson() {
     return {
-      'username': username,
+      'email': email,
       'password': password,
       'confirmPassword': confirmPassword,
       if (nickname != null) 'nickname': nickname,

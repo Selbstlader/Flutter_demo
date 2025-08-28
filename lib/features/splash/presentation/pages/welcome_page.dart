@@ -1,7 +1,9 @@
 import 'package:flutter/material.dart';
+import 'package:go_router/go_router.dart';
 import '../../../auth/presentation/pages/modern_login_page.dart';
 import '../../../auth/presentation/pages/modern_register_page.dart';
 import '../../../../core/theme/app_theme.dart';
+import '../../../../core/router/app_router.dart';
 
 class WelcomePage extends StatefulWidget {
   const WelcomePage({super.key});
@@ -226,12 +228,7 @@ class _WelcomePageState extends State<WelcomePage>
           ),
           child: ElevatedButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ModernLoginPage(),
-                ),
-              );
+              context.push(AppRouter.login);
             },
             style: ElevatedButton.styleFrom(
               backgroundColor: Colors.transparent,
@@ -263,12 +260,7 @@ class _WelcomePageState extends State<WelcomePage>
           ),
           child: TextButton(
             onPressed: () {
-              Navigator.push(
-                context,
-                MaterialPageRoute(
-                  builder: (context) => const ModernRegisterPage(),
-                ),
-              );
+              context.push(AppRouter.register);
             },
             style: TextButton.styleFrom(
               shape: RoundedRectangleBorder(
@@ -289,7 +281,7 @@ class _WelcomePageState extends State<WelcomePage>
         TextButton(
           onPressed: () {
             // 跳过登录，直接进入应用
-            Navigator.pushReplacementNamed(context, '/home');
+            context.go(AppRouter.home);
           },
           child: Text(
             '跳过，稍后登录',

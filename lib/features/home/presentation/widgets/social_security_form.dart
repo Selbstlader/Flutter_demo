@@ -152,7 +152,14 @@ class _SocialSecurityFormState extends State<SocialSecurityForm> with TickerProv
         'region': _selectedRegion ?? 'beijing',
       };
 
-      context.pushNamed('calculation-result', extra: formData);
+      // 检查GoRouter是否可用
+      try {
+        if (mounted && context.mounted) {
+          context.pushNamed('calculation-result', extra: formData);
+        }
+      } catch (e) {
+        _showSnackBar('导航失败: $e', isError: true);
+      }
     }
   }
 
