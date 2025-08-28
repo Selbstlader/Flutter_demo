@@ -2,6 +2,7 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 import 'package:http/http.dart' as http;
+import 'package:connectivity_plus/connectivity_plus.dart';
 import '../../../core/config/deepseek_config.dart';
 import '../models/user_context.dart';
 
@@ -21,6 +22,14 @@ class DeepSeekService {
 
   Stream<String> sendMessage(String message, {UserContext? userContext}) async* {
     final context = userContext ?? _defaultContext;
+    
+    // 检查网络连接
+    final connectivityResult = await Connectivity().checkConnectivity();
+    if (connectivityResult == ConnectivityResult.none) {
+      yield 'error:网络连接不可用，请检查网络设置';
+      return;
+    }
+    
     int retryCount = 0;
     
     while (retryCount < DeepSeekConfig.maxRetries) {
@@ -29,14 +38,34 @@ class DeepSeekService {
         return;
       } catch (e) {
         retryCount++;
+        final errorMsg = _parseNetworkError(e);
+        
         if (retryCount >= DeepSeekConfig.maxRetries) {
-          yield 'error:达到最大重试次数，请稍后再试';
+          yield 'error:$errorMsg (已重试${DeepSeekConfig.maxRetries}次)';
           return;
         }
         
-        yield 'error:连接失败，正在重试... ($retryCount/${DeepSeekConfig.maxRetries})';
+        yield 'error:$errorMsg，正在重试... ($retryCount/${DeepSeekConfig.maxRetries})';
         await Future.delayed(DeepSeekConfig.retryDelay);
       }
+    }
+  }
+
+  String _parseNetworkError(dynamic error) {
+    final errorStr = error.toString().toLowerCase();
+    
+    if (errorStr.contains('host lookup failed') || errorStr.contains('api.deepseek.com')) {
+      return 'DNS解析失败，请检查网络连接或DNS设置';
+    } else if (errorStr.contains('connection refused')) {
+      return '连接被拒绝，请检查网络防火墙设置';
+    } else if (errorStr.contains('timeout')) {
+      return '连接超时，请检查网络状况';
+    } else if (errorStr.contains('certificate') || errorStr.contains('ssl') || errorStr.contains('tls')) {
+      return 'SSL证书验证失败，请检查系统时间和证书设置';
+    } else if (errorStr.contains('socket')) {
+      return '网络连接异常，请重试';
+    } else {
+      return '网络请求失败: ${error.toString()}';
     }
   }
 
@@ -75,25 +104,53 @@ ${context.toContextString()}
       'temperature': DeepSeekConfig.temperature,
     };
 
+    http.Client? client;
     try {
-      final client = http.Client();
+      // 创建带有自定义配置的HTTP客户端
+      client = http.Client();
+      
       final request = http.Request('POST', url);
+      
+      // 设置请求头，增加安卓兼容性
       request.headers.addAll({
-        'Content-Type': 'application/json',
+        'Content-Type': 'application/json; charset=utf-8',
         'Authorization': 'Bearer ${DeepSeekConfig.apiKey}',
         'Accept': 'text/event-stream',
         'Cache-Control': 'no-cache',
+        'Connection': 'keep-alive',
+        'User-Agent': 'Flutter-App/1.0 (Android)',
+        'Accept-Encoding': 'gzip, deflate',
       });
+      
       request.body = json.encode(requestBody);
 
-      final streamedResponse = await client.send(request);
+      // 发送请求，设置超时
+      final streamedResponse = await client.send(request).timeout(
+        const Duration(seconds: 30),
+        onTimeout: () {
+          throw TimeoutException('请求超时，请检查网络连接', const Duration(seconds: 30));
+        },
+      );
       
       if (streamedResponse.statusCode != 200) {
         final responseBody = await streamedResponse.stream.bytesToString();
-        throw HttpException('HTTP ${streamedResponse.statusCode}: $responseBody');
+        client.close();
+        
+        // 解析错误响应
+        try {
+          final errorData = json.decode(responseBody);
+          final errorMsg = errorData['error']?['message'] ?? errorData['message'] ?? '未知错误';
+          throw HttpException('API错误 (${streamedResponse.statusCode}): $errorMsg');
+        } catch (e) {
+          throw HttpException('HTTP ${streamedResponse.statusCode}: $responseBody');
+        }
       }
 
-      await for (final chunk in streamedResponse.stream.transform(utf8.decoder)) {
+      // 处理流式响应
+      await for (final chunk in streamedResponse.stream
+          .timeout(const Duration(seconds: 60))
+          .transform(utf8.decoder)) {
+        
         final lines = chunk.split('\n');
         
         for (final line in lines) {
@@ -103,7 +160,6 @@ ${context.toContextString()}
             final data = line.substring(6).trim();
             
             if (data == '[DONE]') {
-              client.close();
               return;
             }
             
@@ -126,10 +182,22 @@ ${context.toContextString()}
           }
         }
       }
-      
-      client.close();
+    } on TimeoutException catch (e) {
+      throw Exception('请求超时: ${e.message}');
+    } on SocketException catch (e) {
+      if (e.message.contains('Failed host lookup')) {
+        throw Exception('DNS解析失败: 无法连接到 api.deepseek.com，请检查网络连接');
+      } else {
+        throw Exception('网络连接错误: ${e.message}');
+      }
+    } on HttpException catch (e) {
+      throw Exception('HTTP请求错误: ${e.message}');
+    } on FormatException catch (e) {
+      throw Exception('数据格式错误: ${e.message}');
     } catch (e) {
       throw Exception('DeepSeek API请求失败: $e');
+    } finally {
+      client?.close();
     }
   }
 }
