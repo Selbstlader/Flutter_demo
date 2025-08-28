@@ -74,7 +74,7 @@ class _CalculationResultPageState extends State<CalculationResultPage>
   Future<void> _loadDataAndCalculate() async {
     try {
       final String jsonString = await rootBundle.loadString(
-          'lib/features/home/presentation/pages/data/resign.json');
+          'assets/data/regions.json');
       final Map<String, dynamic> data = json.decode(jsonString);
 
       setState(() {

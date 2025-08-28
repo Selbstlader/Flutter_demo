@@ -6,12 +6,14 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
   final String title;
   final Color? backgroundColor;
   final Color? titleColor;
+  final List<Widget>? actions;
 
   const AppHeader({
     super.key,
     required this.title,
     this.backgroundColor,
     this.titleColor,
+    this.actions,
   });
 
   @override
@@ -30,6 +32,7 @@ class AppHeader extends StatelessWidget implements PreferredSizeWidget {
       elevation: 0,
       centerTitle: true,
       systemOverlayStyle: SystemUiOverlayStyle.dark,
+      actions: actions,
       flexibleSpace: Container(
         decoration: const BoxDecoration(
           gradient: LinearGradient(

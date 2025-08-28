@@ -1,240 +1,149 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
 
-/// 应用主题配置类
 class AppTheme {
-  // 私有构造函数，防止实例化
-  AppTheme._();
-
-  /// 主色调
-  static const Color primaryColor = Color(0xFF2196F3);
-  static const Color primaryVariant = Color(0xFF1976D2);
-  static const Color secondaryColor = Color(0xFF03DAC6);
+  // 主色调
+  static const Color primaryColor = Color(0xFF6366F1);
+  static const Color secondaryColor = Color(0xFF8B5CF6);
+  static const Color accentColor = Color(0xFF10B981);
   
-  /// 背景色
-  static const Color lightBackground = Color(0xFFFAFAFA);
-  static const Color darkBackground = Color(0xFF121212);
+  // 背景色
+  static const Color darkBackground = Color(0xFF0F0F23);
+  static const Color darkSurface = Color(0xFF1A1A2E);
+  static const Color cardBackground = Color(0xFF1E293B);
   
-  /// 文字颜色
-  static const Color lightTextPrimary = Color(0xFF212121);
-  static const Color lightTextSecondary = Color(0xFF757575);
-  static const Color darkTextPrimary = Color(0xFFFFFFFF);
-  static const Color darkTextSecondary = Color(0xFFB3B3B3);
-
-  /// 浅色主题
-  static ThemeData get lightTheme {
-    return ThemeData(
-      useMaterial3: true,
-      brightness: Brightness.light,
-      
-      // 颜色方案
-      colorScheme: const ColorScheme.light(
-        primary: primaryColor,
-        secondary: secondaryColor,
-        background: lightBackground,
-        surface: Colors.white,
-        error: Colors.red,
-        onPrimary: Colors.white,
-        onSecondary: Colors.black,
-        onBackground: lightTextPrimary,
-        onSurface: lightTextPrimary,
-        onError: Colors.white,
-      ),
-      
-      // AppBar主题
-      appBarTheme: AppBarTheme(
-        backgroundColor: Colors.white,
-        foregroundColor: lightTextPrimary,
-        elevation: 0,
-        centerTitle: true,
-        titleTextStyle: TextStyle(
-          color: lightTextPrimary,
-          fontSize: 18.sp,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-      
-      // 文字主题
-      textTheme: _buildTextTheme(lightTextPrimary, lightTextSecondary),
-      
-      // 卡片主题 - 暂时移除以避免类型错误
-      // cardTheme: CardTheme(
-      //   elevation: 2,
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(12.r),
-      //   ),
-      // ),
-      
-      // 按钮主题
-      elevatedButtonTheme: ElevatedButtonThemeData(
-        style: ElevatedButton.styleFrom(
-          backgroundColor: primaryColor,
-          foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
-          ),
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
-        ),
-      ),
-      
-      // 输入框主题
-      inputDecorationTheme: InputDecorationTheme(
-        border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(color: Colors.grey),
-        ),
-        focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(color: primaryColor, width: 2),
-        ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
-      ),
-    );
-  }
-
-  /// 深色主题
+  // 文本颜色
+  static const Color textPrimary = Colors.white;
+  static const Color textSecondary = Color(0xFF9CA3AF);
+  static const Color textHint = Color(0xFF64748B);
+  
+  // 渐变色
+  static const LinearGradient primaryGradient = LinearGradient(
+    colors: [primaryColor, secondaryColor],
+  );
+  
+  static const LinearGradient backgroundGradient = LinearGradient(
+    begin: Alignment.topLeft,
+    end: Alignment.bottomRight,
+    colors: [
+      darkBackground,
+      Color(0xFF16213E),
+      darkSurface,
+    ],
+  );
+  
+  // 阴影
+  static List<BoxShadow> cardShadow = [
+    BoxShadow(
+      color: Colors.black.withOpacity(0.1),
+      blurRadius: 8,
+      offset: const Offset(0, 2),
+    ),
+  ];
+  
+  static List<BoxShadow> primaryShadow = [
+    BoxShadow(
+      color: primaryColor.withOpacity(0.3),
+      blurRadius: 12,
+      offset: const Offset(0, 4),
+    ),
+  ];
+  
+  // 圆角
+  static const double borderRadius = 12.0;
+  static const double cardRadius = 16.0;
+  static const double buttonRadius = 12.0;
+  
+  // 间距
+  static const double paddingSmall = 8.0;
+  static const double paddingMedium = 16.0;
+  static const double paddingLarge = 24.0;
+  static const double paddingXLarge = 32.0;
+  
+  // 字体大小
+  static const double fontSizeSmall = 12.0;
+  static const double fontSizeMedium = 14.0;
+  static const double fontSizeLarge = 16.0;
+  static const double fontSizeXLarge = 20.0;
+  static const double fontSizeXXLarge = 24.0;
+  static const double fontSizeTitle = 32.0;
+  
+  // 主题数据
   static ThemeData get darkTheme {
     return ThemeData(
-      useMaterial3: true,
       brightness: Brightness.dark,
-      
-      // 颜色方案
+      primaryColor: primaryColor,
+      scaffoldBackgroundColor: darkBackground,
       colorScheme: const ColorScheme.dark(
         primary: primaryColor,
         secondary: secondaryColor,
+        surface: darkSurface,
         background: darkBackground,
-        surface: Color(0xFF1E1E1E),
-        error: Colors.red,
         onPrimary: Colors.white,
-        onSecondary: Colors.black,
-        onBackground: darkTextPrimary,
-        onSurface: darkTextPrimary,
-        onError: Colors.white,
+        onSecondary: Colors.white,
+        onSurface: textPrimary,
+        onBackground: textPrimary,
       ),
-      
-      // AppBar主题
-      appBarTheme: AppBarTheme(
-        backgroundColor: const Color(0xFF1E1E1E),
-        foregroundColor: darkTextPrimary,
+      appBarTheme: const AppBarTheme(
+        backgroundColor: darkSurface,
         elevation: 0,
-        centerTitle: true,
         titleTextStyle: TextStyle(
-          color: darkTextPrimary,
-          fontSize: 18.sp,
+          color: textPrimary,
+          fontSize: fontSizeLarge,
           fontWeight: FontWeight.w600,
         ),
+        iconTheme: IconThemeData(color: textPrimary),
       ),
-      
-      // 文字主题
-      textTheme: _buildTextTheme(darkTextPrimary, darkTextSecondary),
-      
-      // 卡片主题 - 暂时移除以避免类型错误
-      // cardTheme: CardTheme(
-      //   color: const Color(0xFF1E1E1E),
-      //   elevation: 2,
-      //   shape: RoundedRectangleBorder(
-      //     borderRadius: BorderRadius.circular(12.r),
-      //   ),
-      // ),
-      
-      // 按钮主题
       elevatedButtonTheme: ElevatedButtonThemeData(
         style: ElevatedButton.styleFrom(
           backgroundColor: primaryColor,
           foregroundColor: Colors.white,
-          elevation: 2,
-          shape: RoundedRectangleBorder(
-            borderRadius: BorderRadius.circular(8.r),
+          elevation: 0,
+          padding: const EdgeInsets.symmetric(
+            horizontal: paddingLarge,
+            vertical: paddingMedium,
           ),
-          padding: EdgeInsets.symmetric(horizontal: 24.w, vertical: 12.h),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(buttonRadius),
+          ),
         ),
       ),
-      
-      // 输入框主题
+      textButtonTheme: TextButtonThemeData(
+        style: TextButton.styleFrom(
+          foregroundColor: primaryColor,
+          padding: const EdgeInsets.symmetric(
+            horizontal: paddingMedium,
+            vertical: paddingSmall,
+          ),
+        ),
+      ),
       inputDecorationTheme: InputDecorationTheme(
+        filled: true,
+        fillColor: cardBackground.withOpacity(0.5),
         border: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(color: Colors.grey),
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: BorderSide(
+            color: const Color(0xFF374151).withOpacity(0.5),
+          ),
+        ),
+        enabledBorder: OutlineInputBorder(
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: BorderSide(
+            color: const Color(0xFF374151).withOpacity(0.5),
+          ),
         ),
         focusedBorder: OutlineInputBorder(
-          borderRadius: BorderRadius.circular(8.r),
-          borderSide: const BorderSide(color: primaryColor, width: 2),
+          borderRadius: BorderRadius.circular(borderRadius),
+          borderSide: const BorderSide(color: primaryColor),
         ),
-        contentPadding: EdgeInsets.symmetric(horizontal: 16.w, vertical: 12.h),
+        hintStyle: TextStyle(color: textHint),
+        labelStyle: TextStyle(color: textSecondary),
       ),
-    );
-  }
-
-  /// 构建文字主题
-  static TextTheme _buildTextTheme(Color primaryColor, Color secondaryColor) {
-    return TextTheme(
-      // 标题样式
-      headlineLarge: TextStyle(
-        fontSize: 32.sp,
-        fontWeight: FontWeight.bold,
-        color: primaryColor,
-      ),
-      headlineMedium: TextStyle(
-        fontSize: 28.sp,
-        fontWeight: FontWeight.bold,
-        color: primaryColor,
-      ),
-      headlineSmall: TextStyle(
-        fontSize: 24.sp,
-        fontWeight: FontWeight.w600,
-        color: primaryColor,
-      ),
-      
-      // 标题样式
-      titleLarge: TextStyle(
-        fontSize: 20.sp,
-        fontWeight: FontWeight.w600,
-        color: primaryColor,
-      ),
-      titleMedium: TextStyle(
-        fontSize: 18.sp,
-        fontWeight: FontWeight.w500,
-        color: primaryColor,
-      ),
-      titleSmall: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.w500,
-        color: primaryColor,
-      ),
-      
-      // 正文样式
-      bodyLarge: TextStyle(
-        fontSize: 16.sp,
-        fontWeight: FontWeight.normal,
-        color: primaryColor,
-      ),
-      bodyMedium: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.normal,
-        color: primaryColor,
-      ),
-      bodySmall: TextStyle(
-        fontSize: 12.sp,
-        fontWeight: FontWeight.normal,
-        color: secondaryColor,
-      ),
-      
-      // 标签样式
-      labelLarge: TextStyle(
-        fontSize: 14.sp,
-        fontWeight: FontWeight.w500,
-        color: primaryColor,
-      ),
-      labelMedium: TextStyle(
-        fontSize: 12.sp,
-        fontWeight: FontWeight.w500,
-        color: secondaryColor,
-      ),
-      labelSmall: TextStyle(
-        fontSize: 10.sp,
-        fontWeight: FontWeight.w500,
-        color: secondaryColor,
+      cardTheme: CardThemeData(
+        color: cardBackground,
+        elevation: 0,
+        shape: RoundedRectangleBorder(
+          borderRadius: BorderRadius.circular(cardRadius),
+        ),
       ),
     );
   }

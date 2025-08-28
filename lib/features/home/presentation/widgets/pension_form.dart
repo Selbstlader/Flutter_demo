@@ -55,7 +55,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
     try {
       await CalculationService.loadRegionData();
       final String jsonString = await rootBundle
-          .loadString('lib/features/home/presentation/pages/data/resign.json');
+          .loadString('assets/data/regions.json');
       final Map<String, dynamic> data = json.decode(jsonString);
 
       setState(() {

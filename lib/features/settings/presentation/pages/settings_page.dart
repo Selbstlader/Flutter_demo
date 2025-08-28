@@ -1,264 +1,338 @@
 import 'package:flutter/material.dart';
-import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import '../../../../core/theme/app_theme.dart';
 
-import '../../../../core/providers/theme_provider.dart';
-import '../../../../core/widgets/animations/fade_in_animation.dart';
-
-/// 设置页
-class SettingsPage extends ConsumerWidget {
+class SettingsPage extends StatefulWidget {
   const SettingsPage({super.key});
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    final themeMode = ref.watch(themeModeProvider);
-    final themeModeNotifier = ref.read(themeModeProvider.notifier);
+  State<SettingsPage> createState() => _SettingsPageState();
+}
 
+class _SettingsPageState extends State<SettingsPage> {
+  bool _notificationsEnabled = true;
+  bool _darkModeEnabled = true;
+  bool _biometricEnabled = false;
+
+  @override
+  Widget build(BuildContext context) {
     return Scaffold(
+      backgroundColor: AppTheme.darkBackground,
       appBar: AppBar(
-        title: const Text('设置'),
+        backgroundColor: AppTheme.darkSurface,
+        elevation: 0,
+        leading: IconButton(
+          icon: const Icon(Icons.arrow_back_ios, color: Colors.white),
+          onPressed: () => Navigator.pop(context),
+        ),
+        title: const Text(
+          '设置',
+          style: TextStyle(
+            color: Colors.white,
+            fontSize: 18,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
       ),
-      body: SingleChildScrollView(
-        padding: EdgeInsets.all(16.w),
-        child: Column(
-          crossAxisAlignment: CrossAxisAlignment.start,
+      body: Container(
+        decoration: const BoxDecoration(
+          gradient: AppTheme.backgroundGradient,
+        ),
+        child: ListView(
+          padding: const EdgeInsets.all(AppTheme.paddingMedium),
           children: [
-            // 外观设置
-            FadeInAnimation(
-              child: _buildSectionTitle(context, '外观设置'),
-            ),
-            
-            FadeInAnimation(
-              delay: const Duration(milliseconds: 100),
-              child: Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.palette_outlined),
-                      title: const Text('主题模式'),
-                      subtitle: Text(_getThemeModeText(themeMode)),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _showThemeDialog(context, themeModeNotifier),
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.language),
-                      title: const Text('语言'),
-                      subtitle: const Text('简体中文'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('语言切换功能待实现')),
-                        );
-                      },
-                    ),
-                  ],
+            _buildSection(
+              title: '账户设置',
+              children: [
+                _buildSettingItem(
+                  icon: Icons.person_outline,
+                  title: '个人信息',
+                  subtitle: '管理您的个人资料',
+                  onTap: () {},
                 ),
-              ),
-            ),
-            
-            SizedBox(height: 24.h),
-            
-            // 通知设置
-            FadeInAnimation(
-              delay: const Duration(milliseconds: 200),
-              child: _buildSectionTitle(context, '通知设置'),
-            ),
-            
-            FadeInAnimation(
-              delay: const Duration(milliseconds: 300),
-              child: Card(
-                child: Column(
-                  children: [
-                    SwitchListTile(
-                      secondary: const Icon(Icons.notifications_outlined),
-                      title: const Text('推送通知'),
-                      subtitle: const Text('接收应用推送通知'),
-                      value: true,
-                      onChanged: (value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('推送通知已${value ? '开启' : '关闭'}')),
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                    SwitchListTile(
-                      secondary: const Icon(Icons.vibration),
-                      title: const Text('震动反馈'),
-                      subtitle: const Text('操作时提供震动反馈'),
-                      value: false,
-                      onChanged: (value) {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          SnackBar(content: Text('震动反馈已${value ? '开启' : '关闭'}')),
-                        );
-                      },
-                    ),
-                  ],
+                _buildSettingItem(
+                  icon: Icons.security_rounded,
+                  title: '账户安全',
+                  subtitle: '密码、验证方式',
+                  onTap: () {},
                 ),
-              ),
-            ),
-            
-            SizedBox(height: 24.h),
-            
-            // 其他设置
-            FadeInAnimation(
-              delay: const Duration(milliseconds: 400),
-              child: _buildSectionTitle(context, '其他'),
-            ),
-            
-            FadeInAnimation(
-              delay: const Duration(milliseconds: 500),
-              child: Card(
-                child: Column(
-                  children: [
-                    ListTile(
-                      leading: const Icon(Icons.info_outline),
-                      title: const Text('关于应用'),
-                      subtitle: const Text('版本 1.0.0'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _showAboutDialog(context),
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.feedback_outlined),
-                      title: const Text('意见反馈'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () {
-                        ScaffoldMessenger.of(context).showSnackBar(
-                          const SnackBar(content: Text('意见反馈功能待实现')),
-                        );
-                      },
-                    ),
-                    const Divider(height: 1),
-                    ListTile(
-                      leading: const Icon(Icons.delete_outline),
-                      title: const Text('清除缓存'),
-                      trailing: const Icon(Icons.chevron_right),
-                      onTap: () => _showClearCacheDialog(context),
-                    ),
-                  ],
+                _buildSettingItem(
+                  icon: Icons.privacy_tip_outlined,
+                  title: '隐私设置',
+                  subtitle: '数据使用权限',
+                  onTap: () {},
                 ),
-              ),
+              ],
             ),
+            const SizedBox(height: AppTheme.paddingLarge),
+            _buildSection(
+              title: '应用设置',
+              children: [
+                _buildSwitchItem(
+                  icon: Icons.notifications_outlined,
+                  title: '推送通知',
+                  subtitle: '接收重要消息提醒',
+                  value: _notificationsEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _notificationsEnabled = value;
+                    });
+                  },
+                ),
+                _buildSwitchItem(
+                  icon: Icons.dark_mode_outlined,
+                  title: '深色模式',
+                  subtitle: '护眼模式，节省电量',
+                  value: _darkModeEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _darkModeEnabled = value;
+                    });
+                  },
+                ),
+                _buildSwitchItem(
+                  icon: Icons.fingerprint,
+                  title: '生物识别',
+                  subtitle: '指纹或面容解锁',
+                  value: _biometricEnabled,
+                  onChanged: (value) {
+                    setState(() {
+                      _biometricEnabled = value;
+                    });
+                  },
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.paddingLarge),
+            _buildSection(
+              title: '帮助与支持',
+              children: [
+                _buildSettingItem(
+                  icon: Icons.help_outline,
+                  title: '使用帮助',
+                  subtitle: '常见问题解答',
+                  onTap: () {},
+                ),
+                _buildSettingItem(
+                  icon: Icons.feedback_outlined,
+                  title: '意见反馈',
+                  subtitle: '告诉我们您的建议',
+                  onTap: () {},
+                ),
+                _buildSettingItem(
+                  icon: Icons.info_outline,
+                  title: '关于我们',
+                  subtitle: '版本信息和团队介绍',
+                  onTap: () {},
+                ),
+              ],
+            ),
+            const SizedBox(height: AppTheme.paddingXLarge),
+            _buildLogoutButton(),
           ],
         ),
       ),
     );
   }
 
-  /// 构建分组标题
-  Widget _buildSectionTitle(BuildContext context, String title) {
-    return Padding(
-      padding: EdgeInsets.only(left: 16.w, bottom: 8.h),
-      child: Text(
-        title,
-        style: Theme.of(context).textTheme.titleMedium?.copyWith(
-          color: Theme.of(context).colorScheme.primary,
-          fontWeight: FontWeight.w600,
-        ),
-      ),
-    );
-  }
-
-  /// 获取主题模式文本
-  String _getThemeModeText(ThemeMode themeMode) {
-    switch (themeMode) {
-      case ThemeMode.light:
-        return '浅色模式';
-      case ThemeMode.dark:
-        return '深色模式';
-      case ThemeMode.system:
-        return '跟随系统';
-    }
-  }
-
-  /// 显示主题选择对话框
-  void _showThemeDialog(BuildContext context, ThemeModeNotifier notifier) {
-    showDialog(
-      context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('选择主题'),
-        content: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            ListTile(
-              leading: const Icon(Icons.light_mode),
-              title: const Text('浅色模式'),
-              onTap: () {
-                notifier.setLightTheme();
-                Navigator.of(context).pop();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.dark_mode),
-              title: const Text('深色模式'),
-              onTap: () {
-                notifier.setDarkTheme();
-                Navigator.of(context).pop();
-              },
-            ),
-            ListTile(
-              leading: const Icon(Icons.auto_mode),
-              title: const Text('跟随系统'),
-              onTap: () {
-                notifier.setSystemTheme();
-                Navigator.of(context).pop();
-              },
-            ),
-          ],
-        ),
-      ),
-    );
-  }
-
-  /// 显示关于对话框
-  void _showAboutDialog(BuildContext context) {
-    showAboutDialog(
-      context: context,
-      applicationName: 'Flutter Demo',
-      applicationVersion: '1.0.0',
-      applicationIcon: Icon(
-        Icons.flutter_dash,
-        size: 48.w,
-        color: Theme.of(context).colorScheme.primary,
-      ),
+  Widget _buildSection({
+    required String title,
+    required List<Widget> children,
+  }) {
+    return Column(
+      crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        const Text('这是一个高度可扩展的Flutter基础项目架构演示应用。'),
-        const SizedBox(height: 16),
-        const Text('主要特性：'),
-        const Text('• 分层架构设计'),
-        const Text('• 状态管理 (Riverpod)'),
-        const Text('• API封装'),
-        const Text('• Cookie管理'),
-        const Text('• 动画组件'),
-        const Text('• 主题切换'),
+        Padding(
+          padding: const EdgeInsets.only(
+            left: AppTheme.paddingMedium,
+            bottom: AppTheme.paddingSmall,
+          ),
+          child: Text(
+            title,
+            style: TextStyle(
+              fontSize: AppTheme.fontSizeMedium,
+              fontWeight: FontWeight.w600,
+              color: AppTheme.textSecondary,
+            ),
+          ),
+        ),
+        Container(
+          decoration: BoxDecoration(
+            color: AppTheme.cardBackground.withOpacity(0.5),
+            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
+            border: Border.all(
+              color: const Color(0xFF374151).withOpacity(0.3),
+            ),
+          ),
+          child: Column(children: children),
+        ),
       ],
     );
   }
 
-  /// 显示清除缓存对话框
-  void _showClearCacheDialog(BuildContext context) {
+  Widget _buildSettingItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required VoidCallback onTap,
+  }) {
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          gradient: AppTheme.primaryGradient,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: AppTheme.fontSizeMedium,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: AppTheme.textSecondary,
+          fontSize: AppTheme.fontSizeSmall,
+        ),
+      ),
+      trailing: const Icon(
+        Icons.arrow_forward_ios,
+        color: AppTheme.textSecondary,
+        size: 16,
+      ),
+      onTap: onTap,
+    );
+  }
+
+  Widget _buildSwitchItem({
+    required IconData icon,
+    required String title,
+    required String subtitle,
+    required bool value,
+    required ValueChanged<bool> onChanged,
+  }) {
+    return ListTile(
+      leading: Container(
+        width: 40,
+        height: 40,
+        decoration: BoxDecoration(
+          gradient: AppTheme.primaryGradient,
+          borderRadius: BorderRadius.circular(10),
+        ),
+        child: Icon(
+          icon,
+          color: Colors.white,
+          size: 20,
+        ),
+      ),
+      title: Text(
+        title,
+        style: const TextStyle(
+          color: AppTheme.textPrimary,
+          fontSize: AppTheme.fontSizeMedium,
+          fontWeight: FontWeight.w500,
+        ),
+      ),
+      subtitle: Text(
+        subtitle,
+        style: TextStyle(
+          color: AppTheme.textSecondary,
+          fontSize: AppTheme.fontSizeSmall,
+        ),
+      ),
+      trailing: Switch(
+        value: value,
+        onChanged: onChanged,
+        activeColor: AppTheme.primaryColor,
+        activeTrackColor: AppTheme.primaryColor.withOpacity(0.3),
+      ),
+    );
+  }
+
+  Widget _buildLogoutButton() {
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: AppTheme.paddingMedium),
+      child: ElevatedButton(
+        onPressed: () {
+          _showLogoutDialog();
+        },
+        style: ElevatedButton.styleFrom(
+          backgroundColor: const Color(0xFFEF4444),
+          foregroundColor: Colors.white,
+          padding: const EdgeInsets.symmetric(vertical: AppTheme.paddingMedium),
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.buttonRadius),
+          ),
+        ),
+        child: const Text(
+          '退出登录',
+          style: TextStyle(
+            fontSize: AppTheme.fontSizeMedium,
+            fontWeight: FontWeight.w600,
+          ),
+        ),
+      ),
+    );
+  }
+
+  void _showLogoutDialog() {
     showDialog(
       context: context,
-      builder: (context) => AlertDialog(
-        title: const Text('清除缓存'),
-        content: const Text('确定要清除所有缓存数据吗？此操作不可撤销。'),
-        actions: [
-          TextButton(
-            onPressed: () => Navigator.of(context).pop(),
-            child: const Text('取消'),
+      builder: (BuildContext context) {
+        return AlertDialog(
+          backgroundColor: AppTheme.cardBackground,
+          shape: RoundedRectangleBorder(
+            borderRadius: BorderRadius.circular(AppTheme.cardRadius),
           ),
-          TextButton(
-            onPressed: () {
-              Navigator.of(context).pop();
-              ScaffoldMessenger.of(context).showSnackBar(
-                const SnackBar(content: Text('缓存清除成功')),
-              );
-            },
-            child: const Text('确定'),
+          title: const Text(
+            '确认退出',
+            style: TextStyle(
+              color: AppTheme.textPrimary,
+              fontWeight: FontWeight.w600,
+            ),
           ),
-        ],
-      ),
+          content: Text(
+            '您确定要退出登录吗？',
+            style: TextStyle(
+              color: AppTheme.textSecondary,
+            ),
+          ),
+          actions: [
+            TextButton(
+              onPressed: () => Navigator.pop(context),
+              child: Text(
+                '取消',
+                style: TextStyle(
+                  color: AppTheme.textSecondary,
+                ),
+              ),
+            ),
+            ElevatedButton(
+              onPressed: () {
+                Navigator.pop(context);
+                // 这里添加退出登录的逻辑
+                Navigator.pushReplacementNamed(context, '/welcome');
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFFEF4444),
+              ),
+              child: const Text(
+                '退出',
+                style: TextStyle(color: Colors.white),
+              ),
+            ),
+          ],
+        );
+      },
     );
   }
 }

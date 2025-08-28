@@ -1,35 +1,69 @@
 import 'package:flutter/material.dart';
+import 'package:provider/provider.dart' as provider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:flutter_screenutil/flutter_screenutil.dart';
+import 'core/router/app_router.dart';
+import 'core/services/token_refresh_service.dart';
+// import 'core/services/app_initializer.dart';
+import 'core/theme/app_theme.dart';
+import 'features/auth/providers/auth_provider.dart';
+import 'features/splash/presentation/pages/welcome_page.dart';
 
-import 'core/app.dart';
-import 'core/app_initializer.dart';
-
-/// 应用程序入口点
 void main() async {
-  // 初始化应用
-  await AppInitializer.initialize();
+  WidgetsFlutterBinding.ensureInitialized();
+  
+  // 初始化应用服务
+  // await AppInitializer.initialize();
   
   runApp(
-    ProviderScope(
-      child: const MyApp(),
+    const ProviderScope(
+      child: MyApp(),
     ),
   );
 }
 
-/// 主应用组件
-class MyApp extends ConsumerWidget {
-  const MyApp({super.key});
+class MyApp extends StatefulWidget {
+  const MyApp({Key? key}) : super(key: key);
 
   @override
-  Widget build(BuildContext context, WidgetRef ref) {
-    return ScreenUtilInit(
-      designSize: const Size(375, 812), // 设计稿尺寸
-      minTextAdapt: true,
-      splitScreenMode: true,
-      builder: (context, child) {
-        return const App();
-      },
+  State<MyApp> createState() => _MyAppState();
+}
+
+class _MyAppState extends State<MyApp> {
+  final TokenRefreshService _tokenRefreshService = TokenRefreshService();
+
+  @override
+  void dispose() {
+    _tokenRefreshService.dispose();
+    super.dispose();
+  }
+
+  @override
+  Widget build(BuildContext context) {
+    return provider.MultiProvider(
+      providers: [
+        provider.ChangeNotifierProvider(
+          create: (context) {
+            final authProvider = AuthProvider();
+            // 监听登录状态变化，启动或停止令牌刷新
+            authProvider.addListener(() {
+              if (authProvider.isLoggedIn) {
+                _tokenRefreshService.startTokenRefresh();
+              } else {
+                _tokenRefreshService.stopTokenRefresh();
+              }
+            });
+            return authProvider;
+          },
+        ),
+      ],
+      child: MaterialApp(
+        title: 'AI智能助手',
+        theme: AppTheme.darkTheme,
+        home: const WelcomePage(),
+        initialRoute: AppRouter.splash,
+        onGenerateRoute: AppRouter.generateRoute,
+        debugShowCheckedModeBanner: false,
+      ),
     );
   }
-}
+} 
