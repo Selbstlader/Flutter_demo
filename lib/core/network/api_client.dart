@@ -4,6 +4,7 @@ import 'package:cookie_jar/cookie_jar.dart';
 import 'package:flutter/foundation.dart';
 
 import '../constants/app_constants.dart';
+import '../config/amap_config.dart';
 import '../utils/logger_util.dart';
 import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
@@ -219,6 +220,43 @@ class ApiClient {
       }
     } catch (e) {
       LoggerUtil.e('Cookie清除失败', e);
+    }
+  }
+
+  /// 高德地图Web服务API请求
+  static Future<Response<T>> amapWebRequest<T>(
+    String endpoint, {
+    Map<String, dynamic>? queryParameters,
+    Options? options,
+    CancelToken? cancelToken,
+  }) async {
+    try {
+      // 创建专用于高德地图API的Dio实例
+      final amapDio = Dio(BaseOptions(
+        baseUrl: AmapConfig.webServiceBaseUrl,
+        connectTimeout: Duration(milliseconds: AppConstants.connectTimeout),
+        receiveTimeout: Duration(milliseconds: AppConstants.receiveTimeout),
+        headers: {
+          'Content-Type': 'application/json',
+          'Accept': 'application/json',
+        },
+      ));
+
+      // 添加API密钥到查询参数
+      final params = queryParameters ?? {};
+      params['key'] = kIsWeb ? AmapConfig.webApiKey : AmapConfig.androidApiKey;
+
+      LoggerUtil.d('高德地图API请求: $endpoint');
+      final response = await amapDio.get<T>(
+        endpoint,
+        queryParameters: params,
+        options: options,
+        cancelToken: cancelToken,
+      );
+      return response;
+    } catch (e) {
+      LoggerUtil.e('高德地图API请求失败: $endpoint', e);
+      rethrow;
     }
   }
 }

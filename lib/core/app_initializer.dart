@@ -6,6 +6,7 @@ import 'package:hive_flutter/hive_flutter.dart';
 import 'network/api_client.dart';
 import 'services/connectivity_service.dart';
 import 'services/storage_service.dart';
+import 'services/amap_service.dart';
 import 'utils/logger_util.dart';
 
 /// 应用初始化器
@@ -33,7 +34,10 @@ class AppInitializer {
       // 5. 初始化连接监听
       await _initializeConnectivity();
 
-      // 6. 设置系统UI样式
+      // 6. 初始化高德地图服务
+      await _initializeAmapService();
+
+      // 7. 设置系统UI样式
       await _setupSystemUI();
 
       LoggerUtil.d('应用初始化完成');
@@ -94,6 +98,12 @@ class AppInitializer {
   static Future<void> _initializeConnectivity() async {
     await ConnectivityService.init();
     LoggerUtil.d('连接监听初始化完成');
+  }
+
+  /// 初始化高德地图服务
+  static Future<void> _initializeAmapService() async {
+    await AmapService.instance.init();
+    LoggerUtil.d('高德地图服务初始化完成');
   }
 
   /// 设置系统UI样式

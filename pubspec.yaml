@@ -46,6 +46,12 @@ dependencies:
   # 动画
   lottie: ^2.7.0
   flutter_staggered_animations: ^1.1.1
+  
+  # 地图服务 (临时注释以解决构建问题)
+  # amap_flutter_location: ^3.0.0
+  # amap_flutter_map: ^3.0.0
+  permission_handler: ^11.0.1
+  geolocator: ^10.1.0
 
 dev_dependencies:
   flutter_test:
