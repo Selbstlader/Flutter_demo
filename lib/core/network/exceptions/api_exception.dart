@@ -56,14 +56,7 @@ class ApiException implements Exception {
     );
   }
 
-  /// 认证异常
-  factory ApiException.unauthorized({String? message}) {
-    return ApiException(
-      code: 'UNAUTHORIZED',
-      message: message ?? '未授权，请重新登录',
-      statusCode: 401,
-    );
-  }
+  
 
   /// 禁止访问异常
   factory ApiException.forbidden({String? message}) {
@@ -126,8 +119,7 @@ class ApiException implements Exception {
   /// 是否为客户端错误
   bool get isClientError => statusCode >= 400 && statusCode < 500;
 
-  /// 是否为认证错误
-  bool get isAuthError => statusCode == 401 || statusCode == 403;
+
 
   @override
   String toString() {

@@ -5,7 +5,6 @@ import 'package:flutter/foundation.dart';
 
 import '../constants/app_constants.dart';
 import '../utils/logger_util.dart';
-import 'interceptors/auth_interceptor.dart';
 import 'interceptors/error_interceptor.dart';
 import 'interceptors/logging_interceptor.dart';
 
@@ -39,7 +38,6 @@ class ApiClient {
     }
 
     // 添加拦截器
-    _dio.interceptors.add(AuthInterceptor());
     _dio.interceptors.add(ErrorInterceptor());
     _dio.interceptors.add(LoggingInterceptor());
 

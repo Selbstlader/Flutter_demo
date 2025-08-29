@@ -9,7 +9,6 @@
 - ✨ **分层架构设计** - 数据层/业务层/表现层清晰分离
 - 🎯 **状态管理** - 使用Riverpod进行状态管理
 - 🌐 **网络封装** - 基于Dio的完整API封装，支持拦截器和错误统一处理
-- 🍪 **Cookie管理** - 自动化Cookie管理和持久化
 - 🎨 **主题系统** - 支持浅色/深色/跟随系统主题切换
 - 📱 **响应式设计** - 使用ScreenUtil适配不同屏幕尺寸
 - 🚀 **路由管理** - 基于GoRouter的声明式路由管理
@@ -30,7 +29,6 @@ lib/
 │   ├── network/                       # 网络层
 │   │   ├── api_client.dart           # API客户端封装
 │   │   ├── interceptors/             # 网络拦截器
-│   │   │   ├── auth_interceptor.dart # 认证拦截器
 │   │   │   ├── error_interceptor.dart# 错误处理拦截器
 │   │   │   └── logging_interceptor.dart# 日志拦截器
 │   │   ├── models/                   # 网络模型
@@ -57,22 +55,10 @@ lib/
     │   └── presentation/
     │       └── pages/
     │           └── splash_page.dart
-    ├── auth/                         # 认证模块
-    │   └── presentation/
-    │       └── pages/
-    │           └── login_page.dart
-    ├── home/                         # 首页模块
-    │   └── presentation/
-    │       └── pages/
-    │           └── home_page.dart
-    ├── profile/                      # 个人资料模块
-    │   └── presentation/
-    │       └── pages/
-    │           └── profile_page.dart
-    └── settings/                     # 设置模块
+    └── home/                         # 首页模块
         └── presentation/
             └── pages/
-                └── settings_page.dart
+                └── home_page.dart
 ```
 
 ## 架构设计

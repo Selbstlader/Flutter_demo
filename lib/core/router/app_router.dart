@@ -4,10 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../constants/app_constants.dart';
 import '../../features/splash/presentation/pages/splash_page.dart';
-import '../../features/auth/presentation/pages/login_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
-import '../../features/profile/presentation/pages/profile_page.dart';
-import '../../features/settings/presentation/pages/settings_page.dart';
 
 /// 路由配置类
 class AppRouter {
@@ -26,33 +23,11 @@ class AppRouter {
         builder: (context, state) => const SplashPage(),
       ),
       
-      // 登录页
-      GoRoute(
-        path: AppConstants.loginRoute,
-        name: 'login',
-        builder: (context, state) => const LoginPage(),
-      ),
-      
       // 主页
       GoRoute(
         path: AppConstants.homeRoute,
         name: 'home',
         builder: (context, state) => const HomePage(),
-        routes: [
-          // 个人资料页（子路由）
-          GoRoute(
-            path: 'profile',
-            name: 'profile',
-            builder: (context, state) => const ProfilePage(),
-          ),
-          
-          // 设置页（子路由）
-          GoRoute(
-            path: 'settings',
-            name: 'settings',
-            builder: (context, state) => const SettingsPage(),
-          ),
-        ],
       ),
     ],
     

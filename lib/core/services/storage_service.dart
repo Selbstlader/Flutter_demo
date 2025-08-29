@@ -10,7 +10,6 @@ class StorageService {
   StorageService._();
 
   static late Box _userBox;
-  static late Box _settingsBox;
   static late Box _cacheBox;
   static late SharedPreferences _prefs;
 
@@ -22,7 +21,7 @@ class StorageService {
       
       // 初始化Hive boxes
       _userBox = await Hive.openBox(AppConstants.userBoxName);
-      _settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
+
       _cacheBox = await Hive.openBox(AppConstants.cacheBoxName);
       
       LoggerUtil.d('存储服务初始化完成');
@@ -162,27 +161,7 @@ class StorageService {
     }
   }
 
-  /// 保存设置数据
-  static Future<void> setSettingsData(String key, dynamic value) async {
-    try {
-      await _settingsBox.put(key, value);
-      LoggerUtil.d('保存设置数据: $key');
-    } catch (e) {
-      LoggerUtil.e('保存设置数据失败: $e');
-    }
-  }
 
-  /// 获取设置数据
-  static T? getSettingsData<T>(String key) {
-    try {
-      final value = _settingsBox.get(key) as T?;
-      LoggerUtil.d('获取设置数据: $key');
-      return value;
-    } catch (e) {
-      LoggerUtil.e('获取设置数据失败: $e');
-      return null;
-    }
-  }
 
   /// 保存缓存数据
   static Future<void> setCacheData(String key, dynamic value) async {

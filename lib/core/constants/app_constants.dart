@@ -9,9 +9,8 @@ class AppConstants {
   static const int receiveTimeout = 30000; // 30秒
   static const int sendTimeout = 30000; // 30秒
 
-  /// 存储相关常量
+  /// Hive box names
   static const String userBoxName = 'user_box';
-  static const String settingsBoxName = 'settings_box';
   static const String cacheBoxName = 'cache_box';
 
   /// 缓存键名
@@ -27,8 +26,5 @@ class AppConstants {
 
   /// 页面路由名称
   static const String splashRoute = '/splash';
-  static const String loginRoute = '/login';
   static const String homeRoute = '/home';
-  static const String profileRoute = '/profile';
-  static const String settingsRoute = '/settings';
 }

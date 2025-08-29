@@ -20,7 +20,6 @@ class _HomePageState extends ConsumerState<HomePage> {
   final List<Widget> _pages = [
     const _HomeTab(),
     const _DiscoverTab(),
-    const _ProfileTab(),
   ];
 
   @override
@@ -28,14 +27,7 @@ class _HomePageState extends ConsumerState<HomePage> {
     return Scaffold(
       appBar: AppBar(
         title: const Text('Flutter Demo'),
-        actions: [
-          IconButton(
-            icon: const Icon(Icons.settings),
-            onPressed: () {
-              context.push('/home/settings');
-            },
-          ),
-        ],
+        actions: [],
       ),
       body: IndexedStack(
         index: _currentIndex,
@@ -57,10 +49,7 @@ class _HomePageState extends ConsumerState<HomePage> {
             icon: Icon(Icons.explore),
             label: '发现',
           ),
-          BottomNavigationBarItem(
-            icon: Icon(Icons.person),
-            label: '我的',
-          ),
+
         ],
       ),
     );
@@ -138,78 +127,6 @@ class _DiscoverTab extends StatelessWidget {
   Widget build(BuildContext context) {
     return const Center(
       child: Text('发现页面'),
-    );
-  }
-}
-
-/// 个人资料标签页
-class _ProfileTab extends StatelessWidget {
-  const _ProfileTab();
-
-  @override
-  Widget build(BuildContext context) {
-    return Padding(
-      padding: EdgeInsets.all(16.w),
-      child: Column(
-        children: [
-          FadeInAnimation(
-            child: Card(
-              child: ListTile(
-                leading: const CircleAvatar(
-                  child: Icon(Icons.person),
-                ),
-                title: const Text('用户名'),
-                subtitle: const Text('user@example.com'),
-                trailing: IconButton(
-                  icon: const Icon(Icons.edit),
-                  onPressed: () {
-                    context.push('/home/profile');
-                  },
-                ),
-              ),
-            ),
-          ),
-          
-          SizedBox(height: 16.h),
-          
-          FadeInAnimation(
-            delay: const Duration(milliseconds: 100),
-            child: Card(
-              child: Column(
-                children: [
-                  ListTile(
-                    leading: const Icon(Icons.settings),
-                    title: const Text('设置'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      context.push('/home/settings');
-                    },
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.help_outline),
-                    title: const Text('帮助'),
-                    trailing: const Icon(Icons.chevron_right),
-                    onTap: () {
-                      ScaffoldMessenger.of(context).showSnackBar(
-                        const SnackBar(content: Text('帮助功能待实现')),
-                      );
-                    },
-                  ),
-                  const Divider(height: 1),
-                  ListTile(
-                    leading: const Icon(Icons.logout),
-                    title: const Text('退出登录'),
-                    onTap: () {
-                      context.go(AppConstants.loginRoute);
-                    },
-                  ),
-                ],
-              ),
-            ),
-          ),
-        ],
-      ),
     );
   }
 }
