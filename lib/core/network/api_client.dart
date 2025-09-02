@@ -1,7 +1,8 @@
-import 'dart:convert';
 import 'dart:async';
-import 'package:http/http.dart' as http;
+import 'dart:convert';
+import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
+import '../utils/logger_util.dart';
 
 class ApiResponse<T> {
   final bool success;
@@ -24,14 +25,74 @@ class ApiClient {
   static const String tokenKey = 'auth_token';
   static const String refreshTokenKey = 'refresh_token';
   static const String tenantIdKey = 'tenant_id';
-  
+
   static final ApiClient _instance = ApiClient._internal();
   factory ApiClient() => _instance;
-  ApiClient._internal();
 
+  late Dio _dio;
   String? _token;
   String? _refreshToken;
   int _tenantId = 1; // 默认租户ID
+
+  ApiClient._internal() {
+    _dio = Dio(BaseOptions(
+      baseUrl: baseUrl,
+      connectTimeout: const Duration(seconds: 30),
+      receiveTimeout: const Duration(seconds: 30),
+      headers: {
+        'Content-Type': 'application/json',
+      },
+    ));
+    _setupInterceptors();
+  }
+
+  void _setupInterceptors() {
+    // 请求拦截器
+    _dio.interceptors.add(InterceptorsWrapper(
+      onRequest: (options, handler) {
+        // 添加认证头
+        if (_token != null) {
+          options.headers['Authorization'] = 'Bearer $_token';
+        }
+        // 添加租户ID
+        options.headers['tenant-id'] = _tenantId.toString();
+
+        LoggerUtil.d('请求: ${options.method} ${options.path}');
+        handler.next(options);
+      },
+      onResponse: (response, handler) {
+        LoggerUtil.d(
+            '响应: ${response.statusCode} ${response.requestOptions.path}');
+        handler.next(response);
+      },
+      onError: (error, handler) async {
+        LoggerUtil.e('请求错误: ${error.message}', error.error);
+
+        // 处理401错误，尝试刷新token
+        if (error.response?.statusCode == 401 && _refreshToken != null) {
+          final refreshResult = await _refreshTokens();
+          if (refreshResult) {
+            // 重新发送原请求
+            final cloneReq = await _dio.request(
+              error.requestOptions.path,
+              options: Options(
+                method: error.requestOptions.method,
+                headers: error.requestOptions.headers,
+              ),
+              data: error.requestOptions.data,
+              queryParameters: error.requestOptions.queryParameters,
+            );
+            handler.resolve(cloneReq);
+            return;
+          } else {
+            await clearTokens();
+          }
+        }
+
+        handler.next(error);
+      },
+    ));
+  }
 
   Future<void> init() async {
     final prefs = await SharedPreferences.getInstance();
@@ -40,7 +101,8 @@ class ApiClient {
     _tenantId = prefs.getInt(tenantIdKey) ?? 1;
   }
 
-  Future<void> saveTokens(String token, String refreshToken, {int? tenantId}) async {
+  Future<void> saveTokens(String token, String refreshToken,
+      {int? tenantId}) async {
     _token = token;
     _refreshToken = refreshToken;
     if (tenantId != null) {
@@ -64,17 +126,6 @@ class ApiClient {
     await prefs.remove(refreshTokenKey);
   }
 
-  Map<String, String> get _headers {
-    final headers = {
-      'Content-Type': 'application/json',
-      'tenant-id': _tenantId.toString(),
-    };
-    if (_token != null) {
-      headers['Authorization'] = 'Bearer $_token';
-    }
-    return headers;
-  }
-
   ApiResponse<T> _validateHeaders<T>() {
     if (_tenantId <= 0) {
       return ApiResponse.error('缺少租户标识(tenant-id)，请联系管理员', code: 400);
@@ -96,11 +147,10 @@ class ApiClient {
     }
 
     try {
-      final response = await http.get(
-        Uri.parse('$baseUrl$endpoint'),
-        headers: _headers,
-      );
+      final response = await _dio.get(endpoint);
       return _handleResponse<T>(response, fromJson);
+    } on DioException catch (e) {
+      return ApiResponse.error('网络请求失败: ${e.message}');
     } catch (e) {
       return ApiResponse.error('网络请求失败: $e');
     }
@@ -121,22 +171,20 @@ class ApiClient {
     }
 
     try {
-      final response = await http.post(
-        Uri.parse('$baseUrl$endpoint'),
-        headers: _headers,
-        body: jsonEncode(data),
-      );
+      final response = await _dio.post(endpoint, data: data);
       return _handleResponse<T>(response, fromJson);
+    } on DioException catch (e) {
+      return ApiResponse.error('网络请求失败: ${e.message}');
     } catch (e) {
       return ApiResponse.error('网络请求失败: $e');
     }
   }
 
   Future<ApiResponse<T>> _handleResponse<T>(
-    http.Response response,
+    Response response,
     T Function(Map<String, dynamic>)? fromJson,
   ) async {
-    final Map<String, dynamic> responseData = jsonDecode(response.body);
+    final Map<String, dynamic> responseData = response.data;
 
     // 处理400错误，特别是租户相关错误
     if (response.statusCode == 400) {
@@ -147,19 +195,7 @@ class ApiClient {
       return ApiResponse.error(errorMsg, code: 400);
     }
 
-    if (response.statusCode == 401 && _refreshToken != null) {
-      // Token过期，尝试刷新
-      final refreshResult = await _refreshTokens();
-      if (refreshResult) {
-        // 重新发送原请求
-        return _retryRequest<T>(response.request!, fromJson);
-      } else {
-        await clearTokens();
-        return ApiResponse.error('登录已过期，请重新登录', code: 401);
-      }
-    }
-
-    if (response.statusCode >= 200 && response.statusCode < 300) {
+    if (response.statusCode! >= 200 && response.statusCode! < 300) {
       if (responseData['code'] == 0) {
         if (fromJson != null && responseData['data'] != null) {
           return ApiResponse.success(fromJson(responseData['data']));
@@ -183,49 +219,33 @@ class ApiClient {
     if (_refreshToken == null) return false;
 
     try {
-      // 刷新token时也需要包含tenant-id
-      final headers = {
-        'Content-Type': 'application/x-www-form-urlencoded',
-        'tenant-id': _tenantId.toString(),
-      };
-
-      final response = await http.post(
-        Uri.parse('$baseUrl/app-api/member/auth/refresh-token?refreshToken=$_refreshToken'),
-        headers: headers,
+      final response = await _dio.post(
+        '/app-api/member/auth/refresh-token',
+        queryParameters: {'refreshToken': _refreshToken},
+        options: Options(
+          headers: {
+            'Content-Type': 'application/x-www-form-urlencoded',
+            'tenant-id': _tenantId.toString(),
+          },
+        ),
       );
 
       if (response.statusCode == 200) {
-        final responseData = jsonDecode(response.body);
+        final responseData = response.data;
         if (responseData['code'] == 0 && responseData['data'] != null) {
           final data = responseData['data'];
           await saveTokens(data['accessToken'], data['refreshToken']);
           return true;
         }
       }
+    } on DioException catch (e) {
+      LoggerUtil.e('刷新token失败: ${e.message}');
     } catch (e) {
-      print('刷新token失败: $e');
+      LoggerUtil.e('刷新token失败: $e');
     }
     return false;
   }
 
-  Future<ApiResponse<T>> _retryRequest<T>(
-    http.BaseRequest originalRequest,
-    T Function(Map<String, dynamic>)? fromJson,
-  ) async {
-    if (originalRequest is http.Request) {
-      final newRequest = http.Request(originalRequest.method, originalRequest.url);
-      newRequest.headers.addAll(_headers);
-      newRequest.body = originalRequest.body;
-      
-      final response = await http.Response.fromStream(
-        await newRequest.send(),
-      );
-      return _handleResponse<T>(response, fromJson);
-    }
-    return ApiResponse.error('重试请求失败');
-  }
-
-  bool get isLoggedIn => _token != null;
   // 流式响应支持
   Stream<String> postStream(
     String endpoint,
@@ -242,27 +262,30 @@ class ApiClient {
     }
 
     try {
-      final request = http.Request('POST', Uri.parse('$baseUrl$endpoint'));
-      request.headers.addAll(_headers);
-      request.body = jsonEncode(data);
+      final response = await _dio.post(
+        endpoint,
+        data: data,
+        options: Options(
+          responseType: ResponseType.stream,
+        ),
+      );
 
-      final response = await request.send();
-      
       if (response.statusCode == 200) {
-        await for (final chunk in response.stream.transform(utf8.decoder)) {
+        await for (final chunk
+            in response.data.stream.transform(utf8.decoder)) {
           yield chunk;
         }
       } else {
-        final responseBody = await response.stream.bytesToString();
-        final responseData = jsonDecode(responseBody);
-        yield 'error: ${responseData['msg'] ?? '请求失败'}';
+        yield 'error: 请求失败';
       }
+    } on DioException catch (e) {
+      yield 'error: 网络请求失败: ${e.message}';
     } catch (e) {
       yield 'error: 网络请求失败: $e';
     }
   }
 
-  // bool get isLoggedIn => _token != null;
+  bool get isLoggedIn => _token != null;
   String? get token => _token;
   int get tenantId => _tenantId;
 }

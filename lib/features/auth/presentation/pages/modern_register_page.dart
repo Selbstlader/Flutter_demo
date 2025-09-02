@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
-import 'package:provider/provider.dart' as provider;
-import '../../providers/auth_provider.dart';
+import '../../providers/auth_notifier.dart';
 import '../../../../core/widgets/common_text_field.dart';
 import '../../../../core/widgets/error_message_widget.dart';
 import '../../../../core/widgets/gradient_button.dart';
@@ -69,16 +68,17 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
   Future<void> _handleRegister() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.register(
+    await ref.read(authNotifierProvider.notifier).register(
       _emailController.text.trim(),
       _passwordController.text,
       _confirmPasswordController.text,
-      nickname: _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
+      _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
     );
 
-    if (success && mounted) {
-      Navigator.of(context).pushReplacementNamed('/home');
+    // 检查注册是否成功
+    final authState = ref.read(authNotifierProvider);
+    if (authState.isAuthenticated && mounted) {
+      context.go('/home');
     }
   }
 

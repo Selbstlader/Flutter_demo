@@ -1,8 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import 'package:provider/provider.dart' as provider;
 import 'package:go_router/go_router.dart';
-import '../../providers/auth_provider.dart';
+import '../../providers/auth_notifier.dart';
 import 'modern_register_page.dart';
 import '../../../../core/widgets/common_text_field.dart';
 import '../../../../core/widgets/error_message_widget.dart';
@@ -65,13 +64,14 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   Future<void> _handleLogin() async {
     if (!_formKey.currentState!.validate()) return;
 
-    final authProvider = provider.Provider.of<AuthProvider>(context, listen: false);
-    final success = await authProvider.login(
+    await ref.read(authNotifierProvider.notifier).login(
       _emailController.text.trim(),
       _passwordController.text,
     );
 
-    if (success && mounted) {
+    // 检查登录是否成功
+    final authState = ref.read(authNotifierProvider);
+    if (authState.isAuthenticated && mounted) {
       context.go('/home');
     }
   }

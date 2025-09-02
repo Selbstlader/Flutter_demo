@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
-import 'package:provider/provider.dart';
-import '../../features/auth/providers/auth_provider.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
+import '../../features/auth/providers/auth_notifier.dart';
 
 /// 通用渐变按钮组件
 class GradientButton extends StatelessWidget {
@@ -80,7 +80,7 @@ class GradientButton extends StatelessWidget {
 }
 
 /// 带AuthProvider集成的渐变按钮
-class AuthGradientButton extends StatelessWidget {
+class AuthGradientButton extends ConsumerWidget {
   final String text;
   final VoidCallback? onPressed;
   final double? width;
@@ -101,20 +101,18 @@ class AuthGradientButton extends StatelessWidget {
   });
 
   @override
-  Widget build(BuildContext context) {
-    return Consumer<AuthProvider>(
-      builder: (context, authProvider, child) {
-        return GradientButton(
-          text: text,
-          onPressed: onPressed,
-          showLoading: authProvider.isLoading,
-          width: width,
-          height: height,
-          gradientColors: gradientColors,
-          borderRadius: borderRadius,
-          boxShadow: boxShadow,
-        );
-      },
+  Widget build(BuildContext context, WidgetRef ref) {
+    final isLoading = ref.watch(isLoadingProvider);
+    
+    return GradientButton(
+      text: text,
+      onPressed: onPressed,
+      showLoading: isLoading,
+      width: width,
+      height: height,
+      gradientColors: gradientColors,
+      borderRadius: borderRadius,
+      boxShadow: boxShadow,
     );
   }
 }

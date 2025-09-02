@@ -1,4 +1,4 @@
-class ChatMessage {
+class ApiChatMessage {
   final String id;
   final String query;
   final String? answer;
@@ -9,7 +9,7 @@ class ChatMessage {
   final int createdAt;
   final bool isUser;
 
-  ChatMessage({
+  ApiChatMessage({
     required this.id,
     required this.query,
     this.answer,
@@ -21,8 +21,8 @@ class ChatMessage {
     required this.isUser,
   });
 
-  factory ChatMessage.fromJson(Map<String, dynamic> json) {
-    return ChatMessage(
+  factory ApiChatMessage.fromJson(Map<String, dynamic> json) {
+    return ApiChatMessage(
       id: json['id'] ?? '',
       query: json['query'] ?? '',
       answer: json['answer'],
@@ -191,7 +191,7 @@ class FileInfo {
 
 class MessageHistoryResponse {
   final int limit;
-  final List<ChatMessage> data;
+  final List<ApiChatMessage> data;
   final bool hasMore;
 
   MessageHistoryResponse({
@@ -204,10 +204,10 @@ class MessageHistoryResponse {
     return MessageHistoryResponse(
       limit: json['limit'] ?? 0,
       data: json['data'] != null
-          ? List<ChatMessage>.from(
-              (json['data'] as List).map((e) => ChatMessage.fromJson(e as Map<String, dynamic>))
+          ? List<ApiChatMessage>.from(
+              (json['data'] as List).map((e) => ApiChatMessage.fromJson(e as Map<String, dynamic>))
             )
-          : <ChatMessage>[],
+          : <ApiChatMessage>[],
       hasMore: json['has_more'] ?? false,
     );
   }

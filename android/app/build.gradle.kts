@@ -10,6 +10,19 @@ android {
     compileSdk = flutter.compileSdkVersion
     ndkVersion = flutter.ndkVersion
     buildToolsVersion = "35.0.1"
+    
+    // 启用App Bundle支持
+    bundle {
+        language {
+            enableSplit = true
+        }
+        density {
+            enableSplit = true
+        }
+        abi {
+            enableSplit = true
+        }
+    }
 
     compileOptions {
         sourceCompatibility = JavaVersion.VERSION_11
@@ -33,6 +46,15 @@ android {
 
     buildTypes {
         release {
+            // 启用代码混淆和压缩
+            isMinifyEnabled = true
+            // 启用资源压缩
+            isShrinkResources = true
+            // 使用默认的ProGuard规则文件
+            proguardFiles(
+                getDefaultProguardFile("proguard-android-optimize.txt"),
+                "proguard-rules.pro"
+            )
             // TODO: Add your own signing config for the release build.
             // Signing with the debug keys for now, so `flutter run --release` works.
             signingConfig = signingConfigs.getByName("debug")

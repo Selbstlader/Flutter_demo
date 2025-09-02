@@ -1,6 +1,5 @@
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
-import 'package:provider/provider.dart' as provider;
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:flutter_dotenv/flutter_dotenv.dart';
@@ -11,7 +10,7 @@ import 'core/services/supabase_service.dart';
 import 'core/utils/safe_area_utils.dart';
 // import 'core/services/app_initializer.dart';
 import 'core/theme/app_theme.dart';
-import 'features/auth/providers/auth_provider.dart';
+import 'features/auth/providers/auth_notifier.dart';
 
 void main() async {
   WidgetsFlutterBinding.ensureInitialized();
@@ -49,14 +48,14 @@ void main() async {
   );
 }
 
-class MyApp extends StatefulWidget {
+class MyApp extends ConsumerStatefulWidget {
   const MyApp({Key? key}) : super(key: key);
 
   @override
-  State<MyApp> createState() => _MyAppState();
+  ConsumerState<MyApp> createState() => _MyAppState();
 }
 
-class _MyAppState extends State<MyApp> {
+class _MyAppState extends ConsumerState<MyApp> {
   final TokenRefreshService _tokenRefreshService = TokenRefreshService();
 
   @override
@@ -67,29 +66,20 @@ class _MyAppState extends State<MyApp> {
 
   @override
   Widget build(BuildContext context) {
-    return provider.MultiProvider(
-      providers: [
-        provider.ChangeNotifierProvider(
-          create: (context) {
-            final authProvider = AuthProvider();
-            // 监听登录状态变化，启动或停止令牌刷新
-            authProvider.addListener(() {
-              if (authProvider.isLoggedIn) {
-                _tokenRefreshService.startTokenRefresh();
-              } else {
-                _tokenRefreshService.stopTokenRefresh();
-              }
-            });
-            return authProvider;
-          },
-        ),
-      ],
-      child: MaterialApp.router(
-        title: 'AI智能助手',
-        theme: AppTheme.darkTheme,
-        routerConfig: AppRouter.router,
-        debugShowCheckedModeBanner: false,
-      ),
+    // 监听认证状态变化
+    ref.listen<bool>(isAuthenticatedProvider, (previous, next) {
+      if (next) {
+        _tokenRefreshService.startTokenRefresh();
+      } else {
+        _tokenRefreshService.stopTokenRefresh();
+      }
+    });
+
+    return MaterialApp.router(
+      title: 'AI智能助手',
+      theme: AppTheme.darkTheme,
+      routerConfig: AppRouter.router,
+      debugShowCheckedModeBanner: false,
     );
   }
 }
