@@ -14,9 +14,33 @@
 - 📱 **响应式设计** - 使用ScreenUtil适配不同屏幕尺寸
 - 🚀 **路由管理** - 基于GoRouter的声明式路由管理
 - 💾 **本地存储** - 多层次存储方案(SharedPreferences + Hive)
-- 🎭 **动画组件** - 丰富的动画组件库
 - 🔧 **工具类封装** - 完整的工具类和扩展方法
 - 📝 **日志系统** - 完整的日志记录和调试支持
+- 🤖 **AI集成** - 集成DeepSeek AI服务和Supabase后端
+
+## 📊 项目统计
+
+- **总文件数**: 50+ 个Dart文件
+- **代码行数**: 4000+ 行
+- **功能模块**: 6个主要模块
+- **核心组件**: 15+ 个可复用组件
+- **状态管理**: 完整的Riverpod集成
+- **后端服务**: Supabase集成
+- **AI服务**: DeepSeek AI集成
+- **存储层**: 多层次存储方案
+
+## 🎯 项目特色
+
+✅ **完整的分层架构设计**  
+✅ **现代化的状态管理方案**  
+✅ **Supabase后端集成**  
+✅ **DeepSeek AI服务集成**  
+✅ **灵活的主题系统**  
+✅ **完善的错误处理机制**  
+✅ **类型安全的路由管理**  
+✅ **多层次的存储方案**  
+✅ **响应式设计支持**  
+✅ **完整的开发文档**
 
 ## 项目结构
 
@@ -24,55 +48,78 @@
 lib/
 ├── main.dart                          # 应用入口
 ├── core/                              # 核心模块
-│   ├── app.dart                       # 应用主组件
+│   ├── config/                        # 配置文件
+│   │   ├── android_adaptation_config.dart # 安卓适配配置
+│   │   ├── deepseek_config.dart       # DeepSeek配置
+│   │   └── supabase_config.dart       # Supabase配置
 │   ├── constants/                     # 常量定义
 │   │   └── app_constants.dart         # 应用常量
+│   ├── models/                        # 核心数据模型
+│   │   ├── social_security_model.dart # 社保模型
+│   │   ├── social_security_model.g.dart# 生成的序列化代码
+│   │   ├── user_model.dart            # 用户模型
+│   │   └── user_model.g.dart          # 生成的序列化代码
 │   ├── network/                       # 网络层
-│   │   ├── api_client.dart           # API客户端封装
-│   │   ├── interceptors/             # 网络拦截器
-│   │   │   ├── auth_interceptor.dart # 认证拦截器
-│   │   │   ├── error_interceptor.dart# 错误处理拦截器
-│   │   │   └── logging_interceptor.dart# 日志拦截器
-│   │   ├── models/                   # 网络模型
-│   │   │   ├── api_response.dart     # API响应基础模型
-│   │   │   └── api_response.g.dart   # 生成的序列化代码
-│   │   └── exceptions/               # 异常定义
-│   │       └── api_exception.dart    # API异常类
-│   ├── providers/                    # 全局状态提供者
-│   │   └── theme_provider.dart       # 主题状态管理
-│   ├── router/                       # 路由管理
-│   │   └── app_router.dart          # 路由配置
-│   ├── services/                     # 服务层
-│   │   └── storage_service.dart     # 存储服务
-│   ├── theme/                        # 主题配置
-│   │   └── app_theme.dart           # 应用主题
-│   ├── utils/                        # 工具类
-│   │   └── logger_util.dart         # 日志工具
-│   └── widgets/                      # 通用组件
-│       └── animations/               # 动画组件
-│           ├── fade_in_animation.dart# 淡入动画
-│           └── slide_in_animation.dart# 滑入动画
-└── features/                         # 功能模块
-    ├── splash/                       # 启动页模块
+│   │   └── api_client.dart           # API客户端封装
+│   ├── router/                        # 路由管理
+│   │   └── app_router.dart           # 路由配置
+│   ├── services/                      # 服务层
+│   │   ├── connectivity_service.dart  # 网络连接服务
+│   │   ├── storage_service.dart       # 存储服务
+│   │   ├── supabase_auth_service.dart # Supabase认证服务
+│   │   ├── supabase_data_service.dart # Supabase数据服务
+│   │   ├── supabase_service.dart      # Supabase基础服务
+│   │   └── token_refresh_service.dart # 令牌刷新服务
+│   ├── theme/                         # 主题配置
+│   │   └── app_theme.dart            # 应用主题
+│   ├── utils/                         # 工具类
+│   │   ├── logger_util.dart          # 日志工具
+│   │   └── safe_area_utils.dart       # 安全区域工具
+│   └── widgets/                       # 通用组件
+│       ├── adaptive_form_container.dart# 自适应表单容器
+│       ├── common_text_field.dart     # 通用文本输入框
+│       ├── error_message_widget.dart  # 错误消息组件
+│       ├── gradient_button.dart       # 渐变按钮
+│       └── safe_area_scaffold.dart    # 安全区域脚手架
+└── features/                          # 功能模块
+    ├── splash/                        # 启动页模块
     │   └── presentation/
     │       └── pages/
-    │           └── splash_page.dart
-    ├── auth/                         # 认证模块
+    ├── auth/                          # 认证模块
+    │   ├── domain/                    # 领域层
+    │   │   └── services/              # 领域服务
+    │   ├── models/                    # 数据模型
+    │   │   └── user_model.dart        # 用户模型
+    │   ├── presentation/              # 表现层
+    │   │   └── pages/                 # 页面
+    │   ├── providers/                 # 状态管理
+    │   │   ├── auth_notifier.dart     # 认证通知器
+    │   │   └── auth_provider.dart     # 认证状态管理
+    │   ├── services/                  # 服务层
+    │   │   └── auth_service.dart      # 认证服务
+    │   └── utils/                     # 工具类
+    │       └── auth_error_handler.dart# 认证错误处理
+    ├── home/                          # 首页模块
+    │   ├── data/                      # 数据层
+    │   │   └── services/              # 数据服务
+    │   ├── models/                    # 数据模型
+    │   │   ├── chat_message.dart      # 聊天消息模型
+    │   │   ├── chat_models.dart       # 聊天相关模型
+    │   │   └── user_context.dart      # 用户上下文模型
+    │   ├── presentation/              # 表现层
+    │   │   ├── pages/                 # 页面
+    │   │   └── widgets/               # 组件
+    │   └── services/                  # 服务层
+    │       ├── chat_service.dart      # 聊天服务
+    │       └── deepseek_service.dart  # DeepSeek服务
+    ├── recommendation/                # 推荐模块
+    ├── search/                        # 搜索模块
+    ├── settings/                      # 设置模块
     │   └── presentation/
     │       └── pages/
-    │           └── login_page.dart
-    ├── home/                         # 首页模块
-    │   └── presentation/
-    │       └── pages/
-    │           └── home_page.dart
-    ├── profile/                      # 个人资料模块
-    │   └── presentation/
-    │       └── pages/
-    │           └── profile_page.dart
-    └── settings/                     # 设置模块
+    └── test/                          # 测试模块
         └── presentation/
             └── pages/
-                └── settings_page.dart
 ```
 
 ## 架构设计
@@ -159,20 +206,20 @@ flutter run
 ### 核心依赖
 - `flutter_riverpod`: 状态管理
 - `go_router`: 路由管理
+- `supabase_flutter`: Supabase后端服务
 - `dio`: 网络请求
-- `hive`: 本地数据库
 - `shared_preferences`: 键值对存储
 
 ### UI相关
 - `flutter_screenutil`: 屏幕适配
-- `cached_network_image`: 图片缓存
-- `lottie`: 动画支持
+- `google_fonts`: 字体支持
+- `flutter_svg`: SVG图标支持
 
 ### 工具类
 - `logger`: 日志记录
 - `connectivity_plus`: 网络状态检测
-- `device_info_plus`: 设备信息
-- `package_info_plus`: 应用信息
+- `json_annotation`: JSON序列化注解
+- `build_runner`: 代码生成工具
 
 ## 开发规范
 

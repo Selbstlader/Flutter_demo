@@ -9,77 +9,85 @@ flutter_demo/
 ├── 📄 pubspec.yaml                          # 项目依赖配置
 ├── 📄 analysis_options.yaml                 # 代码分析配置
 ├── 📁 assets/                               # 资源文件目录
-│   ├── 📁 images/                           # 图片资源
-│   ├── 📁 animations/                       # 动画资源
-│   ├── 📁 icons/                           # 图标资源
-│   └── 📁 fonts/                           # 字体资源
+│   ├── 📁 data/                            # 数据文件
+│   │   └── 📄 regions.json                 # 地区数据
+│   └── 📁 icons/                           # 图标资源
+│       └── 📄 app_icon.png                 # 应用图标
 └── 📁 lib/                                 # 源代码目录
     ├── 📄 main.dart                         # 应用入口文件
     ├── 📁 core/                            # 核心模块
-    │   ├── 📄 app.dart                      # 应用主组件
-    │   ├── 📄 app_initializer.dart          # 应用初始化器
+    │   ├── 📁 config/                       # 配置文件
+    │   │   ├── 📄 android_adaptation_config.dart # 安卓适配配置
+    │   │   ├── 📄 deepseek_config.dart      # DeepSeek配置
+    │   │   └── 📄 supabase_config.dart      # Supabase配置
     │   ├── 📁 constants/                    # 常量定义
     │   │   └── 📄 app_constants.dart        # 应用常量
+    │   ├── 📁 models/                       # 核心数据模型
+    │   │   ├── 📄 social_security_model.dart# 社保模型
+    │   │   ├── 📄 social_security_model.g.dart# 生成的序列化代码
+    │   │   ├── 📄 user_model.dart           # 用户模型
+    │   │   └── 📄 user_model.g.dart         # 生成的序列化代码
     │   ├── 📁 network/                      # 网络层
-    │   │   ├── 📄 api_client.dart          # API客户端封装
-    │   │   ├── 📁 interceptors/             # 网络拦截器
-    │   │   │   ├── 📄 auth_interceptor.dart # 认证拦截器
-    │   │   │   ├── 📄 error_interceptor.dart# 错误处理拦截器
-    │   │   │   └── 📄 logging_interceptor.dart# 日志拦截器
-    │   │   ├── 📁 models/                   # 网络模型
-    │   │   │   ├── 📄 api_response.dart     # API响应基础模型
-    │   │   │   └── 📄 api_response.g.dart   # 生成的序列化代码
-    │   │   └── 📁 exceptions/               # 异常定义
-    │   │       └── 📄 api_exception.dart    # API异常类
-    │   ├── 📁 providers/                    # 全局状态提供者
-    │   │   └── 📄 theme_provider.dart       # 主题状态管理
+    │   │   └── 📄 api_client.dart          # API客户端封装
     │   ├── 📁 router/                       # 路由管理
     │   │   └── 📄 app_router.dart          # 路由配置
     │   ├── 📁 services/                     # 服务层
     │   │   ├── 📄 connectivity_service.dart # 网络连接服务
-    │   │   ├── 📄 device_service.dart       # 设备信息服务
-    │   │   └── 📄 storage_service.dart      # 存储服务
+    │   │   ├── 📄 storage_service.dart      # 存储服务
+    │   │   ├── 📄 supabase_auth_service.dart# Supabase认证服务
+    │   │   ├── 📄 supabase_data_service.dart# Supabase数据服务
+    │   │   ├── 📄 supabase_service.dart     # Supabase基础服务
+    │   │   └── 📄 token_refresh_service.dart# 令牌刷新服务
     │   ├── 📁 theme/                        # 主题配置
     │   │   └── 📄 app_theme.dart           # 应用主题
     │   ├── 📁 utils/                        # 工具类
-    │   │   ├── 📄 extensions.dart          # 扩展方法
-    │   │   └── 📄 logger_util.dart         # 日志工具
+    │   │   ├── 📄 logger_util.dart         # 日志工具
+    │   │   └── 📄 safe_area_utils.dart      # 安全区域工具
     │   └── 📁 widgets/                      # 通用组件
-    │       ├── 📁 animations/               # 动画组件
-    │       │   ├── 📄 fade_in_animation.dart# 淡入动画
-    │       │   └── 📄 slide_in_animation.dart# 滑入动画
-    │       └── 📁 common/                   # 通用组件
-    │           ├── 📄 empty_widget.dart     # 空状态组件
-    │           └── 📄 loading_widget.dart   # 加载组件
+    │       ├── 📄 adaptive_form_container.dart# 自适应表单容器
+    │       ├── 📄 common_text_field.dart    # 通用文本输入框
+    │       ├── 📄 error_message_widget.dart # 错误消息组件
+    │       ├── 📄 gradient_button.dart      # 渐变按钮
+    │       └── 📄 safe_area_scaffold.dart   # 安全区域脚手架
     └── 📁 features/                         # 功能模块
         ├── 📁 splash/                       # 启动页模块
         │   └── 📁 presentation/
         │       └── 📁 pages/
-        │           └── 📄 splash_page.dart
         ├── 📁 auth/                         # 认证模块
-        │   ├── 📁 data/                     # 数据层
-        │   │   ├── 📁 models/               # 数据模型
-        │   │   │   ├── 📄 user_model.dart   # 用户模型
-        │   │   │   └── 📄 user_model.g.dart # 生成的序列化代码
-        │   │   └── 📁 services/             # 数据服务
-        │   │       └── 📄 auth_service.dart # 认证服务
-        │   └── 📁 presentation/             # 表现层
-        │       ├── 📁 pages/                # 页面
-        │       │   └── 📄 login_page.dart   # 登录页
-        │       └── 📁 providers/            # 状态管理
-        │           └── 📄 auth_provider.dart# 认证状态管理
+        │   ├── 📁 domain/                   # 领域层
+        │   │   └── 📁 services/             # 领域服务
+        │   ├── 📁 models/                   # 数据模型
+        │   │   └── 📄 user_model.dart       # 用户模型
+        │   ├── 📁 presentation/             # 表现层
+        │   │   └── 📁 pages/                # 页面
+        │   ├── 📁 providers/                # 状态管理
+        │   │   ├── 📄 auth_notifier.dart    # 认证通知器
+        │   │   └── 📄 auth_provider.dart    # 认证状态管理
+        │   ├── 📁 services/                 # 服务层
+        │   │   └── 📄 auth_service.dart     # 认证服务
+        │   └── 📁 utils/                    # 工具类
+        │       └── 📄 auth_error_handler.dart# 认证错误处理
         ├── 📁 home/                         # 首页模块
+        │   ├── 📁 data/                     # 数据层
+        │   │   └── 📁 services/             # 数据服务
+        │   ├── 📁 models/                   # 数据模型
+        │   │   ├── 📄 chat_message.dart     # 聊天消息模型
+        │   │   ├── 📄 chat_models.dart      # 聊天相关模型
+        │   │   └── 📄 user_context.dart     # 用户上下文模型
+        │   ├── 📁 presentation/             # 表现层
+        │   │   ├── 📁 pages/                # 页面
+        │   │   └── 📁 widgets/              # 组件
+        │   └── 📁 services/                 # 服务层
+        │       ├── 📄 chat_service.dart     # 聊天服务
+        │       └── 📄 deepseek_service.dart # DeepSeek服务
+        ├── 📁 recommendation/               # 推荐模块
+        ├── 📁 search/                       # 搜索模块
+        ├── 📁 settings/                     # 设置模块
         │   └── 📁 presentation/
         │       └── 📁 pages/
-        │           └── 📄 home_page.dart
-        ├── 📁 profile/                      # 个人资料模块
-        │   └── 📁 presentation/
-        │       └── 📁 pages/
-        │           └── 📄 profile_page.dart
-        └── 📁 settings/                     # 设置模块
+        └── 📁 test/                         # 测试模块
             └── 📁 presentation/
                 └── 📁 pages/
-                    └── 📄 settings_page.dart
 ```
 
 ## 🏗️ 架构设计
