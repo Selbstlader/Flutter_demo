@@ -5,7 +5,9 @@
 
 interface NavigateToOptions {
   url: "/pages/index" |
-       "/pages/hi" |
+       "/pages/ai-chat" |
+       "/pages/pension-result" |
+       "/pages/social-result" |
        "/pages/webview" |
        "/pages-sub/index";
 }

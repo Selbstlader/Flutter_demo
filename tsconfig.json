@@ -13,7 +13,8 @@
     "resolveJsonModule": true,
     "types": [
       "@dcloudio/types",
-      "@uni-helper/uni-app-types"
+      "@uni-helper/uni-app-types",
+      "vue"
     ],
     "allowJs": true,
     "strict": true,
