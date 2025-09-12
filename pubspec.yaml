@@ -47,9 +47,9 @@ dependencies:
   lottie: ^2.7.0
   flutter_staggered_animations: ^1.1.1
   
-  # Supabase相关
-  supabase_flutter: ^2.3.4
-  supabase: ^2.2.2
+  # Supabase相关 - 已注释，改用独立后端接口
+  # supabase_flutter: ^2.3.4
+  # supabase: ^2.2.2
 
 dev_dependencies:
   flutter_test:

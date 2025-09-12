@@ -1,376 +1,510 @@
 import 'package:hive_flutter/hive_flutter.dart';
 import 'package:shared_preferences/shared_preferences.dart';
-
-import '../constants/app_constants.dart';
+import 'dart:convert';
 import '../utils/logger_util.dart';
-import '../models/user_model.dart';
-import '../models/social_security_model.dart';
-import 'supabase_service.dart';
-import 'supabase_data_service.dart';
-import 'supabase_auth_service.dart';
 
-/// 本地存储服务类
+/// 本地存储服务
+/// 提供SharedPreferences和Hive的统一存储接口
 class StorageService {
-  // 私有构造函数，防止实例化
+  static StorageService? _instance;
+  static StorageService get instance => _instance ??= StorageService._();
+
   StorageService._();
 
-  static late Box _userBox;
-  static late Box _settingsBox;
-  static late Box _cacheBox;
-  static late SharedPreferences _prefs;
+  SharedPreferences? _prefs;
+  Box? _userInfoBox;
+  Box? _testSessionsBox;
+  Box? _cacheBox;
+
+  // SharedPreferences 键值定义
+  static const String USER_INFO_KEY = 'user_info';
+  static const String TEST_SESSIONS_KEY = 'test_sessions';
+  static const String CURRENT_SESSION_KEY = 'current_session';
+  static const String PRIVACY_CONSENT_KEY = 'privacy_consent';
+  static const String SETTINGS_KEY = 'app_settings';
+
+  // Hive Box 名称
+  static const String USER_INFO_BOX = 'user_info_box';
+  static const String TEST_SESSIONS_BOX = 'test_sessions_box';
+  static const String CACHE_BOX = 'cache_box';
 
   /// 初始化存储服务
-  static Future<void> init() async {
+  Future<void> initialize() async {
     try {
       // 初始化SharedPreferences
       _prefs = await SharedPreferences.getInstance();
-      
-      // 初始化Hive boxes
-      _userBox = await Hive.openBox(AppConstants.userBoxName);
-      _settingsBox = await Hive.openBox(AppConstants.settingsBoxName);
-      _cacheBox = await Hive.openBox(AppConstants.cacheBoxName);
-      
-      LoggerUtil.d('存储服务初始化完成');
+
+      // 初始化Hive
+      await Hive.initFlutter();
+
+      // 打开Hive boxes
+      _userInfoBox = await Hive.openBox(USER_INFO_BOX);
+      _testSessionsBox = await Hive.openBox(TEST_SESSIONS_BOX);
+      _cacheBox = await Hive.openBox(CACHE_BOX);
+
+      LoggerUtil.info('StorageService initialized successfully');
     } catch (e) {
-      LoggerUtil.e('存储服务初始化失败: $e');
+      LoggerUtil.error('Failed to initialize StorageService: $e');
       rethrow;
     }
   }
 
-  // ==================== SharedPreferences 操作 ====================
-  
-  /// 保存字符串
-  static Future<bool> setString(String key, String value) async {
+  /// 检查是否已初始化
+  bool get isInitialized => _prefs != null && _userInfoBox != null;
+
+  // ==================== SharedPreferences 方法 ====================
+
+  /// 保存字符串值
+  Future<bool> setString(String key, String value) async {
     try {
-      final result = await _prefs.setString(key, value);
-      LoggerUtil.d('保存字符串: $key = $value');
-      return result;
+      return await _prefs?.setString(key, value) ?? false;
     } catch (e) {
-      LoggerUtil.e('保存字符串失败: $e');
+      LoggerUtil.error('Failed to set string for key $key: $e');
       return false;
     }
   }
 
-  /// 获取字符串
-  static String? getString(String key) {
+  /// 获取字符串值
+  String? getString(String key) {
     try {
-      final value = _prefs.getString(key);
-      LoggerUtil.d('获取字符串: $key = $value');
-      return value;
+      return _prefs?.getString(key);
     } catch (e) {
-      LoggerUtil.e('获取字符串失败: $e');
-      return null;
-    }
-  }
-
-  /// 保存整数
-  static Future<bool> setInt(String key, int value) async {
-    try {
-      final result = await _prefs.setInt(key, value);
-      LoggerUtil.d('保存整数: $key = $value');
-      return result;
-    } catch (e) {
-      LoggerUtil.e('保存整数失败: $e');
-      return false;
-    }
-  }
-
-  /// 获取整数
-  static int? getInt(String key) {
-    try {
-      final value = _prefs.getInt(key);
-      LoggerUtil.d('获取整数: $key = $value');
-      return value;
-    } catch (e) {
-      LoggerUtil.e('获取整数失败: $e');
+      LoggerUtil.error('Failed to get string for key $key: $e');
       return null;
     }
   }
 
   /// 保存布尔值
-  static Future<bool> setBool(String key, bool value) async {
+  Future<bool> setBool(String key, bool value) async {
     try {
-      final result = await _prefs.setBool(key, value);
-      LoggerUtil.d('保存布尔值: $key = $value');
-      return result;
+      return await _prefs?.setBool(key, value) ?? false;
     } catch (e) {
-      LoggerUtil.e('保存布尔值失败: $e');
+      LoggerUtil.error('Failed to set bool for key $key: $e');
       return false;
     }
   }
 
   /// 获取布尔值
-  static bool? getBool(String key) {
+  bool getBool(String key, {bool defaultValue = false}) {
     try {
-      final value = _prefs.getBool(key);
-      LoggerUtil.d('获取布尔值: $key = $value');
-      return value;
+      return _prefs?.getBool(key) ?? defaultValue;
     } catch (e) {
-      LoggerUtil.e('获取布尔值失败: $e');
+      LoggerUtil.error('Failed to get bool for key $key: $e');
+      return defaultValue;
+    }
+  }
+
+  /// 保存整数值
+  Future<bool> setInt(String key, int value) async {
+    try {
+      return await _prefs?.setInt(key, value) ?? false;
+    } catch (e) {
+      LoggerUtil.error('Failed to set int for key $key: $e');
+      return false;
+    }
+  }
+
+  /// 获取整数值
+  int getInt(String key, {int defaultValue = 0}) {
+    try {
+      return _prefs?.getInt(key) ?? defaultValue;
+    } catch (e) {
+      LoggerUtil.error('Failed to get int for key $key: $e');
+      return defaultValue;
+    }
+  }
+
+  /// 保存JSON对象
+  Future<bool> setJson(String key, Map<String, dynamic> value) async {
+    try {
+      final jsonString = jsonEncode(value);
+      return await setString(key, jsonString);
+    } catch (e) {
+      LoggerUtil.error('Failed to set JSON for key $key: $e');
+      return false;
+    }
+  }
+
+  /// 获取JSON对象
+  Map<String, dynamic>? getJson(String key) {
+    try {
+      final jsonString = getString(key);
+      if (jsonString != null) {
+        return jsonDecode(jsonString) as Map<String, dynamic>;
+      }
+      return null;
+    } catch (e) {
+      LoggerUtil.error('Failed to get JSON for key $key: $e');
       return null;
     }
   }
 
   /// 删除键值
-  static Future<bool> remove(String key) async {
+  Future<bool> remove(String key) async {
     try {
-      final result = await _prefs.remove(key);
-      LoggerUtil.d('删除键值: $key');
-      return result;
+      return await _prefs?.remove(key) ?? false;
     } catch (e) {
-      LoggerUtil.e('删除键值失败: $e');
+      LoggerUtil.error('Failed to remove key $key: $e');
       return false;
     }
   }
 
-  // ==================== Hive 操作 ====================
-
-  /// 保存用户数据
-  static Future<void> setUserData(String key, dynamic value) async {
+  /// 清除所有数据
+  Future<bool> clear() async {
     try {
-      await _userBox.put(key, value);
-      LoggerUtil.d('保存用户数据: $key');
+      return await _prefs?.clear() ?? false;
     } catch (e) {
-      LoggerUtil.e('保存用户数据失败: $e');
+      LoggerUtil.error('Failed to clear SharedPreferences: $e');
+      return false;
     }
   }
 
-  /// 获取用户数据
-  static T? getUserData<T>(String key) {
+  // ==================== Hive 方法 ====================
+
+  /// 保存用户信息到Hive
+  Future<void> saveUserInfoToHive(String key, dynamic userInfo) async {
     try {
-      final value = _userBox.get(key) as T?;
-      LoggerUtil.d('获取用户数据: $key');
-      return value;
+      await _userInfoBox?.put(key, userInfo);
+      LoggerUtil.info('User info saved to Hive with key: $key');
     } catch (e) {
-      LoggerUtil.e('获取用户数据失败: $e');
+      LoggerUtil.error('Failed to save user info to Hive: $e');
+      rethrow;
+    }
+  }
+
+  /// 从Hive获取用户信息
+  dynamic getUserInfoFromHive(String key) {
+    try {
+      return _userInfoBox?.get(key);
+    } catch (e) {
+      LoggerUtil.error('Failed to get user info from Hive: $e');
       return null;
     }
   }
 
-  /// 删除用户数据
-  static Future<void> removeUserData(String key) async {
+  /// 保存测试会话到Hive
+  Future<void> saveTestSessionToHive(String key, dynamic session) async {
     try {
-      await _userBox.delete(key);
-      LoggerUtil.d('删除用户数据: $key');
+      await _testSessionsBox?.put(key, session);
+      LoggerUtil.info('Test session saved to Hive with key: $key');
     } catch (e) {
-      LoggerUtil.e('删除用户数据失败: $e');
+      LoggerUtil.error('Failed to save test session to Hive: $e');
+      rethrow;
     }
   }
 
-  /// 清空用户数据
-  static Future<void> clearUserData() async {
+  /// 从Hive获取测试会话
+  dynamic getTestSessionFromHive(String key) {
     try {
-      await _userBox.clear();
-      LoggerUtil.d('清空用户数据');
+      return _testSessionsBox?.get(key);
     } catch (e) {
-      LoggerUtil.e('清空用户数据失败: $e');
-    }
-  }
-
-  /// 保存设置数据
-  static Future<void> setSettingsData(String key, dynamic value) async {
-    try {
-      await _settingsBox.put(key, value);
-      LoggerUtil.d('保存设置数据: $key');
-    } catch (e) {
-      LoggerUtil.e('保存设置数据失败: $e');
-    }
-  }
-
-  /// 获取设置数据
-  static T? getSettingsData<T>(String key) {
-    try {
-      final value = _settingsBox.get(key) as T?;
-      LoggerUtil.d('获取设置数据: $key');
-      return value;
-    } catch (e) {
-      LoggerUtil.e('获取设置数据失败: $e');
+      LoggerUtil.error('Failed to get test session from Hive: $e');
       return null;
     }
   }
 
   /// 保存缓存数据
-  static Future<void> setCacheData(String key, dynamic value) async {
+  Future<void> saveCache(String key, dynamic data) async {
     try {
-      await _cacheBox.put(key, value);
-      LoggerUtil.d('保存缓存数据: $key');
+      await _cacheBox?.put(key, data);
     } catch (e) {
-      LoggerUtil.e('保存缓存数据失败: $e');
+      LoggerUtil.error('Failed to save cache: $e');
+      rethrow;
     }
   }
 
   /// 获取缓存数据
-  static T? getCacheData<T>(String key) {
+  T? getCache<T>(String key) {
     try {
-      final value = _cacheBox.get(key) as T?;
-      LoggerUtil.d('获取缓存数据: $key');
-      return value;
+      return _cacheBox?.get(key) as T?;
     } catch (e) {
-      LoggerUtil.e('获取缓存数据失败: $e');
+      LoggerUtil.error('Failed to get cache: $e');
       return null;
     }
   }
 
-  /// 清空缓存数据
-  static Future<void> clearCacheData() async {
+  /// 清除缓存
+  Future<void> clearCache() async {
     try {
-      await _cacheBox.clear();
-      LoggerUtil.d('清空缓存数据');
+      await _cacheBox?.clear();
+      LoggerUtil.info('Cache cleared');
     } catch (e) {
-      LoggerUtil.e('清空缓存数据失败: $e');
+      LoggerUtil.error('Failed to clear cache: $e');
+      rethrow;
     }
   }
 
-  // ==================== Supabase 同步功能 ====================
+  // ==================== 便捷方法 ====================
 
-  /// 同步用户数据到Supabase
-  static Future<bool> syncUserDataToSupabase(UserModel user) async {
+  /// 保存隐私同意状态
+  Future<bool> setPrivacyConsent(bool consent) async {
+    return await setBool(PRIVACY_CONSENT_KEY, consent);
+  }
+
+  /// 获取隐私同意状态
+  bool getPrivacyConsent() {
+    return getBool(PRIVACY_CONSENT_KEY);
+  }
+
+  /// 保存应用设置
+  Future<bool> saveAppSettings(Map<String, dynamic> settings) async {
+    return await setJson(SETTINGS_KEY, settings);
+  }
+
+  /// 获取应用设置
+  Map<String, dynamic>? getAppSettings() {
+    return getJson(SETTINGS_KEY);
+  }
+
+  /// 销毁存储服务
+  Future<void> dispose() async {
     try {
-      final dataService = SupabaseDataService();
-      await dataService.insert(table: 'users', data: user.toJson());
-      
-      // 同时保存到本地
-      await setUserData('current_user', user.toJson());
-      
-      LoggerUtil.d('用户数据同步到Supabase成功');
-      return true;
+      await _userInfoBox?.close();
+      await _testSessionsBox?.close();
+      await _cacheBox?.close();
+      LoggerUtil.info('StorageService disposed');
     } catch (e) {
-      LoggerUtil.e('用户数据同步到Supabase失败: $e');
-      return false;
+      LoggerUtil.error('Failed to dispose StorageService: $e');
     }
   }
 
-  /// 从Supabase获取用户数据
-  static Future<UserModel?> getUserDataFromSupabase(String userId) async {
+  // 便捷方法
+  Future<void> clearAll() async {
+    await _prefs?.clear();
+    await Hive.deleteFromDisk();
+  }
+
+  Future<bool> hasKey(String key) async {
+    return _prefs?.containsKey(key) ?? false;
+  }
+
+  // 心理测试相关方法
+  Future<void> saveUserInfo(dynamic userInfo) async {
     try {
-      final dataService = SupabaseDataService();
-      final data = await dataService.select(table: 'users', where: 'id', whereValue: userId);
-      
-      if (data.isNotEmpty) {
-        final user = UserModel.fromJson(data.first);
-        
-        // 同时保存到本地
-        await setUserData('current_user', user.toJson());
-        
-        LoggerUtil.d('从Supabase获取用户数据成功');
-        return user;
+      // 确保使用已初始化的box或重新打开
+      Box userInfoBox;
+      if (_userInfoBox != null && _userInfoBox!.isOpen) {
+        userInfoBox = _userInfoBox!;
+      } else {
+        userInfoBox = await Hive.openBox('user_info');
+      }
+
+      // 直接存储对象，不需要转换为JSON
+      await userInfoBox.put(userInfo.id, userInfo);
+      LoggerUtil.info('User info saved successfully with id: ${userInfo.id}');
+    } catch (e) {
+      LoggerUtil.error('Failed to save user info: $e');
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getUserInfo(String id) async {
+    try {
+      // 确保使用已初始化的box或重新打开
+      Box userInfoBox;
+      if (_userInfoBox != null && _userInfoBox!.isOpen) {
+        userInfoBox = _userInfoBox!;
+      } else {
+        userInfoBox = await Hive.openBox('user_info');
+      }
+
+      final data = userInfoBox.get(id);
+      LoggerUtil.info(
+          'Retrieved user info for id: $id, found: ${data != null}');
+      return data;
+    } catch (e) {
+      LoggerUtil.error('Failed to get user info: $e');
+      return null;
+    }
+  }
+
+  Future<void> saveTestSession(dynamic testSession) async {
+    try {
+      // 确保使用已初始化的box或重新打开
+      Box sessionBox;
+      if (_testSessionsBox != null && _testSessionsBox!.isOpen) {
+        sessionBox = _testSessionsBox!;
+      } else {
+        sessionBox = await Hive.openBox('test_sessions');
+      }
+
+      // 直接存储对象，不需要转换为JSON
+      await sessionBox.put(testSession.id, testSession);
+      LoggerUtil.info(
+          'Test session saved successfully with id: ${testSession.id}');
+    } catch (e) {
+      LoggerUtil.error('Failed to save test session: $e');
+      rethrow;
+    }
+  }
+
+  Future<dynamic> getTestSession(String id) async {
+    try {
+      // 确保使用已初始化的box或重新打开
+      Box sessionBox;
+      if (_testSessionsBox != null && _testSessionsBox!.isOpen) {
+        sessionBox = _testSessionsBox!;
+      } else {
+        sessionBox = await Hive.openBox('test_sessions');
+      }
+
+      final data = sessionBox.get(id);
+      LoggerUtil.info(
+          'Retrieved test session for id: $id, found: ${data != null}');
+      return data;
+    } catch (e) {
+      LoggerUtil.error('Failed to get test session: $e');
+      return null;
+    }
+  }
+
+  Future<void> saveTestResult(dynamic testResult) async {
+    final resultBox = await Hive.openBox('test_results');
+    await resultBox.put(testResult.id, testResult.toJson());
+  }
+
+  static Future<Map<String, dynamic>?> getTestSettings() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = prefs.getString('test_settings');
+      if (jsonString != null) {
+        return jsonDecode(jsonString) as Map<String, dynamic>;
       }
       return null;
     } catch (e) {
-      LoggerUtil.e('从Supabase获取用户数据失败: $e');
+      LoggerUtil.error('Failed to get test settings: $e');
       return null;
     }
   }
 
-  /// 同步社保数据到Supabase
-  static Future<bool> syncSocialSecurityToSupabase(SocialSecurityModel socialSecurity) async {
+  static Future<void> saveTestSettings(Map<String, dynamic> settings) async {
     try {
-      final dataService = SupabaseDataService();
-      await dataService.insert(table: 'social_security', data: socialSecurity.toJson());
-      
-      // 同时保存到本地缓存
-      await setCacheData('social_security_${socialSecurity.id}', socialSecurity.toJson());
-      
-      LoggerUtil.d('社保数据同步到Supabase成功');
-      return true;
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = jsonEncode(settings);
+      await prefs.setString('test_settings', jsonString);
+      LoggerUtil.info('Test settings saved');
     } catch (e) {
-      LoggerUtil.e('社保数据同步到Supabase失败: $e');
-      return false;
+      LoggerUtil.error('Failed to save test settings: $e');
+      rethrow;
     }
   }
 
-  /// 从Supabase获取社保数据
-  static Future<List<SocialSecurityModel>> getSocialSecurityFromSupabase(String userId) async {
+  static Future<void> clearAllTestData() async {
     try {
-      final dataService = SupabaseDataService();
-      final data = await dataService.select(table: 'social_security', where: 'user_id', whereValue: userId);
-      
-      final socialSecurityList = data.map((item) => SocialSecurityModel.fromJson(item)).toList();
-      
-      // 同时保存到本地缓存
-      for (final item in socialSecurityList) {
-        await setCacheData('social_security_${item.id}', item.toJson());
-      }
-      
-      LoggerUtil.d('从Supabase获取社保数据成功，共${socialSecurityList.length}条');
-      return socialSecurityList;
+      await Hive.deleteBoxFromDisk('user_info');
+      await Hive.deleteBoxFromDisk('test_sessions');
+      await Hive.deleteBoxFromDisk('test_results');
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.remove('test_settings');
+      LoggerUtil.info('All test data cleared');
     } catch (e) {
-      LoggerUtil.e('从Supabase获取社保数据失败: $e');
-      return [];
+      LoggerUtil.error('Failed to clear all test data: $e');
+      rethrow;
     }
   }
 
-  /// 离线模式：获取本地缓存的用户数据
-  static UserModel? getCachedUserData() {
+  static Future<Map<String, dynamic>> exportTestData() async {
     try {
-      final userData = getUserData<Map<String, dynamic>>('current_user');
-      if (userData != null) {
-        return UserModel.fromJson(userData);
-      }
-      return null;
+      final userInfoBox = await Hive.openBox('user_info');
+      final sessionBox = await Hive.openBox('test_sessions');
+      final resultBox = await Hive.openBox('test_results');
+
+      return {
+        'userInfo': userInfoBox.toMap(),
+        'testSessions': sessionBox.toMap(),
+        'testResults': resultBox.toMap(),
+        'exportedAt': DateTime.now().toIso8601String(),
+      };
     } catch (e) {
-      LoggerUtil.e('获取本地用户数据失败: $e');
-      return null;
+      LoggerUtil.error('Failed to export test data: $e');
+      rethrow;
     }
   }
 
-  /// 离线模式：获取本地缓存的社保数据
-  static List<SocialSecurityModel> getCachedSocialSecurityData() {
+  static Future<List<Map<String, dynamic>>> getAllTestSessions() async {
     try {
-      final List<SocialSecurityModel> socialSecurityList = [];
-      
-      // 遍历缓存box查找社保数据
-      for (final key in _cacheBox.keys) {
-        if (key.toString().startsWith('social_security_')) {
-          final data = getCacheData<Map<String, dynamic>>(key);
-          if (data != null) {
-            socialSecurityList.add(SocialSecurityModel.fromJson(data));
-          }
+      final sessionBox = await Hive.openBox('test_sessions');
+      final sessions = <Map<String, dynamic>>[];
+
+      for (final key in sessionBox.keys) {
+        final session = sessionBox.get(key);
+        if (session != null) {
+          sessions.add(Map<String, dynamic>.from(session));
         }
       }
-      
-      LoggerUtil.d('获取本地社保数据成功，共${socialSecurityList.length}条');
-      return socialSecurityList;
+
+      // 按完成时间排序（最新的在前）
+      sessions.sort((a, b) {
+        final aTime =
+            DateTime.tryParse(a['completedAt'] ?? '') ?? DateTime.now();
+        final bTime =
+            DateTime.tryParse(b['completedAt'] ?? '') ?? DateTime.now();
+        return bTime.compareTo(aTime);
+      });
+
+      return sessions;
     } catch (e) {
-      LoggerUtil.e('获取本地社保数据失败: $e');
+      LoggerUtil.error('Failed to get all test sessions: $e');
       return [];
     }
   }
 
-  /// 检查网络连接并决定数据源
-  static Future<bool> isOnline() async {
+  static Future<Map<String, dynamic>?> getTestResult(String id) async {
     try {
-      final authService = SupabaseAuthService();
-      return authService.isAuthenticated;
+      final resultBox = await Hive.openBox('test_results');
+      final result = resultBox.get(id);
+      return result != null ? Map<String, dynamic>.from(result) : null;
     } catch (e) {
-      LoggerUtil.e('检查网络连接失败: $e');
-      return false;
+      LoggerUtil.error('Failed to get test result: $e');
+      return null;
     }
   }
 
-  /// 智能数据获取：优先从Supabase获取，失败时使用本地缓存
-  static Future<UserModel?> getSmartUserData(String userId) async {
-    if (await isOnline()) {
-      final onlineData = await getUserDataFromSupabase(userId);
-      if (onlineData != null) {
-        return onlineData;
-      }
+  static Future<void> deleteTestSession(String id) async {
+    try {
+      final sessionBox = await Hive.openBox('test_sessions');
+      await sessionBox.delete(id);
+      LoggerUtil.info('Test session deleted with id: $id');
+    } catch (e) {
+      LoggerUtil.error('Failed to delete test session: $e');
+      rethrow;
     }
-    
-    // 网络不可用或获取失败时，使用本地缓存
-    return getCachedUserData();
   }
 
-  /// 智能数据获取：优先从Supabase获取，失败时使用本地缓存
-  static Future<List<SocialSecurityModel>> getSmartSocialSecurityData(String userId) async {
-    if (await isOnline()) {
-      final onlineData = await getSocialSecurityFromSupabase(userId);
-      if (onlineData.isNotEmpty) {
-        return onlineData;
-      }
+  static Future<void> deleteTestResult(String id) async {
+    try {
+      final resultBox = await Hive.openBox('test_results');
+      await resultBox.delete(id);
+      LoggerUtil.info('Test result deleted with id: $id');
+    } catch (e) {
+      LoggerUtil.error('Failed to delete test result: $e');
+      rethrow;
     }
-    
-    // 网络不可用或获取失败时，使用本地缓存
-    return getCachedSocialSecurityData();
+  }
+
+  /// 设置用户数据
+  static Future<void> setUserData(
+      String key, Map<String, dynamic> userData) async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      final jsonString = jsonEncode(userData);
+      await prefs.setString(key, jsonString);
+      LoggerUtil.info('User data saved with key: $key');
+    } catch (e) {
+      LoggerUtil.error('Failed to set user data: $e');
+      rethrow;
+    }
+  }
+
+  /// 清除用户数据
+  static Future<void> clearUserData() async {
+    try {
+      final prefs = await SharedPreferences.getInstance();
+      await prefs.clear();
+      LoggerUtil.info('User data cleared');
+    } catch (e) {
+      LoggerUtil.error('Failed to clear user data: $e');
+      rethrow;
+    }
   }
 }

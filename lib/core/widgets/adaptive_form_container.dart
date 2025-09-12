@@ -29,19 +29,19 @@ class AdaptiveFormContainer extends StatelessWidget {
     final double screenHeight = mediaQuery.size.height;
     final double keyboardHeight = mediaQuery.viewInsets.bottom;
     final double bottomSafeArea = SafeAreaUtils.getBottomSafeArea(context);
-    
+
     // 计算可用高度
-    double availableHeight = screenHeight - 
-                           SafeAreaUtils.getTopSafeArea(context) - 
-                           (enableBottomSafeArea ? bottomSafeArea : 0);
-    
+    double availableHeight = screenHeight -
+        SafeAreaUtils.getTopSafeArea(context) -
+        (enableBottomSafeArea ? bottomSafeArea : 0);
+
     // 如果键盘弹起，减去键盘高度
     if (enableKeyboardPadding && keyboardHeight > 0) {
       availableHeight -= keyboardHeight;
     }
 
     EdgeInsetsGeometry finalPadding = padding ?? const EdgeInsets.all(16.0);
-    
+
     // 响应式padding调整
     final double responsivePadding = ResponsiveUtils.getResponsiveValue(
       context,
@@ -49,7 +49,7 @@ class AdaptiveFormContainer extends StatelessWidget {
       tablet: 24.0,
       desktop: 32.0,
     );
-    
+
     if (padding == null) {
       finalPadding = EdgeInsets.all(responsivePadding);
     }
@@ -109,7 +109,7 @@ class ResponsiveCard extends StatelessWidget {
       tablet: 20.0,
       desktop: 24.0,
     );
-    
+
     final double responsiveMargin = ResponsiveUtils.getResponsiveValue(
       context,
       mobile: 16.0,
@@ -128,15 +128,17 @@ class ResponsiveCard extends StatelessWidget {
       margin: margin ?? EdgeInsets.all(responsiveMargin),
       decoration: BoxDecoration(
         color: backgroundColor ?? Colors.white,
-        borderRadius: borderRadius ?? BorderRadius.circular(responsiveBorderRadius),
-        boxShadow: boxShadow ?? [
-          BoxShadow(
-            color: Colors.black.withOpacity(0.08),
-            blurRadius: 12,
-            offset: const Offset(0, 4),
-            spreadRadius: 0,
-          ),
-        ],
+        borderRadius:
+            borderRadius ?? BorderRadius.circular(responsiveBorderRadius),
+        boxShadow: boxShadow ??
+            [
+              BoxShadow(
+                color: Colors.black.withOpacity(0.08),
+                blurRadius: 12,
+                offset: const Offset(0, 4),
+                spreadRadius: 0,
+              ),
+            ],
       ),
       child: Padding(
         padding: padding ?? EdgeInsets.all(responsivePadding),
@@ -165,10 +167,9 @@ class AdaptiveButtonContainer extends StatelessWidget {
 
   @override
   Widget build(BuildContext context) {
-    final double bottomSafeArea = enableBottomSafeArea 
-        ? SafeAreaUtils.getBottomSafeArea(context) 
-        : 0;
-    
+    final double bottomSafeArea =
+        enableBottomSafeArea ? SafeAreaUtils.getBottomSafeArea(context) : 0;
+
     final double responsivePadding = ResponsiveUtils.getResponsiveValue(
       context,
       mobile: 16.0,
@@ -176,12 +177,13 @@ class AdaptiveButtonContainer extends StatelessWidget {
       desktop: 24.0,
     );
 
-    EdgeInsetsGeometry finalPadding = padding ?? EdgeInsets.only(
-      left: responsivePadding,
-      right: responsivePadding,
-      top: responsivePadding,
-      bottom: responsivePadding + bottomSafeArea,
-    );
+    EdgeInsetsGeometry finalPadding = padding ??
+        EdgeInsets.only(
+          left: responsivePadding,
+          right: responsivePadding,
+          top: responsivePadding,
+          bottom: responsivePadding + bottomSafeArea,
+        );
 
     return Container(
       width: double.infinity,
@@ -195,7 +197,8 @@ class AdaptiveButtonContainer extends StatelessWidget {
           : Row(
               mainAxisAlignment: mainAxisAlignment,
               crossAxisAlignment: crossAxisAlignment,
-              children: children.map((child) => Expanded(child: child)).toList(),
+              children:
+                  children.map((child) => Expanded(child: child)).toList(),
             ),
     );
   }
@@ -245,8 +248,9 @@ class _KeyboardAwareContainerState extends State<KeyboardAwareContainer>
 
   @override
   Widget build(BuildContext context) {
-    final double currentKeyboardHeight = MediaQuery.of(context).viewInsets.bottom;
-    
+    final double currentKeyboardHeight =
+        MediaQuery.of(context).viewInsets.bottom;
+
     if (currentKeyboardHeight != _keyboardHeight) {
       _keyboardHeight = currentKeyboardHeight;
       if (_keyboardHeight > 0) {

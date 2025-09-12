@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/adaptive_form_container.dart';
+import '../../../../core/widgets/unified_text_field.dart';
 import '../../../../core/utils/safe_area_utils.dart';
 import 'base_form.dart';
 import 'modern_card.dart';
-import 'modern_text_field.dart';
 import 'modern_button.dart';
 import 'region_dropdown.dart';
 
@@ -52,8 +52,8 @@ class _SocialSecurityFormState extends BaseFormState<SocialSecurityForm> {
 
   Future<void> _loadRegionData() async {
     try {
-      final String jsonString = await rootBundle
-          .loadString('assets/data/regions.json');
+      final String jsonString =
+          await rootBundle.loadString('assets/data/regions.json');
       final Map<String, dynamic> data = json.decode(jsonString);
 
       setState(() {
@@ -72,7 +72,8 @@ class _SocialSecurityFormState extends BaseFormState<SocialSecurityForm> {
           );
         }).toList();
 
-        if (_selectedRegion == 'beijing' && _regionData.containsKey('beijing')) {
+        if (_selectedRegion == 'beijing' &&
+            _regionData.containsKey('beijing')) {
           final beijingInfo = _regionData['beijing'];
           _socialSecurityBaseController.text =
               beijingInfo['socialSecurityBase'].toString();
@@ -226,46 +227,53 @@ class _SocialSecurityFormState extends BaseFormState<SocialSecurityForm> {
                   icon: Icons.person_outline_rounded,
                   child: Column(
                     children: [
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _salaryController,
                         label: '税前月薪',
                         suffix: '元',
                         iconText: '¥',
                         validator: _validateSalary,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _housingFundRateController,
                         label: '公积金缴纳比例',
                         suffix: '%',
                         icon: Icons.percent_outlined,
                         validator: _validateRate,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _specialDeductionController,
                         label: '专项附加扣除',
                         suffix: '元',
                         icon: Icons.receipt_outlined,
                         validator: _validateDeduction,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _socialSecurityBaseController,
                         label: '社保基数',
                         suffix: '元',
                         icon: Icons.shield_outlined,
-                        onChanged: (value) => _validateBaseInput(value, 'social'),
+                        onChanged: (value) =>
+                            _validateBaseInput(value, 'social'),
                         validator: _validateBaseField,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _housingFundBaseController,
                         label: '公积金基数',
                         suffix: '元',
                         icon: Icons.home_outlined,
-                        onChanged: (value) => _validateBaseInput(value, 'housing'),
+                        onChanged: (value) =>
+                            _validateBaseInput(value, 'housing'),
                         validator: _validateBaseField,
+                        isRequired: true,
                       ),
                     ],
                   ),
@@ -273,7 +281,8 @@ class _SocialSecurityFormState extends BaseFormState<SocialSecurityForm> {
 
                 // 操作按钮
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   child: Row(
                     children: [
                       Expanded(

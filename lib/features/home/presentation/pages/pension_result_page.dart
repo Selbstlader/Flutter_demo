@@ -8,6 +8,7 @@ import '../widgets/modern_text_field.dart';
 import '../widgets/modern_button.dart';
 import '../widgets/region_dropdown.dart';
 import '../../data/services/calculation_service.dart';
+import '../../../../core/utils/error_handler.dart';
 
 /// 养老金计算结果页面
 class PensionResultPage extends StatefulWidget {
@@ -116,7 +117,7 @@ class _PensionResultPageState extends State<PensionResultPage>
       // 数据加载完成后初始化表单
       _initializeFormData();
     } catch (e) {
-      debugPrint('加载地区数据失败: $e');
+      debugPrint('加载地区数据失败: ${ErrorHandler.handleError(e, context: 'loadRegionData')}');
     }
   }
 
@@ -169,7 +170,7 @@ class _PensionResultPageState extends State<PensionResultPage>
         );
       });
     } catch (e) {
-      debugPrint('养老金计算失败: $e');
+      debugPrint('养老金计算失败: ${ErrorHandler.handleError(e, context: 'calculatePension')}');
     }
   }
 

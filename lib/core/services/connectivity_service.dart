@@ -1,8 +1,8 @@
 import 'dart:async';
 import 'package:connectivity_plus/connectivity_plus.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-
 import '../utils/logger_util.dart';
+import '../utils/error_handler.dart';
 
 /// 网络连接状态枚举
 enum ConnectivityStatus {
@@ -38,14 +38,14 @@ class ConnectivityService {
       _subscription = _connectivity.onConnectivityChanged.listen(
         _updateStatus,
         onError: (error) {
-          LoggerUtil.e('网络状态监听错误', error);
+          LoggerUtil.e('网络状态监听错误', error: error);
           _controller.add(ConnectivityStatus.unknown);
         },
       );
 
       LoggerUtil.d('网络连接服务初始化完成');
     } catch (e) {
-      LoggerUtil.e('网络连接服务初始化失败', e);
+      LoggerUtil.e('网络连接服务初始化失败: ${ErrorHandler.handleError(e, context: 'initConnectivity')}');
     }
   }
 
@@ -88,7 +88,7 @@ class ConnectivityService {
           return ConnectivityStatus.unknown;
       }
     } catch (e) {
-      LoggerUtil.e('检查网络状态失败', e);
+      LoggerUtil.e('检查网络状态失败: ${ErrorHandler.handleError(e, context: 'checkConnectivity')}');
       return ConnectivityStatus.unknown;
     }
   }

@@ -8,6 +8,12 @@ import '../../features/settings/presentation/pages/settings_page.dart';
 import '../../features/home/presentation/pages/calculation_result_page.dart';
 import '../../features/home/presentation/pages/pension_result_page.dart';
 import '../../features/home/presentation/pages/ai_chat_page.dart';
+import '../../features/psychological_test/presentation/pages/psychological_test_page.dart';
+import '../../features/psychological_test/presentation/pages/user_info_form_page.dart';
+import '../../features/psychological_test/presentation/pages/test_questions_page.dart';
+import '../../features/psychological_test/presentation/pages/test_results_page.dart';
+import '../../features/psychological_test/pages/test_history_page.dart';
+import '../../features/psychological_test/pages/test_settings_page.dart';
 
 class AppRouter {
   // 路由路径常量
@@ -19,6 +25,12 @@ class AppRouter {
   static const String aiChat = '/ai-chat';
 
   static const String settings = '/settings';
+  static const String psychologicalTest = '/psychological-test';
+  static const String userInfoForm = '/user-info-form';
+  static const String testQuestions = '/test-questions';
+  static const String testResults = '/test-results';
+  static const String testHistory = '/test-history';
+  static const String testSettings = '/test-settings';
   static const String calculationResult = '/calculation-result';
   static const String pensionResult = '/pension-result';
 
@@ -76,6 +88,54 @@ class AppRouter {
       path: '/settings',
       name: 'settings',
       builder: (context, state) => const SettingsPage(),
+    ),
+
+    // 心理健康测试路由
+    GoRoute(
+      path: '/psychological-test',
+      name: 'psychological-test',
+      builder: (context, state) => const PsychologicalTestPage(),
+    ),
+
+    // 用户信息收集页面
+    GoRoute(
+      path: '/user-info-form',
+      name: 'user-info-form',
+      builder: (context, state) => const UserInfoFormPage(),
+    ),
+
+    // 测试题目页面
+    GoRoute(
+      path: '/test-questions',
+      name: 'test-questions',
+      builder: (context, state) {
+        final userInfoId = state.uri.queryParameters['userInfoId'] ?? '';
+        return TestQuestionsPage(userInfoId: userInfoId);
+      },
+    ),
+
+    // 测试结果页面
+    GoRoute(
+      path: '/test-results',
+      name: 'test-results',
+      builder: (context, state) {
+        final sessionId = state.uri.queryParameters['sessionId'] ?? '';
+        return TestResultsPage(sessionId: sessionId);
+      },
+    ),
+
+    // 测试历史记录页面
+    GoRoute(
+      path: '/test-history',
+      name: 'test-history',
+      builder: (context, state) => const TestHistoryPage(),
+    ),
+
+    // 测试设置页面
+    GoRoute(
+      path: '/test-settings',
+      name: 'test-settings',
+      builder: (context, state) => const TestSettingsPage(),
     ),
 
     // 计算器结果页面路由

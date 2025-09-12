@@ -3,6 +3,7 @@ import 'dart:convert';
 import 'package:dio/dio.dart';
 import 'package:shared_preferences/shared_preferences.dart';
 import '../utils/logger_util.dart';
+import '../utils/error_handler.dart';
 
 class ApiResponse<T> {
   final bool success;
@@ -42,6 +43,10 @@ class ApiClient {
       headers: {
         'Content-Type': 'application/json',
       },
+      // 配置validateStatus，让401状态码不抛出异常，而是正常返回响应
+      validateStatus: (status) {
+        return status != null && status >= 200 && status < 500;
+      },
     ));
     _setupInterceptors();
   }
@@ -60,35 +65,40 @@ class ApiClient {
         LoggerUtil.d('请求: ${options.method} ${options.path}');
         handler.next(options);
       },
-      onResponse: (response, handler) {
+      onResponse: (response, handler) async {
         LoggerUtil.d(
             '响应: ${response.statusCode} ${response.requestOptions.path}');
-        handler.next(response);
-      },
-      onError: (error, handler) async {
-        LoggerUtil.e('请求错误: ${error.message}', error.error);
 
-        // 处理401错误，尝试刷新token
-        if (error.response?.statusCode == 401 && _refreshToken != null) {
-          final refreshResult = await _refreshTokens();
-          if (refreshResult) {
-            // 重新发送原请求
-            final cloneReq = await _dio.request(
-              error.requestOptions.path,
-              options: Options(
-                method: error.requestOptions.method,
-                headers: error.requestOptions.headers,
-              ),
-              data: error.requestOptions.data,
-              queryParameters: error.requestOptions.queryParameters,
-            );
-            handler.resolve(cloneReq);
-            return;
-          } else {
-            await clearTokens();
+        // 处理401错误，尝试刷新token（仅在有refreshToken且不是登录/注册接口时）
+        if (response.statusCode == 401 && _refreshToken != null) {
+          final path = response.requestOptions.path;
+          // 排除登录和注册接口，这些接口的401是正常的业务逻辑
+          if (!path.contains('/auth/login') &&
+              !path.contains('/auth/register')) {
+            final refreshResult = await _refreshTokens();
+            if (refreshResult) {
+              // 重新发送原请求
+              final cloneReq = await _dio.request(
+                response.requestOptions.path,
+                options: Options(
+                  method: response.requestOptions.method,
+                  headers: response.requestOptions.headers,
+                ),
+                data: response.requestOptions.data,
+                queryParameters: response.requestOptions.queryParameters,
+              );
+              handler.resolve(cloneReq);
+              return;
+            } else {
+              await clearTokens();
+            }
           }
         }
 
+        handler.next(response);
+      },
+      onError: (error, handler) async {
+        LoggerUtil.e('请求错误: ${error.message}', error: error.error);
         handler.next(error);
       },
     ));
@@ -101,7 +111,7 @@ class ApiClient {
     _tenantId = prefs.getInt(tenantIdKey) ?? 1;
   }
 
-  Future<void> saveTokens(String token, String refreshToken,
+  Future<void> saveTokens(String token, String? refreshToken,
       {int? tenantId}) async {
     _token = token;
     _refreshToken = refreshToken;
@@ -110,7 +120,9 @@ class ApiClient {
     }
     final prefs = await SharedPreferences.getInstance();
     await prefs.setString(tokenKey, token);
-    await prefs.setString(refreshTokenKey, refreshToken);
+    if (refreshToken != null) {
+      await prefs.setString(refreshTokenKey, refreshToken);
+    }
     await prefs.setInt(tenantIdKey, _tenantId);
   }
 
@@ -150,9 +162,11 @@ class ApiClient {
       final response = await _dio.get(endpoint);
       return _handleResponse<T>(response, fromJson);
     } on DioException catch (e) {
-      return ApiResponse.error('网络请求失败: ${e.message}');
+      return ApiResponse.error(
+          '网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.get')}');
     } catch (e) {
-      return ApiResponse.error('网络请求失败: $e');
+      return ApiResponse.error(
+          '网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.get')}');
     }
   }
 
@@ -174,45 +188,57 @@ class ApiClient {
       final response = await _dio.post(endpoint, data: data);
       return _handleResponse<T>(response, fromJson);
     } on DioException catch (e) {
-      return ApiResponse.error('网络请求失败: ${e.message}');
+      return ApiResponse.error(
+          '网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.post')}');
     } catch (e) {
-      return ApiResponse.error('网络请求失败: $e');
+      return ApiResponse.error(
+          '网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.post')}');
     }
   }
 
   Future<ApiResponse<T>> _handleResponse<T>(
-    Response response,
+    Response<dynamic> response,
     T Function(Map<String, dynamic>)? fromJson,
   ) async {
     final Map<String, dynamic> responseData = response.data;
+    LoggerUtil.d('响应数据: ${response.statusCode} - ${responseData.toString()}');
 
-    // 处理400错误，特别是租户相关错误
-    if (response.statusCode == 400) {
-      final errorMsg = responseData['msg'] ?? '请求参数错误';
-      if (errorMsg.contains('tenant') || errorMsg.contains('租户')) {
-        return ApiResponse.error('租户标识错误或缺失，请检查tenant-id参数', code: 400);
-      }
-      return ApiResponse.error(errorMsg, code: 400);
+    // 处理HTTP错误状态码（除了200和401，401也是后端正常响应）
+    if (response.statusCode! < 200 ||
+        (response.statusCode! >= 300 && response.statusCode != 401)) {
+      final errorMsg =
+          responseData['message'] ?? responseData['msg'] ?? '网络请求失败';
+      return ApiResponse.error(errorMsg, code: response.statusCode);
     }
 
-    if (response.statusCode! >= 200 && response.statusCode! < 300) {
-      if (responseData['code'] == 0) {
+    // HTTP状态码200，按业务逻辑处理
+    if (response.statusCode == 200) {
+      // 适配新的后端返回格式：{success: true/false, data: xxx, message: xxx}
+      if (responseData['success'] == true) {
+        // 业务逻辑成功
         if (fromJson != null && responseData['data'] != null) {
           return ApiResponse.success(fromJson(responseData['data']));
         }
         return ApiResponse.success(responseData['data'] as T);
       } else {
+        // 业务逻辑失败
         return ApiResponse.error(
-          responseData['msg'] ?? '请求失败',
-          code: responseData['code'],
+          responseData['message'] ?? '请求失败',
+          code: 0,
         );
       }
-    } else {
-      return ApiResponse.error(
-        responseData['msg'] ?? '请求失败',
-        code: responseData['code'] ?? response.statusCode,
-      );
+    } else if (response.statusCode == 401) {
+      // 401状态码，直接返回后端提示信息
+      // 适配新的后端返回格式：{success: false, message: "用户名或密码错误"}
+      final errorMsg = responseData['message'] ?? '认证失败，请重新登录';
+      return ApiResponse.error(errorMsg, code: 401);
     }
+
+    // 其他情况的兜底处理
+    return ApiResponse.error(
+      responseData['message'] ?? '请求失败',
+      code: response.statusCode,
+    );
   }
 
   Future<bool> _refreshTokens() async {
@@ -232,16 +258,19 @@ class ApiClient {
 
       if (response.statusCode == 200) {
         final responseData = response.data;
-        if (responseData['code'] == 0 && responseData['data'] != null) {
+        // 适配新的响应格式：{success: true, data: {...}}
+        if (responseData['success'] == true && responseData['data'] != null) {
           final data = responseData['data'];
           await saveTokens(data['accessToken'], data['refreshToken']);
           return true;
         }
       }
     } on DioException catch (e) {
-      LoggerUtil.e('刷新token失败: ${e.message}');
+      LoggerUtil.e(
+          '刷新token失败: ${ErrorHandler.handleError(e, context: 'ApiClient.refreshTokens')}');
     } catch (e) {
-      LoggerUtil.e('刷新token失败: $e');
+      LoggerUtil.e(
+          '刷新token失败: ${ErrorHandler.handleError(e, context: 'ApiClient.refreshTokens')}');
     }
     return false;
   }
@@ -279,9 +308,9 @@ class ApiClient {
         yield 'error: 请求失败';
       }
     } on DioException catch (e) {
-      yield 'error: 网络请求失败: ${e.message}';
+      yield 'error: 网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.postStream')}';
     } catch (e) {
-      yield 'error: 网络请求失败: $e';
+      yield 'error: 网络请求失败: ${ErrorHandler.handleError(e, context: 'ApiClient.postStream')}';
     }
   }
 

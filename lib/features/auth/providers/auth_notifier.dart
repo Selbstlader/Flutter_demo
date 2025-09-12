@@ -1,6 +1,7 @@
 import 'package:flutter_riverpod/flutter_riverpod.dart';
-import '../services/auth_service.dart';
+import '../services/auth_api_service.dart';
 import '../models/user_model.dart';
+import '../../../core/utils/error_handler.dart';
 
 // 认证状态类
 class AuthState {
@@ -33,7 +34,7 @@ class AuthState {
 
 // 认证状态管理器
 class AuthNotifier extends StateNotifier<AuthState> {
-  final AuthService _authService;
+  final AuthApiService _authService;
 
   AuthNotifier(this._authService) : super(const AuthState()) {
     _initializeAuth();
@@ -49,7 +50,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true);
     
     try {
-      final result = await _authService.getCurrentUser();
+      final result = await _authService.getCurrentUserWithValidation();
       
       if (result.success && result.data != null) {
         state = state.copyWith(
@@ -71,7 +72,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
         user: null,
         isLoading: false,
         isAuthenticated: false,
-        errorMessage: null,
+        errorMessage: ErrorHandler.handleError(e, context: 'loadCurrentUser'),
       );
     }
   }
@@ -82,11 +83,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
     
     try {
       final request = LoginRequest(email: email, password: password);
-      final result = await _authService.login(request);
+      final result = await _authService.loginWithValidation(request);
       
       if (result.success && result.data != null) {
         // 获取当前用户信息
-        final userResult = await _authService.getCurrentUser();
+        final userResult = await _authService.getCurrentUserWithValidation();
         if (userResult.success && userResult.data != null) {
           state = state.copyWith(
             user: userResult.data,
@@ -108,7 +109,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorHandler.handleError(e, context: 'login'),
       );
     }
   }
@@ -124,11 +125,11 @@ class AuthNotifier extends StateNotifier<AuthState> {
         confirmPassword: confirmPassword,
         nickname: nickname,
       );
-      final result = await _authService.register(request);
+      final result = await _authService.registerWithValidation(request);
       
       if (result.success && result.data != null) {
         // 注册成功后获取用户信息
-        final userResult = await _authService.getCurrentUser();
+        final userResult = await _authService.getCurrentUserWithValidation();
         if (userResult.success && userResult.data != null) {
           state = state.copyWith(
             user: userResult.data,
@@ -150,7 +151,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorHandler.handleError(e, context: 'register'),
       );
     }
   }
@@ -160,7 +161,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     state = state.copyWith(isLoading: true);
     
     try {
-      final result = await _authService.logout();
+      final result = await _authService.logoutWithCleanup();
       
       if (result.success) {
         state = state.copyWith(
@@ -178,7 +179,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorHandler.handleError(e, context: 'logout'),
       );
     }
   }
@@ -207,7 +208,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorHandler.handleError(e, context: 'updateProfile'),
       );
     }
   }
@@ -233,7 +234,7 @@ class AuthNotifier extends StateNotifier<AuthState> {
     } catch (e) {
       state = state.copyWith(
         isLoading: false,
-        errorMessage: e.toString(),
+        errorMessage: ErrorHandler.handleError(e, context: 'changePassword'),
       );
     }
   }
@@ -245,8 +246,8 @@ class AuthNotifier extends StateNotifier<AuthState> {
 }
 
 // Riverpod Providers
-final authServiceProvider = Provider<AuthService>((ref) {
-  return AuthService();
+final authServiceProvider = Provider<AuthApiService>((ref) {
+  return AuthApiService();
 });
 
 final authNotifierProvider = StateNotifierProvider<AuthNotifier, AuthState>((ref) {

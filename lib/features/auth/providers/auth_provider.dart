@@ -1,12 +1,13 @@
 import 'package:flutter/material.dart';
-import '../services/auth_service.dart';
+import '../services/auth_api_service.dart';
 import '../models/user_model.dart';
 import '../../../core/services/storage_service.dart';
 import '../../../core/models/user_model.dart' as core_models;
+import '../../../core/utils/error_handler.dart';
 
 class AuthProvider with ChangeNotifier {
-  final AuthService _authService = AuthService();
-  
+  final AuthApiService _authService = AuthApiService();
+
   User? _currentUser;
   bool _isLoading = false;
   String? _errorMessage;
@@ -58,19 +59,20 @@ class AuthProvider with ChangeNotifier {
   Future<bool> login(String email, String password) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final request = LoginRequest(email: email, password: password);
-      final result = await _authService.login(request);
-      
+      final result = await _authService.loginWithValidation(request);
+
       if (result.success && result.data != null) {
         await loadCurrentUser();
-        
-        // 登录成功后同步用户数据到Supabase
-        if (_currentUser != null) {
-          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
-        }
-        
+
+        // 登录成功后同步用户数据到Supabase - 已注释，改用独立后端接口
+        // 更新用户信息后同步到Supabase - 已注释，改用独立后端接口
+        // if (_currentUser != null) {
+        //   await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        // }
+
         _setLoading(false);
         return true;
       } else {
@@ -79,23 +81,24 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('登录失败: ${e.toString()}');
+      _setError('登录失败: ${ErrorHandler.handleError(e, context: 'login')}');
       _setLoading(false);
       return false;
     }
   }
 
-  Future<bool> register(String email, String password, String confirmPassword, {String? nickname}) async {
+  Future<bool> register(String email, String password, String confirmPassword,
+      {String? nickname}) async {
     _setLoading(true);
     _setError(null);
-    
+
     // 验证密码确认
     if (password != confirmPassword) {
       _setError('密码确认不匹配');
       _setLoading(false);
       return false;
     }
-    
+
     try {
       final request = RegisterRequest(
         email: email,
@@ -103,15 +106,15 @@ class AuthProvider with ChangeNotifier {
         confirmPassword: confirmPassword,
         nickname: nickname,
       );
-      final result = await _authService.register(request);
-      
+      final result = await _authService.registerWithValidation(request);
+
       if (result.success && result.data != null) {
-        // 注册成功后获取用户信息并同步到Supabase
+        // 注册成功后获取用户信息并同步到Supabase - 已注释，改用独立后端接口
         await loadCurrentUser();
-        if (_currentUser != null) {
-          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
-        }
-        
+        // if (_currentUser != null) {
+        //   await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        // }
+
         _setLoading(false);
         return true;
       } else {
@@ -120,7 +123,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('注册失败: ${e.toString()}');
+      _setError('注册失败: ${ErrorHandler.handleError(e, context: 'register')}');
       _setLoading(false);
       return false;
     }
@@ -129,9 +132,9 @@ class AuthProvider with ChangeNotifier {
   Future<void> logout() async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
-      final result = await _authService.logout();
+      final result = await _authService.logoutWithCleanup();
       if (result.success) {
         _currentUser = null;
         // 登出时清空本地用户数据
@@ -141,7 +144,7 @@ class AuthProvider with ChangeNotifier {
       }
       _setLoading(false);
     } catch (e) {
-      _setError('登出失败: ${e.toString()}');
+      _setError('登出失败: ${ErrorHandler.handleError(e, context: 'logout')}');
       _setLoading(false);
     }
   }
@@ -152,15 +155,16 @@ class AuthProvider with ChangeNotifier {
       notifyListeners();
       return;
     }
-    
+
     try {
-      final result = await _authService.getCurrentUser();
+      final result = await _authService.getCurrentUserWithValidation();
       if (result.success && result.data != null) {
         _currentUser = result.data;
-        
+
         // 尝试从Supabase获取最新的用户数据
         if (_currentUser?.supabaseId != null) {
-          final cloudUserModel = await StorageService.getSmartUserData(_currentUser!.supabaseId!);
+          final cloudUserModel =
+              await StorageService.getSmartUserData(_currentUser!.supabaseId!);
           if (cloudUserModel != null) {
             _currentUser = _convertFromUserModel(cloudUserModel);
           }
@@ -180,7 +184,7 @@ class AuthProvider with ChangeNotifier {
       if (cachedUserModel != null) {
         _currentUser = _convertFromUserModel(cachedUserModel);
       } else {
-        _setError('获取用户信息失败: ${e.toString()}');
+        _setError('获取用户信息失败: ${ErrorHandler.handleError(e, context: 'loadCurrentUser')}');
       }
     }
     notifyListeners();
@@ -210,7 +214,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> resendEmailConfirmation() async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final result = await _authService.resendEmailConfirmation();
       if (result.success) {
@@ -222,7 +226,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('发送确认邮件失败: ${e.toString()}');
+      _setError('发送确认邮件失败: ${ErrorHandler.handleError(e, context: 'resendEmailConfirmation')}');
       _setLoading(false);
       return false;
     }
@@ -232,7 +236,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> resetPassword(String email) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final result = await _authService.resetPassword(email);
       if (result.success) {
@@ -244,7 +248,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('发送重置密码邮件失败: ${e.toString()}');
+      _setError('发送重置密码邮件失败: ${ErrorHandler.handleError(e, context: 'resetPassword')}');
       _setLoading(false);
       return false;
     }
@@ -254,7 +258,7 @@ class AuthProvider with ChangeNotifier {
   Future<bool> updatePassword(String newPassword) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
       final result = await _authService.updatePassword(newPassword);
       if (result.success) {
@@ -266,27 +270,29 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('更新密码失败: ${e.toString()}');
+      _setError('更新密码失败: ${ErrorHandler.handleError(e, context: 'updatePassword')}');
       _setLoading(false);
       return false;
     }
   }
 
   // 更新用户信息
-  Future<bool> updateUser({String? nickname, Map<String, dynamic>? metadata}) async {
+  Future<bool> updateUser(
+      {String? nickname, Map<String, dynamic>? metadata}) async {
     _setLoading(true);
     _setError(null);
-    
+
     try {
-      final result = await _authService.updateUser(nickname: nickname, metadata: metadata);
+      final result =
+          await _authService.updateUser(nickname: nickname, metadata: metadata);
       if (result.success && result.data != null) {
         _currentUser = result.data;
-        
-        // 同步更新到Supabase
-        if (_currentUser != null) {
-          await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
-        }
-        
+
+        // 注册成功后同步用户数据到Supabase - 已注释，改用独立后端接口
+        // if (_currentUser != null) {
+        //   await StorageService.syncUserDataToSupabase(_convertToUserModel(_currentUser!));
+        // }
+
         _setLoading(false);
         return true;
       } else {
@@ -295,7 +301,7 @@ class AuthProvider with ChangeNotifier {
         return false;
       }
     } catch (e) {
-      _setError('更新用户信息失败: ${e.toString()}');
+      _setError('更新用户信息失败: ${ErrorHandler.handleError(e, context: 'updateUser')}');
       _setLoading(false);
       return false;
     }

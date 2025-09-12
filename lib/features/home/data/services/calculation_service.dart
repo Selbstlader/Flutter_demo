@@ -1,5 +1,6 @@
 import 'dart:convert';
 import 'package:flutter/services.dart';
+import '../../../../core/utils/error_handler.dart';
 
 /// 通用计算服务 - 支持社保和养老金计算
 class CalculationService {
@@ -15,7 +16,7 @@ class CalculationService {
       final Map<String, dynamic> data = json.decode(jsonString);
       _regionData = data['regions'];
     } catch (e) {
-      throw Exception('加载地区数据失败: $e');
+      throw Exception('加载地区数据失败: ${ErrorHandler.handleError(e, context: 'loadRegionData')}');
     }
   }
   

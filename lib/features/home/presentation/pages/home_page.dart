@@ -160,16 +160,6 @@ class _HomePageState extends ConsumerState<HomePage> {
         actions: [
           IconButton(
             onPressed: () {
-              _showAIDialog(context);
-            },
-            icon: const Icon(
-              Icons.support_agent_rounded,
-              color: Color(0xFF4A90E2),
-            ),
-            tooltip: '智能助手',
-          ),
-          IconButton(
-            onPressed: () {
               context.push('/settings');
             },
             icon: const Icon(
@@ -198,6 +188,9 @@ class _HomePageState extends ConsumerState<HomePage> {
           setState(() {
             _currentIndex = index;
           });
+        },
+        onAITap: () {
+          _showAIDialog(context);
         },
         items: const [
           BottomNavigationBarItem(

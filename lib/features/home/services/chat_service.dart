@@ -1,5 +1,7 @@
 import 'dart:convert';
 import '../../../core/network/api_client.dart';
+import '../../../core/utils/logger_util.dart';
+import '../../../core/utils/error_handler.dart';
 import '../models/chat_models.dart';
 
 class ChatService {
@@ -79,7 +81,7 @@ class ChatService {
       }
       return null;
     } catch (e) {
-      print('解析流式数据失败: $e');
+      LoggerUtil.e('解析流式数据失败: ${ErrorHandler.handleError(e, context: 'parseStreamData')}');
       return null;
     }
   }

@@ -1,0 +1,28 @@
+{
+    "id": "ec68a8c3-bd0f-4eb0-b103-704a56cc1c15",
+    "object": "chat.completion",
+    "created": 1757659132,
+    "model": "deepseek-chat",
+    "choices": [
+        {
+            "index": 0,
+            "message": {
+                "role": "assistant",
+                "content": "```json\n{\n  \"mentalHealthReport\": {\n    \"basicInformation\": {\n      \"age\": 12,\n      \"gender\": \"女\",\n      \"educationLevel\": \"大专\",\n      \"maritalStatus\": \"单身\",\n      \"livingSituation\": \"与室友同住\",\n      \"occupation\": \"测试\",\n      \"assessmentDate\": \"2025-09-12\"\n    },\n    \n    \"overallAssessment\": {\n      \"totalScore\": 78,\n      \"riskLevel\": \"中等风险\",\n      \"mainCharacteristics\": \"该用户展现出良好的情绪调节能力和人际关系处理技巧，但在职业发展和未来规划方面存在明显的不确定性和压力感。整体心理状态相对稳定，但需要关注职业认同和未来发展方向的问题。\"\n    },\n    \n    \"dimensionalAnalysis\": {\n      \"emotionalState\": {\n        \"score\": 82,\n        \"analysis\": \"情绪状态总体稳定，能够通过积极的方式（如与朋友交流）调节负面情绪。自评快乐程度较高（4/5），显示出较好的情绪管理能力。\"\n      },\n      \"stressLevel\": {\n        \"score\": 65,\n        \"analysis\": \"面临学业/工作表现和人际关系双重压力源。职业发展不确定性带来明显压力，但具备一定的压力应对策略，如独自思考和寻求社交支持。\"\n      },\n      \"interpersonalRelationships\": {\n        \"score\": 85,\n        \"analysis\": \"人际关系处理能力较强，与室友关系融洽（5/5），善于倾听，能够委婉表达建议。重视沟通和包容的品质，显示出成熟的人际交往观念。\"\n      },\n      \"selfAwareness\": {\n        \"score\": 70,\n        \"analysis\": \"对自身优势和局限有一定认识，但在职业认同和自我定位方面需要加强。对外貌形象的关注度适中，显示出相对健康的自我认知。\"\n      },\n      \"copingStrategies\": {\n        \"score\": 75,\n        \"analysis\": \"应对策略多样化，包括独立思考、社交支持和休闲活动。能够根据情境选择适当的应对方式，但在压力较大时可能倾向于回避（冷处理）。\"\n      }\n    },\n    \n    \"personalizedInsights\": {\n      \"backgroundAnalysis\": \"作为12岁的大专学生，用户面临着比同龄人更早的职业发展压力。与室友同住的生活环境要求其具备较强的人际协调能力。\",\n      \"potentialRisks\": [\n        \"职业发展方向不明确可能导致长期焦虑\",\n        \"过早的职业压力可能影响正常的学习和发展\",\n        \"回避型应对策略可能在压力增大时失效\"\n      ],\n      \"strengthsAndResources\": [\n        \"良好的社交支持和人际关系网络\",\n        \"多样化的情绪调节和压力应对能力\",\n        \"较强的自我反思和独立思考能力\"\n      ]\n    },\n    \n    \"professionalRecommendations\": {\n      \"improvementSuggestions\": [\n        \"探索职业兴趣和发展方向，进行职业规划咨询\",\n        \"学习更积极的压力管理技巧，如时间管理和目标设定\",\n        \"建立更广泛的社会支持网络\"\n      ],\n      \"maintenanceMethods\": [\n        \"保持规律的休闲活动和社交互动\",\n        \"定期进行自我反思和情绪记录\",\n        \"参与兴趣小组或社团活动，拓展社交圈\"\n      ],\n      \"professionalCounseling\": \"建议考虑职业规划咨询，如压力持续增大可寻求心理咨询支持\"\n    },\n    \n    \"actionPlan\": {\n      \"shortTermGoals\": [\n        \"每周进行2-3次放松活动（阅读、观影等）\",\n        \"与朋友或家人讨论职业困惑，寻求建议\",\n        \"记录每日情绪变化和压力源\"\n      ],\n      \"mediumTermGoals\": [\n        \"参加职业规划讲座或工作坊\",\n        \"建立更规律的生活作息\",\n        \"发展1-2个新的兴趣爱好\"\n      ],\n      \"longTermGoals\": [\n        \"明确职业发展方向并制定实施计划\",\n        \"建立稳定的经济管理习惯\",\n        \"提升人际沟通和冲突解决能力\"\n      ]\n    },\n    \n    \"additionalNotes\": \"鉴于用户年龄较小但已进入大专学习，需要特别关注其心理发展与社会适应的平衡。建议家长和教育工作者提供适当的指导和支持。\"\n  }\n}\n```"
+            },
+            "logprobs": null,
+            "finish_reason": "stop"
+        }
+    ],
+    "usage": {
+        "prompt_tokens": 714,
+        "completion_tokens": 865,
+        "total_tokens": 1579,
+        "prompt_tokens_details": {
+            "cached_tokens": 704
+        },
+        "prompt_cache_hit_tokens": 704,
+        "prompt_cache_miss_tokens": 10
+    },
+    "system_fingerprint": "fp_08f168e49b_prod0820_fp8_kvcache"
+}

@@ -17,16 +17,20 @@ class User {
 
   factory User.fromJson(Map<String, dynamic> json) {
     return User(
-      id: json['id'] is String ? json['id'].hashCode : json['id'],
+      id: json['id'] is String ? json['id'].hashCode : (json['id'] ?? 0),
       username: json['username'] ?? json['email'] ?? '',
       nickname: json['nickname'],
       email: json['email'],
-      supabaseId: json['supabaseId'] ?? json['id'],
+      supabaseId: json['supabaseId'] ?? json['id']?.toString(),
       createTime: json['createTime'] != null 
           ? (json['createTime'] is String 
               ? DateTime.parse(json['createTime'])
               : DateTime.fromMillisecondsSinceEpoch(json['createTime']))
-          : null,
+          : (json['createdAt'] != null 
+              ? DateTime.parse(json['createdAt'])
+              : (json['updatedAt'] != null 
+                  ? DateTime.parse(json['updatedAt'])
+                  : null)),
     );
   }
 
@@ -118,22 +122,27 @@ class RegisterResponse {
   final String? username;
   final String? nickname;
   final DateTime? createTime;
+  final User? user; // 添加用户信息
 
   RegisterResponse({
     required this.id,
     this.username,
     this.nickname,
     this.createTime,
+    this.user,
   });
 
   factory RegisterResponse.fromJson(Map<String, dynamic> json) {
+    // 适配新的响应格式：{"user": {...}}
+    final userJson = json['user'] ?? json;
     return RegisterResponse(
-      id: json['id'],
-      username: json['username'],
-      nickname: json['nickname'],
-      createTime: json['createTime'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['createTime'])
+      id: userJson['id'] ?? 0,
+      username: userJson['username'],
+      nickname: userJson['nickname'],
+      createTime: userJson['createdAt'] != null 
+          ? DateTime.parse(userJson['createdAt'])
           : null,
+      user: userJson != null ? User.fromJson(userJson) : null,
     );
   }
 }
@@ -141,27 +150,30 @@ class RegisterResponse {
 class LoginResponse {
   final int userId;
   final String accessToken;
-  final String refreshToken;
+  final String? refreshToken;
   final DateTime? expiresTime;
   final String? openid;
+  final User? user; // 添加用户信息
 
   LoginResponse({
     required this.userId,
     required this.accessToken,
-    required this.refreshToken,
+    this.refreshToken,
     this.expiresTime,
     this.openid,
+    this.user,
   });
 
   factory LoginResponse.fromJson(Map<String, dynamic> json) {
+    // 适配新的响应格式：{"user": {...}, "accessToken": "..."}
+    final userJson = json['user'];
     return LoginResponse(
-      userId: json['userId'],
-      accessToken: json['accessToken'],
-      refreshToken: json['refreshToken'],
-      expiresTime: json['expiresTime'] != null 
-          ? DateTime.fromMillisecondsSinceEpoch(json['expiresTime'])
-          : null,
-      openid: json['openid'],
+      userId: userJson?['id'] ?? 0,
+      accessToken: json['accessToken'] ?? '',
+      refreshToken: null, // 新格式中没有refreshToken
+      expiresTime: null,
+      openid: null,
+      user: userJson != null ? User.fromJson(userJson) : null,
     );
   }
 }

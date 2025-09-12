@@ -6,7 +6,8 @@ part of 'social_security_model.dart';
 // JsonSerializableGenerator
 // **************************************************************************
 
-SocialSecurityModel _$SocialSecurityModelFromJson(Map<String, dynamic> json) => SocialSecurityModel(
+SocialSecurityModel _$SocialSecurityModelFromJson(Map<String, dynamic> json) =>
+    SocialSecurityModel(
       id: json['id'] as String,
       userId: json['user_id'] as String,
       socialSecurityNumber: json['social_security_number'] as String,
@@ -22,7 +23,9 @@ SocialSecurityModel _$SocialSecurityModelFromJson(Map<String, dynamic> json) => 
       updatedAt: DateTime.parse(json['updated_at'] as String),
     );
 
-Map<String, dynamic> _$SocialSecurityModelToJson(SocialSecurityModel instance) => <String, dynamic>{
+Map<String, dynamic> _$SocialSecurityModelToJson(
+        SocialSecurityModel instance) =>
+    <String, dynamic>{
       'id': instance.id,
       'user_id': instance.userId,
       'social_security_number': instance.socialSecurityNumber,

@@ -2,6 +2,7 @@ import 'dart:convert';
 import 'package:flutter/material.dart';
 import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
+import '../../../../core/utils/error_handler.dart';
 
 /// 社保计算结果页面
 class CalculationResultPage extends StatefulWidget {
@@ -82,7 +83,7 @@ class _CalculationResultPageState extends State<CalculationResultPage>
         _calculationResult = _calculateSocialSecurity();
       });
     } catch (e) {
-      debugPrint('加载数据失败: $e');
+      debugPrint('加载数据失败: ${ErrorHandler.handleError(e, context: 'loadRegionData')}');
     }
   }
 

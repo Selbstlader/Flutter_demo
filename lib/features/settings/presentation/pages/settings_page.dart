@@ -1,6 +1,6 @@
 import 'package:flutter/material.dart';
 import 'package:go_router/go_router.dart';
-import '../../../../core/theme/app_theme.dart';
+import '../../../auth/services/auth_api_service.dart';
 import '../../../../core/router/app_router.dart';
 
 class SettingsPage extends StatefulWidget {
@@ -52,99 +52,16 @@ class _SettingsPageState extends State<SettingsPage> {
         child: ListView(
           padding: const EdgeInsets.all(16),
           children: [
-            // _buildSection(
-            //   title: '账户设置',
-            //   children: [
-            //     _buildSettingItem(
-            //       icon: Icons.person_outline,
-            //       title: '个人信息',
-            //       subtitle: '管理您的个人资料',
-            //       onTap: () {},
-            //     ),
-            //     _buildDivider(),
-            //     _buildSettingItem(
-            //       icon: Icons.security_rounded,
-            //       title: '账户安全',
-            //       subtitle: '密码、验证方式',
-            //       onTap: () {},
-            //     ),
-            //     _buildDivider(),
-            //     _buildSettingItem(
-            //       icon: Icons.privacy_tip_outlined,
-            //       title: '隐私设置',
-            //       subtitle: '数据使用权限',
-            //       onTap: () {},
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 24),
-            // _buildSection(
-            //   title: '应用设置',
-            //   children: [
-            //     _buildSwitchItem(
-            //       icon: Icons.notifications_outlined,
-            //       title: '推送通知',
-            //       subtitle: '接收重要消息提醒',
-            //       value: _notificationsEnabled,
-            //       onChanged: (value) {
-            //         setState(() {
-            //           _notificationsEnabled = value;
-            //         });
-            //       },
-            //     ),
-            //     _buildDivider(),
-            //     _buildSwitchItem(
-            //       icon: Icons.light_mode_outlined,
-            //       title: '浅色模式',
-            //       subtitle: '清爽界面，护眼舒适',
-            //       value: !_darkModeEnabled,
-            //       onChanged: (value) {
-            //         setState(() {
-            //           _darkModeEnabled = !value;
-            //         });
-            //       },
-            //     ),
-            //     _buildDivider(),
-            //     _buildSwitchItem(
-            //       icon: Icons.fingerprint,
-            //       title: '生物识别',
-            //       subtitle: '指纹或面容解锁',
-            //       value: _biometricEnabled,
-            //       onChanged: (value) {
-            //         setState(() {
-            //           _biometricEnabled = value;
-            //         });
-            //       },
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 24),
-            // _buildSection(
-            //   title: '帮助与支持',
-            //   children: [
-            //     _buildSettingItem(
-            //       icon: Icons.help_outline,
-            //       title: '使用帮助',
-            //       subtitle: '常见问题解答',
-            //       onTap: () {},
-            //     ),
-            //     _buildDivider(),
-            //     _buildSettingItem(
-            //       icon: Icons.feedback_outlined,
-            //       title: '意见反馈',
-            //       subtitle: '告诉我们您的建议',
-            //       onTap: () {},
-            //     ),
-            //     _buildDivider(),
-            //     _buildSettingItem(
-            //       icon: Icons.info_outline,
-            //       title: '关于我们',
-            //       subtitle: '版本信息和团队介绍',
-            //       onTap: () {},
-            //     ),
-            //   ],
-            // ),
-            // const SizedBox(height: 32),
+            _buildAccountSection(),
+            const SizedBox(height: 24),
+            _buildToolsSection(),
+            const SizedBox(height: 24),
+            _buildPrivacySection(),
+            const SizedBox(height: 24),
+            _buildNotificationSection(),
+            const SizedBox(height: 24),
+            _buildAboutSection(),
+            const SizedBox(height: 24),
             _buildLogoutButton(),
             const SizedBox(height: 32),
           ],
@@ -153,47 +70,171 @@ class _SettingsPageState extends State<SettingsPage> {
     );
   }
 
-  Widget _buildSection({
-    required String title,
-    required List<Widget> children,
-  }) {
-    return Column(
-      crossAxisAlignment: CrossAxisAlignment.start,
-      children: [
-        Padding(
-          padding: const EdgeInsets.only(left: 16, bottom: 8),
-          child: Text(
-            title,
-            style: const TextStyle(
-              fontSize: 14,
-              fontWeight: FontWeight.w600,
-              color: Color(0xFF64748B),
+  // 构建区块容器
+  Widget _buildSection({required String title, required List<Widget> children}) {
+    return Container(
+      decoration: BoxDecoration(
+        color: Colors.white,
+        borderRadius: BorderRadius.circular(16),
+        boxShadow: [
+          BoxShadow(
+            color: Colors.black.withOpacity(0.05),
+            blurRadius: 10,
+            offset: const Offset(0, 2),
+          ),
+        ],
+      ),
+      child: Column(
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Padding(
+            padding: const EdgeInsets.fromLTRB(20, 20, 20, 12),
+            child: Text(
+              title,
+              style: const TextStyle(
+                fontSize: 16,
+                fontWeight: FontWeight.w600,
+                color: Color(0xFF1E293B),
+              ),
             ),
           ),
+          ...children,
+          const SizedBox(height: 8),
+        ],
+      ),
+    );
+  }
+
+  // 构建账户设置区块
+  Widget _buildAccountSection() {
+    return _buildSection(
+      title: '账户设置',
+      children: [
+        _buildSettingItem(
+          icon: Icons.person_outline,
+          title: '个人信息',
+          subtitle: '管理您的个人资料',
+          onTap: () {},
         ),
-        Container(
-          decoration: BoxDecoration(
-            color: Colors.white,
-            borderRadius: BorderRadius.circular(16),
-            boxShadow: [
-              BoxShadow(
-                color: Colors.black.withOpacity(0.05),
-                blurRadius: 10,
-                offset: const Offset(0, 4),
-              ),
-            ],
-          ),
-          child: Column(children: children),
+        _buildDivider(),
+        _buildSettingItem(
+          icon: Icons.security_rounded,
+          title: '账户安全',
+          subtitle: '密码、验证方式',
+          onTap: () {},
         ),
       ],
     );
   }
 
+  // 构建工具区块
+  Widget _buildToolsSection() {
+    return _buildSection(
+      title: '健康工具',
+      children: [
+        _buildSettingItem(
+          icon: Icons.psychology,
+          title: '心理健康测试',
+          subtitle: '专业心理评估工具',
+          onTap: () {
+            context.push(AppRouter.psychologicalTest);
+          },
+        ),
+      ],
+    );
+  }
+
+  // 构建隐私设置区块
+  Widget _buildPrivacySection() {
+    return _buildSection(
+      title: '隐私设置',
+      children: [
+        _buildSettingItem(
+          icon: Icons.privacy_tip_outlined,
+          title: '隐私设置',
+          subtitle: '数据使用权限',
+          onTap: () {},
+        ),
+        _buildDivider(),
+        _buildSettingItem(
+          icon: Icons.data_usage,
+          title: '数据管理',
+          subtitle: '清理缓存和数据',
+          onTap: () {},
+        ),
+      ],
+    );
+  }
+
+  // 构建通知设置区块
+  Widget _buildNotificationSection() {
+    return _buildSection(
+      title: '应用设置',
+      children: [
+        _buildSwitchItem(
+          icon: Icons.notifications_outlined,
+          title: '推送通知',
+          subtitle: '接收重要消息提醒',
+          value: _notificationsEnabled,
+          onChanged: (value) {
+            setState(() {
+              _notificationsEnabled = value;
+            });
+          },
+        ),
+        _buildDivider(),
+        _buildSwitchItem(
+          icon: Icons.light_mode_outlined,
+          title: '浅色模式',
+          subtitle: '清爽界面，护眼舒适',
+          value: !_darkModeEnabled,
+          onChanged: (value) {
+            setState(() {
+              _darkModeEnabled = !value;
+            });
+          },
+        ),
+      ],
+    );
+  }
+
+  // 构建关于区块
+  Widget _buildAboutSection() {
+    return _buildSection(
+      title: '帮助与支持',
+      children: [
+        _buildSettingItem(
+          icon: Icons.help_outline,
+          title: '使用帮助',
+          subtitle: '常见问题解答',
+          onTap: () {},
+        ),
+        _buildDivider(),
+        _buildSettingItem(
+          icon: Icons.feedback_outlined,
+          title: '意见反馈',
+          subtitle: '告诉我们您的建议',
+          onTap: () {},
+        ),
+        _buildDivider(),
+        _buildSettingItem(
+          icon: Icons.info_outline,
+          title: '关于我们',
+          subtitle: '版本信息和团队介绍',
+          onTap: () {},
+        ),
+      ],
+    );
+  }
+
+  // 构建分割线
   Widget _buildDivider() {
     return Container(
-      margin: const EdgeInsets.symmetric(horizontal: 16),
       height: 1,
-      color: const Color(0xFFF1F5F9),
+      margin: const EdgeInsets.symmetric(horizontal: 16),
+      decoration: BoxDecoration(
+        color: Colors.grey.withOpacity(0.2),
+      ),
     );
   }
 

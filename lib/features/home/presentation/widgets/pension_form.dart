@@ -4,10 +4,10 @@ import 'package:flutter/services.dart';
 import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/adaptive_form_container.dart';
+import '../../../../core/widgets/unified_text_field.dart';
 import '../../../../core/utils/safe_area_utils.dart';
 import 'base_form.dart';
 import 'modern_card.dart';
-import 'modern_text_field.dart';
 import 'modern_button.dart';
 import 'region_dropdown.dart';
 import '../../data/services/calculation_service.dart';
@@ -112,7 +112,7 @@ class _PensionFormState extends BaseFormState<PensionForm> {
         'accountBalance': _accountBalanceController.text,
         'region': _selectedRegion ?? 'beijing',
       };
-      
+
       // 检查GoRouter是否可用
       try {
         if (mounted && context.mounted) {
@@ -224,55 +224,60 @@ class _PensionFormState extends BaseFormState<PensionForm> {
                   icon: Icons.person_outline_rounded,
                   child: Column(
                     children: [
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _currentSalaryController,
                         label: '当前月薪',
                         suffix: '元',
                         iconText: '¥',
                         validator: _validateSalary,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
                       Row(
                         children: [
                           Expanded(
-                            child: ModernTextField(
+                            child: UnifiedTextField(
                               controller: _currentAgeController,
                               label: '当前年龄',
                               suffix: '岁',
                               icon: Icons.person_outline,
                               validator: _validateAge,
+                              isRequired: true,
                             ),
                           ),
                           SizedBox(width: getResponsiveSpacing(16)),
                           Expanded(
-                            child: ModernTextField(
+                            child: UnifiedTextField(
                               controller: _retirementAgeController,
                               label: '退休年龄',
                               suffix: '岁',
                               icon: Icons.elderly_outlined,
                               validator: _validateRetirementAge,
+                              isRequired: true,
                             ),
                           ),
                         ],
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _paymentYearsController,
                         label: '缴费年限',
                         suffix: '年',
                         icon: Icons.access_time_outlined,
                         validator: _validatePaymentYears,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _socialSecurityBaseController,
                         label: '社保基数',
                         suffix: '元',
                         icon: Icons.shield_outlined,
                         validator: _validateBaseField,
+                        isRequired: true,
                       ),
                       SizedBox(height: getResponsiveSpacing(20)),
-                      ModernTextField(
+                      UnifiedTextField(
                         controller: _accountBalanceController,
                         label: '当前账户余额（可选）',
                         suffix: '元',
@@ -285,7 +290,8 @@ class _PensionFormState extends BaseFormState<PensionForm> {
 
                 // 操作按钮
                 Padding(
-                  padding: const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
+                  padding:
+                      const EdgeInsets.symmetric(horizontal: 16, vertical: 16),
                   child: Row(
                     children: [
                       Expanded(

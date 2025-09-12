@@ -3,6 +3,7 @@ import 'dart:async';
 import '../../models/chat_message.dart';
 import '../../models/user_context.dart';
 import '../../services/deepseek_service.dart';
+import '../../../../core/utils/error_handler.dart';
 
 class AIChatPage extends StatefulWidget {
   const AIChatPage({super.key});
@@ -98,7 +99,7 @@ class _AIChatPageState extends State<AIChatPage> with TickerProviderStateMixin {
         onDone: _handleStreamComplete,
       );
     } catch (e) {
-      _handleStreamError('发送消息失败: $e');
+      _handleStreamError('发送消息失败: ${ErrorHandler.handleError(e, context: 'sendMessage')}');
     }
   }
 

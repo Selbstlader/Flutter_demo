@@ -2,7 +2,7 @@ import 'package:flutter/material.dart';
 import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_notifier.dart';
-import '../../../../core/widgets/common_text_field.dart';
+import '../../../../core/widgets/unified_text_field.dart';
 import '../../../../core/widgets/error_message_widget.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
@@ -20,14 +20,13 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
   final _nicknameController = TextEditingController();
   final _passwordController = TextEditingController();
   final _confirmPasswordController = TextEditingController();
-  
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
-  bool _isPasswordVisible = false;
-  bool _isConfirmPasswordVisible = false;
+
+
 
   @override
   void initState() {
@@ -40,16 +39,16 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
-    
+
     _fadeController.forward();
     _slideController.forward();
   }
@@ -69,11 +68,13 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
     if (!_formKey.currentState!.validate()) return;
 
     await ref.read(authNotifierProvider.notifier).register(
-      _emailController.text.trim(),
-      _passwordController.text,
-      _confirmPasswordController.text,
-      _nicknameController.text.trim().isEmpty ? null : _nicknameController.text.trim(),
-    );
+          _emailController.text.trim(),
+          _passwordController.text,
+          _confirmPasswordController.text,
+          _nicknameController.text.trim().isEmpty
+              ? null
+              : _nicknameController.text.trim(),
+        );
 
     // 检查注册是否成功
     final authState = ref.read(authNotifierProvider);
@@ -103,8 +104,8 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 
-                    MediaQuery.of(context).padding.top - 
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
                     MediaQuery.of(context).padding.bottom,
               ),
               child: FadeTransition(
@@ -222,46 +223,41 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
         key: _formKey,
         child: Column(
           children: [
-            CommonTextField(
+            UnifiedTextField(
               controller: _emailController,
               label: '邮箱',
-              hint: '请输入您的邮箱地址',
+              hintText: '请输入您的邮箱地址',
               icon: Icons.email_outlined,
               helperText: '邮箱将用于登录和接收验证信息',
               keyboardType: TextInputType.emailAddress,
-            
+              isRequired: true,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return '请输入邮箱地址';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
-                  return '请输入正确的邮箱格式';
-                }
+                // if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                //   return '请输入正确的邮箱格式';
+                // }
                 return null;
               },
             ),
             const SizedBox(height: 20),
-            CommonTextField(
+            UnifiedTextField(
               controller: _nicknameController,
               label: '昵称（可选）',
-              hint: '请输入您的昵称',
+              hintText: '请输入您的昵称',
               icon: Icons.badge_outlined,
               helperText: '昵称用于显示，可以为空',
             ),
             const SizedBox(height: 20),
-            CommonTextField(
+            UnifiedTextField(
               controller: _passwordController,
               label: '密码',
-              hint: '请输入密码（至少6位）',
+              hintText: '请输入密码（至少6位）',
               icon: Icons.lock_outline,
               isPassword: true,
               helperText: '密码至少6位',
-              passwordVisible: _isPasswordVisible,
-              onPasswordVisibilityToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
+              isRequired: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '请输入密码';
@@ -273,19 +269,13 @@ class _ModernRegisterPageState extends ConsumerState<ModernRegisterPage>
               },
             ),
             const SizedBox(height: 20),
-            CommonTextField(
+            UnifiedTextField(
               controller: _confirmPasswordController,
               label: '确认密码',
-              hint: '请再次输入密码',
+              hintText: '请再次输入密码',
               icon: Icons.lock_outline,
               isPassword: true,
-              isConfirmPassword: true,
-              confirmPasswordVisible: _isConfirmPasswordVisible,
-              onConfirmPasswordVisibilityToggle: () {
-                setState(() {
-                  _isConfirmPasswordVisible = !_isConfirmPasswordVisible;
-                });
-              },
+              isRequired: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '请确认密码';

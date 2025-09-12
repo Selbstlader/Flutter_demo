@@ -3,7 +3,7 @@ import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import '../../providers/auth_notifier.dart';
 import 'modern_register_page.dart';
-import '../../../../core/widgets/common_text_field.dart';
+import '../../../../core/widgets/unified_text_field.dart';
 import '../../../../core/widgets/error_message_widget.dart';
 import '../../../../core/widgets/gradient_button.dart';
 
@@ -19,13 +19,13 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
   final _formKey = GlobalKey<FormState>();
   final _emailController = TextEditingController();
   final _passwordController = TextEditingController();
-  
+
   late AnimationController _fadeController;
   late AnimationController _slideController;
   late Animation<double> _fadeAnimation;
   late Animation<Offset> _slideAnimation;
-  
-  bool _isPasswordVisible = false;
+
+
 
   @override
   void initState() {
@@ -38,16 +38,16 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
       duration: const Duration(milliseconds: 600),
       vsync: this,
     );
-    
+
     _fadeAnimation = Tween<double>(begin: 0.0, end: 1.0).animate(
       CurvedAnimation(parent: _fadeController, curve: Curves.easeOut),
     );
-    
+
     _slideAnimation = Tween<Offset>(
       begin: const Offset(0, 0.2),
       end: Offset.zero,
     ).animate(CurvedAnimation(parent: _slideController, curve: Curves.easeOut));
-    
+
     _fadeController.forward();
     _slideController.forward();
   }
@@ -65,9 +65,9 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
     if (!_formKey.currentState!.validate()) return;
 
     await ref.read(authNotifierProvider.notifier).login(
-      _emailController.text.trim(),
-      _passwordController.text,
-    );
+          _emailController.text.trim(),
+          _passwordController.text,
+        );
 
     // 检查登录是否成功
     final authState = ref.read(authNotifierProvider);
@@ -97,8 +97,8 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
             padding: const EdgeInsets.symmetric(horizontal: 24),
             child: ConstrainedBox(
               constraints: BoxConstraints(
-                minHeight: MediaQuery.of(context).size.height - 
-                    MediaQuery.of(context).padding.top - 
+                minHeight: MediaQuery.of(context).size.height -
+                    MediaQuery.of(context).padding.top -
                     MediaQuery.of(context).padding.bottom,
               ),
               child: FadeTransition(
@@ -195,35 +195,31 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
         key: _formKey,
         child: Column(
           children: [
-            CommonTextField(
+            UnifiedTextField(
               controller: _emailController,
               label: '邮箱',
-              hint: '请输入您的邮箱地址',
+              hintText: '请输入您的邮箱地址',
               icon: Icons.email_outlined,
               keyboardType: TextInputType.emailAddress,
+              isRequired: true,
               validator: (value) {
                 if (value == null || value.trim().isEmpty) {
                   return '请输入邮箱地址';
                 }
-                if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
-                  return '请输入正确的邮箱格式';
-                }
+                // if (!RegExp(r'^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$').hasMatch(value.trim())) {
+                //   return '请输入正确的邮箱格式';
+                // }
                 return null;
               },
             ),
             const SizedBox(height: 20),
-            CommonTextField(
+            UnifiedTextField(
               controller: _passwordController,
               label: '密码',
-              hint: '请输入您的密码',
+              hintText: '请输入您的密码',
               icon: Icons.lock_outline,
               isPassword: true,
-              passwordVisible: _isPasswordVisible,
-              onPasswordVisibilityToggle: () {
-                setState(() {
-                  _isPasswordVisible = !_isPasswordVisible;
-                });
-              },
+              isRequired: true,
               validator: (value) {
                 if (value == null || value.isEmpty) {
                   return '请输入密码';
@@ -244,7 +240,8 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
                       width: 18,
                       height: 18,
                       decoration: BoxDecoration(
-                        border: Border.all(color: const Color(0xFF6366F1), width: 1.5),
+                        border: Border.all(
+                            color: const Color(0xFF6366F1), width: 1.5),
                         borderRadius: BorderRadius.circular(4),
                       ),
                       child: const Icon(
@@ -282,10 +279,10 @@ class _ModernLoginPageState extends ConsumerState<ModernLoginPage>
               ],
             ),
             const SizedBox(height: 24),
-            
+
             // 错误信息显示
             const ErrorMessageWidget(),
-            
+
             const SizedBox(height: 8),
             _buildLoginButton(),
           ],
