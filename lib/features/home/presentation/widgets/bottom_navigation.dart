@@ -51,26 +51,43 @@ class CustomBottomNavigation extends StatelessWidget {
               SizedBox(
                 height: 90,
                 child: Row(
+                  mainAxisAlignment: MainAxisAlignment.spaceEvenly,
                   children: [
-                    // 左侧 - 社保计算
-                    Expanded(
-                      child: _buildNavItem(
-                        context,
-                        items[0],
-                        0,
-                        currentIndex == 0,
-                      ),
+                    // 社保计算
+                    _buildNavItem(
+                      context,
+                      items[0],
+                      0,
+                      currentIndex == 0,
+                    ),
+                    // 养老金计算
+                    _buildNavItem(
+                      context,
+                      items[1],
+                      1,
+                      currentIndex == 1,
                     ),
                     // 中央空间 - 为AI按钮预留
-                    const SizedBox(width: 80),
-                    // 右侧 - 养老金计算
-                    Expanded(
-                      child: _buildNavItem(
-                        context,
-                        items[1],
-                        1,
-                        currentIndex == 1,
+                    const SizedBox(width: 60),
+                    // 健康工具
+                    _buildNavItem(
+                      context,
+                      const BottomNavigationBarItem(
+                        icon: Icon(Icons.psychology),
+                        label: '健康工具',
                       ),
+                      2,
+                      currentIndex == 2,
+                    ),
+                    // 个人信息管理
+                    _buildNavItem(
+                      context,
+                      const BottomNavigationBarItem(
+                        icon: Icon(Icons.person_rounded),
+                        label: '个人信息',
+                      ),
+                      3,
+                      currentIndex == 3,
                     ),
                   ],
                 ),
@@ -86,7 +103,7 @@ class CustomBottomNavigation extends StatelessWidget {
         // 中央凸起的AI按钮
         Positioned(
           top: -20,
-          left: MediaQuery.of(context).size.width / 2 - 35,
+          left: MediaQuery.of(context).size.width / 2 - 30,
           child: _buildAIButton(context),
         ),
       ],
@@ -102,39 +119,23 @@ class CustomBottomNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: () => onTap(index),
       child: Container(
-        padding: const EdgeInsets.symmetric(vertical: 8, horizontal: 16),
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            AnimatedContainer(
-              duration: const Duration(milliseconds: 200),
-              padding: const EdgeInsets.all(8),
-              decoration: BoxDecoration(
-                color: isSelected
-                    ? const Color(0xFF6366F1).withOpacity(0.1)
-                    : Colors.transparent,
-                borderRadius: BorderRadius.circular(12),
-              ),
-              child: Icon(
-                item.icon is Icon ? (item.icon as Icon).icon : Icons.home,
-                color: isSelected
-                    ? const Color(0xFF6366F1)
-                    : const Color(0xFF64748B),
-                size: 24,
-              ),
-            ),
-            const SizedBox(height: 4),
-            Text(
-              item.label ?? '',
-              style: TextStyle(
-                fontSize: _getResponsiveFontSize(context, 12),
-                fontWeight: isSelected ? FontWeight.w600 : FontWeight.w500,
-                color: isSelected
-                    ? const Color(0xFF6366F1)
-                    : const Color(0xFF64748B),
-              ),
-            ),
-          ],
+        padding: const EdgeInsets.all(12),
+        child: AnimatedContainer(
+          duration: const Duration(milliseconds: 200),
+          padding: const EdgeInsets.all(12),
+          decoration: BoxDecoration(
+            color: isSelected
+                ? const Color(0xFF6366F1).withOpacity(0.1)
+                : Colors.transparent,
+            borderRadius: BorderRadius.circular(16),
+          ),
+          child: Icon(
+            item.icon is Icon ? (item.icon as Icon).icon : Icons.home,
+            color: isSelected
+                ? const Color(0xFF6366F1)
+                : const Color(0xFF64748B),
+            size: 28,
+          ),
         ),
       ),
     );
@@ -145,8 +146,8 @@ class CustomBottomNavigation extends StatelessWidget {
     return GestureDetector(
       onTap: onAITap,
       child: Container(
-        width: 70,
-        height: 70,
+        width: 60,
+        height: 60,
         decoration: BoxDecoration(
           gradient: const LinearGradient(
             colors: [
@@ -156,7 +157,7 @@ class CustomBottomNavigation extends StatelessWidget {
             begin: Alignment.topLeft,
             end: Alignment.bottomRight,
           ),
-          borderRadius: BorderRadius.circular(35),
+          borderRadius: BorderRadius.circular(30),
           boxShadow: [
             BoxShadow(
               color: const Color(0xFF4A90E2).withOpacity(0.3),
@@ -175,7 +176,7 @@ class CustomBottomNavigation extends StatelessWidget {
         child: const Icon(
           Icons.support_agent_rounded,
           color: Colors.white,
-          size: 32,
+          size: 28,
         ),
       ),
     );

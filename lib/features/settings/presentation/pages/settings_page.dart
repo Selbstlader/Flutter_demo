@@ -114,7 +114,9 @@ class _SettingsPageState extends State<SettingsPage> {
           icon: Icons.person_outline,
           title: '个人信息',
           subtitle: '管理您的个人资料',
-          onTap: () {},
+          onTap: () {
+            context.push(AppRouter.userProfile);
+          },
         ),
         _buildDivider(),
         _buildSettingItem(

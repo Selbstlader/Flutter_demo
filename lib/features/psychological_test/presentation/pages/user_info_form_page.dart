@@ -1,20 +1,22 @@
 import 'package:flutter/material.dart';
+import 'package:flutter_riverpod/flutter_riverpod.dart';
 import 'package:go_router/go_router.dart';
 import 'package:uuid/uuid.dart';
 import '../../../../core/widgets/safe_area_scaffold.dart';
 import '../../../../core/widgets/unified_text_field.dart';
 import '../../../../core/widgets/gradient_button.dart';
 import '../../../../core/services/storage_service.dart';
+import '../../../settings/providers/user_profile_provider.dart';
 import '../../models/user_info.dart';
 
-class UserInfoFormPage extends StatefulWidget {
+class UserInfoFormPage extends ConsumerStatefulWidget {
   const UserInfoFormPage({super.key});
 
   @override
-  State<UserInfoFormPage> createState() => _UserInfoFormPageState();
+  ConsumerState<UserInfoFormPage> createState() => _UserInfoFormPageState();
 }
 
-class _UserInfoFormPageState extends State<UserInfoFormPage> {
+class _UserInfoFormPageState extends ConsumerState<UserInfoFormPage> {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _ageController = TextEditingController();
@@ -27,7 +29,16 @@ class _UserInfoFormPageState extends State<UserInfoFormPage> {
   LivingCondition? _selectedLivingCondition;
   GraduationStatus? _selectedGraduationStatus;
   bool _isLoading = false;
+  bool _hasInitialized = false;
   
+  @override
+  void initState() {
+    super.initState();
+    WidgetsBinding.instance.addPostFrameCallback((_) {
+      _initializeForm();
+    });
+  }
+
   @override
   void dispose() {
     _nameController.dispose();
@@ -36,9 +47,76 @@ class _UserInfoFormPageState extends State<UserInfoFormPage> {
     _locationController.dispose();
     super.dispose();
   }
+
+  /// 初始化表单数据
+  void _initializeForm() {
+    final userInfo = ref.read(currentUserInfoProvider);
+    if (userInfo != null && !_hasInitialized) {
+      _populateForm(userInfo);
+      _hasInitialized = true;
+    }
+  }
+
+  /// 填充表单数据
+  void _populateForm(UserInfo userInfo) {
+    // 注意：UserInfo模型中没有name和location字段，这里保持原有逻辑
+    _ageController.text = userInfo.age.toString();
+    _occupationController.text = userInfo.occupation;
+    
+    // 转换枚举值
+    _selectedGender = _getGenderFromString(userInfo.gender);
+    _selectedEducation = _getEducationFromString(userInfo.education);
+    _selectedMaritalStatus = _getMaritalStatusFromString(userInfo.maritalStatus);
+    _selectedLivingCondition = _getLivingConditionFromString(userInfo.livingCondition);
+    _selectedGraduationStatus = _getGraduationStatusFromString(userInfo.graduationStatus);
+  }
+
+  // 枚举转换方法
+  Gender? _getGenderFromString(String gender) {
+    return Gender.values.firstWhere(
+      (g) => g.displayName == gender || g.name == gender,
+      orElse: () => Gender.male,
+    );
+  }
+
+  Education? _getEducationFromString(String education) {
+    return Education.values.firstWhere(
+      (e) => e.displayName == education || e.name == education,
+      orElse: () => Education.bachelor,
+    );
+  }
+
+  MaritalStatus? _getMaritalStatusFromString(String status) {
+    return MaritalStatus.values.firstWhere(
+      (s) => s.displayName == status || s.name == status,
+      orElse: () => MaritalStatus.single,
+    );
+  }
+
+  LivingCondition? _getLivingConditionFromString(String condition) {
+    return LivingCondition.values.firstWhere(
+      (c) => c.displayName == condition || c.name == condition,
+      orElse: () => LivingCondition.alone,
+    );
+  }
+
+  GraduationStatus? _getGraduationStatusFromString(String status) {
+    return GraduationStatus.values.firstWhere(
+      (s) => s.displayName == status || s.name == status,
+      orElse: () => GraduationStatus.graduated,
+    );
+  }
   
   @override
   Widget build(BuildContext context) {
+    // 监听用户信息变化并更新表单
+    ref.listen<UserInfo?>(currentUserInfoProvider, (previous, next) {
+      if (next != null && !_hasInitialized) {
+        _populateForm(next);
+        _hasInitialized = true;
+      }
+    });
+
     return SafeAreaScaffold(
       backgroundColor: const Color(0xFFF8FAFC),
       appBar: AppBar(
@@ -376,26 +454,37 @@ class _UserInfoFormPageState extends State<UserInfoFormPage> {
     setState(() => _isLoading = true);
     
     try {
+      final currentUserInfo = ref.read(currentUserInfoProvider);
+      
       // 创建用户信息对象
       final userInfo = UserInfo(
-        id: const Uuid().v4(),
+        id: currentUserInfo?.id ?? const Uuid().v4(),
         age: int.parse(_ageController.text.trim()),
-        gender: _selectedGender!.displayName,
+        gender: _selectedGender!.name, // 使用枚举的name而不是displayName
         occupation: _occupationController.text.trim(),
-        education: _selectedEducation!.displayName,
-        maritalStatus: _selectedMaritalStatus!.displayName,
-        livingCondition: _selectedLivingCondition!.displayName,
-        graduationStatus: _selectedGraduationStatus!.displayName,
-        createdAt: DateTime.now(),
+        education: _selectedEducation!.name,
+        maritalStatus: _selectedMaritalStatus!.name,
+        livingCondition: _selectedLivingCondition!.name,
+        graduationStatus: _selectedGraduationStatus!.name,
+        createdAt: currentUserInfo?.createdAt ?? DateTime.now(),
+        // 保留现有的其他字段
+        phone: currentUserInfo?.phone,
+        email: currentUserInfo?.email,
+        concerns: currentUserInfo?.concerns,
+        previousExperience: currentUserInfo?.previousExperience,
       );
       
-      // 保存用户信息到本地存储
-      final storageService = StorageService.instance;
-      await storageService.saveUserInfo(userInfo);
+      // 同步保存到Provider和本地存储
+      final notifier = ref.read(userProfileNotifierProvider.notifier);
+      final success = await notifier.updateUserInfo(userInfo);
       
-      // 导航到测试题目页面
-      if (mounted) {
-        context.go('/test-questions?userInfoId=${userInfo.id}');
+      if (success) {
+        // 导航到测试题目页面
+        if (mounted) {
+          context.go('/test-questions?userInfoId=${userInfo.id}');
+        }
+      } else {
+        throw Exception('保存用户信息失败');
       }
     } catch (e) {
       if (mounted) {

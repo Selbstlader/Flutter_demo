@@ -4,6 +4,7 @@ import 'package:go_router/go_router.dart';
 
 import '../../../../core/widgets/safe_area_scaffold.dart';
 import '../../../../core/utils/safe_area_utils.dart';
+import '../../../../core/router/app_router.dart';
 import '../widgets/app_header.dart';
 import '../widgets/bottom_navigation.dart';
 import '../widgets/social_security_form.dart';
@@ -21,10 +22,146 @@ class HomePage extends ConsumerStatefulWidget {
 class _HomePageState extends ConsumerState<HomePage> {
   int _currentIndex = 0;
 
-  final List<Widget> _pages = [
-    const SocialSecurityForm(),
-    const PensionForm(),
-  ];
+  List<Widget> get _pages => [
+        const SocialSecurityForm(),
+        const PensionForm(),
+        _buildHealthToolsPage(),
+        _buildPersonalInfoPage(),
+      ];
+
+  Widget _buildHealthToolsPage() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: const Color(0xFF6366F1).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(40),
+            ),
+            child: const Icon(
+              Icons.psychology,
+              color: Color(0xFF6366F1),
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            '心理健康测试',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E293B),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '专业的心理评估工具，帮助您了解自己的心理健康状况',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF64748B),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                context.push(AppRouter.psychologicalTest);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF6366F1),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                '开始测试',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
+
+  Widget _buildPersonalInfoPage() {
+    return Container(
+      padding: const EdgeInsets.all(16),
+      child: Column(
+        mainAxisAlignment: MainAxisAlignment.center,
+        children: [
+          Container(
+            width: 80,
+            height: 80,
+            decoration: BoxDecoration(
+              color: const Color(0xFF10B981).withOpacity(0.1),
+              borderRadius: BorderRadius.circular(40),
+            ),
+            child: const Icon(
+              Icons.person_rounded,
+              color: Color(0xFF10B981),
+              size: 40,
+            ),
+          ),
+          const SizedBox(height: 24),
+          const Text(
+            '个人信息管理',
+            style: TextStyle(
+              fontSize: 24,
+              fontWeight: FontWeight.w600,
+              color: Color(0xFF1E293B),
+            ),
+          ),
+          const SizedBox(height: 12),
+          const Text(
+            '管理您的个人资料和偏好设置',
+            textAlign: TextAlign.center,
+            style: TextStyle(
+              fontSize: 16,
+              color: Color(0xFF64748B),
+              height: 1.5,
+            ),
+          ),
+          const SizedBox(height: 32),
+          SizedBox(
+            width: double.infinity,
+            child: ElevatedButton(
+              onPressed: () {
+                context.push(AppRouter.settings);
+              },
+              style: ElevatedButton.styleFrom(
+                backgroundColor: const Color(0xFF10B981),
+                foregroundColor: Colors.white,
+                padding: const EdgeInsets.symmetric(vertical: 16),
+                shape: RoundedRectangleBorder(
+                  borderRadius: BorderRadius.circular(12),
+                ),
+              ),
+              child: const Text(
+                '管理信息',
+                style: TextStyle(
+                  fontSize: 16,
+                  fontWeight: FontWeight.w600,
+                ),
+              ),
+            ),
+          ),
+        ],
+      ),
+    );
+  }
 
   void _showAIDialog(BuildContext context) {
     showDialog(
@@ -158,16 +295,16 @@ class _HomePageState extends ConsumerState<HomePage> {
       appBar: AppHeader(
         title: '社保养老金计算',
         actions: [
-          IconButton(
-            onPressed: () {
-              context.push('/settings');
-            },
-            icon: const Icon(
-              Icons.settings_rounded,
-              color: Color(0xFF7F8C8D),
-            ),
-            tooltip: '设置',
-          ),
+          // IconButton(
+          //   onPressed: () {
+          //     context.push('/settings');
+          //   },
+          //   icon: const Icon(
+          //     Icons.settings_rounded,
+          //     color: Color(0xFF7F8C8D),
+          //   ),
+          //   tooltip: '设置',
+          // ),
         ],
       ),
       body: SafeAreaContainer(
@@ -188,6 +325,12 @@ class _HomePageState extends ConsumerState<HomePage> {
           setState(() {
             _currentIndex = index;
           });
+          // 处理健康工具和个人信息的导航
+          if (index == 2) {
+            context.push(AppRouter.psychologicalTest);
+          } else if (index == 3) {
+            context.push(AppRouter.userProfile);
+          }
         },
         onAITap: () {
           _showAIDialog(context);

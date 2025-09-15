@@ -5,6 +5,7 @@ import '../../features/auth/presentation/pages/modern_login_page.dart';
 import '../../features/auth/presentation/pages/modern_register_page.dart';
 import '../../features/home/presentation/pages/home_page.dart';
 import '../../features/settings/presentation/pages/settings_page.dart';
+import '../../features/settings/presentation/pages/user_profile_page.dart';
 import '../../features/home/presentation/pages/calculation_result_page.dart';
 import '../../features/home/presentation/pages/pension_result_page.dart';
 import '../../features/home/presentation/pages/ai_chat_page.dart';
@@ -25,6 +26,7 @@ class AppRouter {
   static const String aiChat = '/ai-chat';
 
   static const String settings = '/settings';
+  static const String userProfile = '/user-profile';
   static const String psychologicalTest = '/psychological-test';
   static const String userInfoForm = '/user-info-form';
   static const String testQuestions = '/test-questions';
@@ -88,6 +90,13 @@ class AppRouter {
       path: '/settings',
       name: 'settings',
       builder: (context, state) => const SettingsPage(),
+    ),
+
+    // 用户信息管理页面
+    GoRoute(
+      path: '/user-profile',
+      name: 'user-profile',
+      builder: (context, state) => const UserProfilePage(),
     ),
 
     // 心理健康测试路由

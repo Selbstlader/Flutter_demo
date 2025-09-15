@@ -133,7 +133,7 @@ ${focusArea != null ? '- 关注领域：$focusArea' : ''}
     final answerSummary = testSession.answers.entries.map((entry) {
       final questionId = entry.key;
       final answer = entry.value;
-      
+
       // 查找对应的题目
       final question = testSession.questions.firstWhere(
         (q) => q.id == questionId,
@@ -144,12 +144,12 @@ ${focusArea != null ? '- 关注领域：$focusArea' : ''}
           order: 0,
         ),
       );
-      
+
       // 构建题目标识：使用题目内容而不是题目序号
       final questionLabel = question.questionText.isNotEmpty
           ? question.questionText
           : '题目${questionId}';
-      
+
       return '$questionLabel: $answer';
     }).join('\n');
 
@@ -305,7 +305,32 @@ $answerSummary
   /// 解析AI生成的题目JSON数据
   List<TestQuestion> parseGeneratedQuestions(String jsonResponse) {
     try {
-      final data = json.decode(jsonResponse);
+      // 清理响应中的markdown代码块标记
+      String cleanedResponse = jsonResponse.trim();
+
+      // 移除开头的```json标记
+      if (cleanedResponse.startsWith('```json')) {
+        cleanedResponse = cleanedResponse.substring(7);
+      }
+
+      // 移除结尾的```标记
+      if (cleanedResponse.endsWith('```')) {
+        cleanedResponse =
+            cleanedResponse.substring(0, cleanedResponse.length - 3);
+      }
+
+      // 再次清理首尾空白字符
+      cleanedResponse = cleanedResponse.trim();
+
+      // 验证清理后的数据不为空
+      if (cleanedResponse.isEmpty) {
+        throw Exception('清理后的JSON数据为空');
+      }
+
+      print(
+          '清理后的JSON数据: ${cleanedResponse.substring(0, cleanedResponse.length > 200 ? 200 : cleanedResponse.length)}...');
+
+      final data = json.decode(cleanedResponse);
 
       // 支持两种格式：直接数组或包含questions/test_questions字段的对象
       List<dynamic> questionsJson;

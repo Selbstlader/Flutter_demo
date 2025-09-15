@@ -20,9 +20,9 @@ class PsychologicalAIConfig {
 
   // 题目生成配置
   static const Map<String, int> questionTypeDistribution = {
-    'single_choice': 8,
-    'multiple_choice': 4,
-    'scale': 6,
+    'single_choice': 3,
+    'multiple_choice': 0,
+    'scale': 0,
     'text_input': 2,
   };
 
