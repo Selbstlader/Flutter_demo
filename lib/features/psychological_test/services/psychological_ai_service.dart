@@ -327,8 +327,7 @@ $answerSummary
         throw Exception('清理后的JSON数据为空');
       }
 
-      print(
-          '清理后的JSON数据: ${cleanedResponse.substring(0, cleanedResponse.length > 200 ? 200 : cleanedResponse.length)}...');
+      LoggerUtil.d('清理后的JSON数据: ${cleanedResponse.substring(0, cleanedResponse.length > 200 ? 200 : cleanedResponse.length)}...');
 
       final data = json.decode(cleanedResponse);
 

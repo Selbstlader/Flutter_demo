@@ -8,6 +8,7 @@ import '../../models/user_info.dart';
 import '../../models/test_question.dart';
 import '../../models/test_session.dart';
 import '../../services/psychological_ai_service.dart';
+import '../../../../core/utils/logger_util.dart';
 
 class TestQuestionsPage extends StatefulWidget {
   final String userInfoId;
@@ -47,11 +48,11 @@ class _TestQuestionsPageState extends State<TestQuestionsPage> {
 
   Future<void> _initializeTest() async {
     try {
-      print('开始初始化测试，userInfoId: ${widget.userInfoId}');
+      LoggerUtil.d('开始初始化测试，userInfoId: ${widget.userInfoId}');
 
       // 加载用户信息
       final userInfoData = await _storageService.getUserInfo(widget.userInfoId);
-      print('获取到的用户信息数据: $userInfoData');
+      LoggerUtil.d('获取到的用户信息数据: $userInfoData');
 
       if (userInfoData != null) {
         // 检查是否已经是UserInfo对象
@@ -60,17 +61,17 @@ class _TestQuestionsPageState extends State<TestQuestionsPage> {
         } else if (userInfoData is Map<String, dynamic>) {
           _userInfo = UserInfo.fromJson(userInfoData);
         }
-        print('用户信息解析成功: ${_userInfo!.id}, 年龄: ${_userInfo!.age}');
+        LoggerUtil.d('用户信息解析成功: ${_userInfo!.id}, 年龄: ${_userInfo!.age}');
       }
 
       if (_userInfo == null) {
         throw Exception('用户信息不存在，userInfoId: ${widget.userInfoId}');
       }
 
-      print('开始生成AI题目...');
+      LoggerUtil.d('开始生成AI题目...');
       // 使用AI服务生成个性化测试题目
       await _generateQuestionsFromAI(_userInfo!);
-      print('AI题目生成完成，题目数量: ${_questions.length}');
+      LoggerUtil.d('AI题目生成完成，题目数量: ${_questions.length}');
 
       // 创建测试会话
       _testSession = TestSession(
@@ -83,18 +84,18 @@ class _TestQuestionsPageState extends State<TestQuestionsPage> {
         sessionType: '综合心理健康评估',
       );
 
-      print('开始保存测试会话: ${_testSession!.id}');
+      LoggerUtil.d('开始保存测试会话: ${_testSession!.id}');
       // 保存测试会话
       await _storageService.saveTestSession(_testSession!);
-      print('测试会话保存成功');
+      LoggerUtil.d('测试会话保存成功');
 
       setState(() {
         _isLoading = false;
       });
-      print('测试初始化完成');
+      LoggerUtil.d('测试初始化完成');
     } catch (e, stackTrace) {
-      print('初始化测试失败: $e');
-      print('堆栈跟踪: $stackTrace');
+      LoggerUtil.e('初始化测试失败: $e');
+      LoggerUtil.e('堆栈跟踪: $stackTrace');
 
       setState(() {
         _isLoading = false;
@@ -113,7 +114,7 @@ class _TestQuestionsPageState extends State<TestQuestionsPage> {
   /// 使用AI服务生成个性化测试题目
   Future<void> _generateQuestionsFromAI(UserInfo userInfo) async {
     try {
-      print('开始从AI生成题目，用户信息: ${userInfo.toJson()}');
+      LoggerUtil.d('开始从AI生成题目，用户信息: ${userInfo.toJson()}');
 
       final stream = _aiService.generateQuestions(userInfo);
       String fullResponse = '';
@@ -123,29 +124,29 @@ class _TestQuestionsPageState extends State<TestQuestionsPage> {
           throw Exception(chunk.substring(6));
         }
         fullResponse = chunk; // 现在是完整响应，不需要累积
-        print('接收到AI完整响应: $chunk');
+        LoggerUtil.d('接收到AI完整响应: $chunk');
         break; // 只有一个完整响应
       }
 
-      print('完整AI响应: $fullResponse');
+      LoggerUtil.d('完整AI响应: $fullResponse');
 
       // 解析AI生成的题目数据
       if (fullResponse.isNotEmpty) {
         _questions = _aiService.parseGeneratedQuestions(fullResponse);
-        print('解析得到 ${_questions.length} 道题目');
+        LoggerUtil.d('解析得到 ${_questions.length} 道题目');
 
         // 如果AI生成的题目数量不足，添加一些基础题目
         if (_questions.isEmpty) {
-          print('解析结果为空，使用备用题目');
+          LoggerUtil.w('解析结果为空，使用备用题目');
           _questions = _generateFallbackQuestions();
         }
       } else {
-        print('AI响应为空，使用备用题目');
+        LoggerUtil.w('AI响应为空，使用备用题目');
         throw Exception('AI服务未返回有效数据');
       }
     } catch (e, stackTrace) {
-      print('AI生成题目失败: $e');
-      print('堆栈跟踪: $stackTrace');
+      LoggerUtil.e('AI生成题目失败: $e');
+      LoggerUtil.e('堆栈跟踪: $stackTrace');
 
       // 如果AI生成失败，使用备用题目
       _questions = _generateFallbackQuestions();

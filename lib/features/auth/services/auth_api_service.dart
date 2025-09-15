@@ -37,7 +37,7 @@ class AuthApiService {
         fromJson: (json) => LoginResponse.fromJson(json),
         skipTenantValidation: true, // 登录接口不需要租户验证
       );
-      print(response);
+      LoggerUtil.d('登录响应: ${response.success ? '成功' : '失败 - ${response.error}'}');
       if (response.success && response.data != null) {
         LoggerUtil.d('用户登录成功: ${response.data!.userId}');
         // 保存token到ApiClient

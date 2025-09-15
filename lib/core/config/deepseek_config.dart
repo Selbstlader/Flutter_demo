@@ -1,6 +1,8 @@
+import 'package:flutter_dotenv/flutter_dotenv.dart';
+
 class DeepSeekConfig {
   static const String baseURL = "https://api.deepseek.com";
-  static const String apiKey = "sk-a8e4ee88516f40e6a2dc3776d3254846";
+  static String get apiKey => dotenv.env['DEEPSEEK_API_KEY'] ?? '';
   static const bool dangerouslyAllowBrowser = true;
   
   // 模型配置

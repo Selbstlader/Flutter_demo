@@ -106,7 +106,7 @@ class _TestResultsPageState extends State<TestResultsPage> {
           try {
             // 解析API响应获取完整的JSON结构
             final apiResponse = json.decode(fullResponse);
-            print(apiResponse);
+            LoggerUtil.d('分析API响应: ${apiResponse.toString().length > 100 ? apiResponse.toString().substring(0, 100) + "..." : apiResponse.toString()}');
 
             Map<String, dynamic>? reportData;
 
@@ -312,7 +312,7 @@ class _TestResultsPageState extends State<TestResultsPage> {
       };
     } catch (e) {
       // 如果数据转换失败，返回一个基本的默认结构
-      print('数据转换错误: $e');
+      LoggerUtil.e('数据转换错误: $e');
       return {
         'basicInformation': {
           'testDate': DateTime.now().toIso8601String(),
